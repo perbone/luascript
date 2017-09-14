@@ -1,0 +1,81 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+classes
+*.pyc
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+Desktop.ini
+.Trash*
+
+
+# Editor Files #
+################
+*~
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# Gradle Files #
+################
+.gradle
+
+# Build output directies
+/target
+*/target
+/build
+*/build
+.m2
+/bin
+*/bin
+
+# IntelliJ specific files/directories #
+#######################################
+out
+.idea
+*.ipr
+*.iws
+*.iml
+atlassian-ide-plugin.xml
+
+# Eclipse specific files/directories #
+######################################
+*.launch
+.classpath
+.project
+.settings
+.metadata
+.cproject
+.buildpath
+
+# NetBeans specific files/directories #
+#######################################
+.nbattrs
