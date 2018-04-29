@@ -114,7 +114,6 @@ public:
     virtual RPCMode get_rset_mode(const StringName &p_variable) const;
 
     virtual ScriptLanguage *get_language();
-    virtual ~ScriptInstance();
 
 protected:
 
