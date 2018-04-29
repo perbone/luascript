@@ -23,15 +23,21 @@
 #include "io/resource_saver.h"
 #include "script_language.h"
 
-class LuaScript: public Script {
+class LuaScript : public Script {
 
 	GDCLASS(LuaScript, Script)
 
 	friend class LuaScriptInstance;
 	friend class LuaScriptLanguage;
 
-public:
+private:
+	String source;
 
+#ifdef TOOLS_ENABLED
+	bool source_changed_cache;
+#endif
+
+public:
 	LuaScript();
 	~LuaScript();
 
@@ -70,19 +76,16 @@ public:
 	virtual void get_members(Set<StringName> *p_constants);
 
 protected:
-
 	static void _bind_methods();
 
 private:
-
 };
 
-class LuaScriptInstance: public ScriptInstance {
+class LuaScriptInstance : public ScriptInstance {
 
 	friend class LuaScript;
 
 public:
-
 	LuaScriptInstance();
 	~LuaScriptInstance();
 
@@ -116,20 +119,17 @@ public:
 	virtual ScriptLanguage *get_language();
 
 protected:
-
 	static void _bind_methods();
 
 private:
-
 };
 
-class LuaScriptLanguage: public ScriptLanguage {
+class LuaScriptLanguage : public ScriptLanguage {
 
 	friend class LuaScript;
 	friend class LuaScriptInstance;
 
 public:
-
 	LuaScriptLanguage();
 	~LuaScriptLanguage();
 
@@ -200,9 +200,23 @@ public:
 	virtual void frame();
 
 protected:
-
 	static void _bind_methods();
 
 private:
+	String get_indentation() const;
+};
 
+class LuaScriptResourceFormatLoader : public ResourceFormatLoader {
+public:
+	virtual Ref<Resource> load(const String &p_path, const String &p_original_path = "", Error *r_error = NULL);
+	virtual void get_recognized_extensions(List<String> *p_extensions) const;
+	virtual bool handles_type(const String &p_type) const;
+	virtual String get_resource_type(const String &p_path) const;
+};
+
+class LuaScriptResourceFormatSaver : public ResourceFormatSaver {
+public:
+	virtual Error save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags = 0);
+	virtual void get_recognized_extensions(const Ref<Resource> &p_resource, List<String> *p_extensions) const;
+	virtual bool recognize(const Ref<Resource> &p_resource) const;
 };
