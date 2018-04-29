@@ -1,3 +1,6 @@
+def is_enabled():
+    # The module is disabled by default. Use module_luascript_enabled=yes to enable it.
+    return False
 
 def can_build(platform):
     return True
