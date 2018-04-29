@@ -27,31 +27,31 @@ LuaScriptLanguage *script_language = nullptr;
 
 void register_luascript_types() {
 
-    ClassDB::register_class<LuaScript>();
+	ClassDB::register_class<LuaScript>();
 
-    script_language = memnew(LuaScriptLanguage);
-    ScriptServer::register_language(script_language);
+	script_language = memnew(LuaScriptLanguage);
+	ScriptServer::register_language(script_language);
 
-//    resource_loader = memnew(LuaScriptResourceFormatLoader);
-//    ResourceLoader::add_resource_format_loader(resource_loader);
+	//    resource_loader = memnew(LuaScriptResourceFormatLoader);
+	//    ResourceLoader::add_resource_format_loader(resource_loader);
 
-//    resource_saver = memnew(LuaScriptResourceFormatSaver);
-//    ResourceSaver::add_resource_format_saver(resource_saver);
+	//    resource_saver = memnew(LuaScriptResourceFormatSaver);
+	//    ResourceSaver::add_resource_format_saver(resource_saver);
 
 #ifdef TOOLS_ENABLED
-//    ScriptEditor::register_create_syntax_highlighter_function(LuaSyntaxHighlighter::create);
-//    EditorNode::add_init_callback(_editor_init);
+	//    ScriptEditor::register_create_syntax_highlighter_function(LuaSyntaxHighlighter::create);
+	//    EditorNode::add_init_callback(_editor_init);
 #endif
 }
 
 void unregister_luascript_types() {
 
-    ScriptServer::unregister_language(script_language);
+	ScriptServer::unregister_language(script_language);
 
-    if (script_language)
-        memdelete(script_language);
-//    if (resource_loader)
-//        memdelete(resource_loader);
-//    if (resource_saver)
-//        memdelete(resource_saver);
+	if (script_language)
+		memdelete(script_language);
+	//    if (resource_loader)
+	//        memdelete(resource_loader);
+	//    if (resource_saver)
+	//        memdelete(resource_saver);
 }
