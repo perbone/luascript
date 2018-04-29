@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.0.2 - 2018-04-29
 ### Added
-- Add basic implementation enough to run the engine
+- Add basic implementation enough to run the engine.
+- Add clang format compatible with Godot source code.
 
 ## 0.0.1 - 2018-04-28
 ### Added
