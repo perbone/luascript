@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.2 - 2018-04-29
+### Added
+- Add basic implementation enough to run the engine
+
 ## 0.0.1 - 2018-04-28
 ### Added
 - This CHANGELOG file.
