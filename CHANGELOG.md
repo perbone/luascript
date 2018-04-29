@@ -10,3 +10,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - This CHANGELOG file.
 - Initial boilerplate code for a basic module.
+- Add declarations for all virtual member functions for the minimun (I think)
+  required for the engine to recognize Lua as a language available.
