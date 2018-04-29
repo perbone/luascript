@@ -22,8 +22,8 @@
 #include "luascript.h"
 
 LuaScriptLanguage *script_language = nullptr;
-//LuaScriptResourceFormatLoader *resource_loader = nullptr;
-//LuaScriptResourceFormatSaver *resource_saver = nullptr;
+LuaScriptResourceFormatLoader *resource_loader = nullptr;
+LuaScriptResourceFormatSaver *resource_saver = nullptr;
 
 void register_luascript_types() {
 
@@ -32,11 +32,11 @@ void register_luascript_types() {
 	script_language = memnew(LuaScriptLanguage);
 	ScriptServer::register_language(script_language);
 
-	//    resource_loader = memnew(LuaScriptResourceFormatLoader);
-	//    ResourceLoader::add_resource_format_loader(resource_loader);
+	resource_loader = memnew(LuaScriptResourceFormatLoader);
+	ResourceLoader::add_resource_format_loader(resource_loader);
 
-	//    resource_saver = memnew(LuaScriptResourceFormatSaver);
-	//    ResourceSaver::add_resource_format_saver(resource_saver);
+	resource_saver = memnew(LuaScriptResourceFormatSaver);
+	ResourceSaver::add_resource_format_saver(resource_saver);
 
 #ifdef TOOLS_ENABLED
 	//    ScriptEditor::register_create_syntax_highlighter_function(LuaSyntaxHighlighter::create);
@@ -50,8 +50,8 @@ void unregister_luascript_types() {
 
 	if (script_language)
 		memdelete(script_language);
-	//    if (resource_loader)
-	//        memdelete(resource_loader);
-	//    if (resource_saver)
-	//        memdelete(resource_saver);
+	if (resource_loader)
+		memdelete(resource_loader);
+	if (resource_saver)
+		memdelete(resource_saver);
 }
