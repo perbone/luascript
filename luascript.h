@@ -145,22 +145,22 @@ public:
     virtual void get_comment_delimiters(List<String> *p_delimiters) const;
     virtual void get_string_delimiters(List<String> *p_delimiters) const;
     virtual Ref<Script> get_template(const String &p_class_name, const String &p_base_class_name) const;
-    virtual void make_template(const String &p_class_name, const String &p_base_class_name, Ref<Script> &p_script) {}
-    virtual bool is_using_templates() { return false; }
+    virtual void make_template(const String &p_class_name, const String &p_base_class_name, Ref<Script> &p_script);
+    virtual bool is_using_templates();
     virtual bool validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path = "", List<String> *r_functions = NULL) const;
-    virtual String validate_path(const String &p_path) const { return ""; }
+    virtual String validate_path(const String &p_path) const;
     virtual Script *create_script() const;
     virtual bool has_named_classes() const;
     virtual bool supports_builtin_mode() const;
-    virtual bool can_inherit_from_file() { return false; }
+    virtual bool can_inherit_from_file();
     virtual int find_function(const String &p_function, const String &p_code) const;
     virtual String make_function(const String &p_class, const String &p_name, const PoolStringArray &p_args) const;
-    virtual Error open_in_external_editor(const Ref<Script> &p_script, int p_line, int p_col) { return ERR_UNAVAILABLE; }
-    virtual bool overrides_external_editor() { return false; }
+    virtual Error open_in_external_editor(const Ref<Script> &p_script, int p_line, int p_col);
+    virtual bool overrides_external_editor();
 
-    virtual Error complete_code(const String &p_code, const String &p_base_path, Object *p_owner, List<String> *r_options, bool &r_force, String &r_call_hint) { return ERR_UNAVAILABLE; }
+    virtual Error complete_code(const String &p_code, const String &p_base_path, Object *p_owner, List<String> *r_options, bool &r_force, String &r_call_hint);
 
-    virtual Error lookup_code(const String &p_code, const String &p_symbol, const String &p_base_path, Object *p_owner, LookupResult &r_result) { return ERR_UNAVAILABLE; }
+    virtual Error lookup_code(const String &p_code, const String &p_symbol, const String &p_base_path, Object *p_owner, LookupResult &r_result);
 
     virtual void auto_indent_code(String &p_code, int p_from_line, int p_to_line) const;
     virtual void add_global_constant(const StringName &p_variable, const Variant &p_value);
@@ -175,7 +175,7 @@ public:
     virtual String debug_get_stack_level_source(int p_level) const;
     virtual void debug_get_stack_level_locals(int p_level, List<String> *p_locals, List<Variant> *p_values, int p_max_subitems = -1, int p_max_depth = -1);
     virtual void debug_get_stack_level_members(int p_level, List<String> *p_members, List<Variant> *p_values, int p_max_subitems = -1, int p_max_depth = -1);
-    virtual ScriptInstance *debug_get_stack_level_instance(int p_level) { return NULL; }
+    virtual ScriptInstance *debug_get_stack_level_instance(int p_level);
     virtual void debug_get_globals(List<String> *p_globals, List<Variant> *p_values, int p_max_subitems = -1, int p_max_depth = -1);
     virtual String debug_parse_stack_level_expression(int p_level, const String &p_expression, int p_max_subitems = -1, int p_max_depth = -1);
 
