@@ -39,11 +39,11 @@ bool LuaScript::can_instance() const {
 }
 
 // Returns the script directly inherited by this script.
-Ref<Script> LuaScript::get_base_script() const {
+Ref<Script> LuaScript::get_base_script() const { // TODO
 	return Ref<Script>();
 }
 
-StringName LuaScript::get_instance_base_type() const {
+StringName LuaScript::get_instance_base_type() const { // TODO
 	return StringName();
 }
 
@@ -55,8 +55,9 @@ bool LuaScript::instance_has(const Object *p_this) const { // TODO
 	return false;
 }
 
-bool LuaScript::has_source_code() const { // TODO
-	return false;
+bool LuaScript::has_source_code() const {
+
+	return !this->source.empty();
 }
 
 String LuaScript::get_source_code() const {
@@ -279,7 +280,7 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 					   "-- Import the classes library\n" +
 					   "local classes = require \"classes\"\n" +
 					   "\n" +
-					   "-- Make sure to import the base class" +
+					   "-- Make sure to import the base class\n" +
 					   "local %BASE% = require \"%BASE%\"\n" +
 					   "\n" +
 					   "-- Create the subclass\n" +
@@ -290,10 +291,11 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 					   "end\n" +
 					   "\n" +
 					   "function %CLASS%:_process(delta)\n" +
+					   "\n" +
 					   "end\n" +
 					   "\n" +
-					   "-- Return the %CLASS% class" +
-					   "return %CLASS%";
+					   "-- Return the %CLASS% class\n" +
+					   "return %CLASS%\n";
 
 	_template = _template.replace("%BASE%", p_base_class_name);
 	_template = _template.replace("%CLASS%", p_class_name);
