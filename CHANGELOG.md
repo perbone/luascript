@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Add basic implementation enough to run the engine.
 - Add clang format compatible with Godot source code.
-- Add support for resource load and saving.
+- Add intial (buggy) support for resource load and saving.
 
 ## 0.0.1 - 2018-04-28
 ### Added
