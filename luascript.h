@@ -121,12 +121,16 @@ public:
 
 class LuaScriptLanguage : public ScriptLanguage {
 
+	static LuaScriptLanguage *singleton;
+
 	friend class LuaScript;
 	friend class LuaScriptInstance;
 
 public:
 	LuaScriptLanguage();
 	~LuaScriptLanguage();
+
+	_FORCE_INLINE_ static LuaScriptLanguage *get_singleton() { return singleton; }
 
 	virtual String get_name() const;
 

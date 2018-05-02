@@ -118,7 +118,7 @@ bool LuaScript::is_tool() const { // TODO
 ScriptLanguage *LuaScript::get_language() const { // TODO
 	print_line("LuaScript::get_language");
 
-	return memnew(LuaScriptLanguage);
+	return LuaScriptLanguage::get_singleton();
 }
 
 bool LuaScript::has_script_signal(const StringName &p_signal) const { // TODO
@@ -303,9 +303,14 @@ ScriptLanguage *LuaScriptInstance::get_language() { // TODO
 
 // LuaScriptLanguage definitions
 
+LuaScriptLanguage *LuaScriptLanguage::singleton = nullptr;
+
 LuaScriptLanguage::LuaScriptLanguage() {
 	print_line("LuaScriptLanguage::constructor");
-} // TODO
+
+	ERR_FAIL_COND(singleton);
+	singleton = this;
+}
 
 LuaScriptLanguage::~LuaScriptLanguage() {
 	print_line("LuaScriptLanguage::destructor");
@@ -647,7 +652,7 @@ String LuaScriptLanguage::get_indentation() const {
 	}
 #endif
 
-	return "\t";
+	return "  ";
 }
 
 // LuaScriptResourceFormatLoader
@@ -679,6 +684,7 @@ Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const St
 		return nullptr;
 	}
 
+	print_line("LuaScriptResourceFormatLoader::load.about-to-return");
 	return Ref<LuaScript>(script);
 }
 
