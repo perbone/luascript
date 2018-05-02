@@ -117,11 +117,6 @@ public:
 	virtual RPCMode get_rset_mode(const StringName &p_variable) const;
 
 	virtual ScriptLanguage *get_language();
-
-protected:
-	static void _bind_methods();
-
-private:
 };
 
 class LuaScriptLanguage : public ScriptLanguage {
@@ -199,15 +194,15 @@ public:
 
 	virtual void frame();
 
-protected:
-	static void _bind_methods();
-
 private:
 	String get_indentation() const;
 };
 
 class LuaScriptResourceFormatLoader : public ResourceFormatLoader {
 public:
+	LuaScriptResourceFormatLoader();
+	~LuaScriptResourceFormatLoader();
+
 	virtual Ref<Resource> load(const String &p_path, const String &p_original_path = "", Error *r_error = NULL);
 	virtual void get_recognized_extensions(List<String> *p_extensions) const;
 	virtual bool handles_type(const String &p_type) const;
@@ -216,6 +211,9 @@ public:
 
 class LuaScriptResourceFormatSaver : public ResourceFormatSaver {
 public:
+	LuaScriptResourceFormatSaver();
+	~LuaScriptResourceFormatSaver();
+
 	virtual Error save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags = 0);
 	virtual void get_recognized_extensions(const Ref<Resource> &p_resource, List<String> *p_extensions) const;
 	virtual bool recognize(const Ref<Resource> &p_resource) const;
