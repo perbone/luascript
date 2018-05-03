@@ -295,10 +295,10 @@ ScriptInstance::RPCMode LuaScriptInstance::get_rset_mode(const StringName &p_var
 	return RPC_MODE_DISABLED;
 }
 
-ScriptLanguage *LuaScriptInstance::get_language() { // TODO
+ScriptLanguage *LuaScriptInstance::get_language() {
 	print_line("LuaScriptInstance::get_language");
 
-	return memnew(LuaScriptLanguage);
+	return LuaScriptLanguage::get_singleton();
 }
 
 // LuaScriptLanguage definitions
