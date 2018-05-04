@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.4 - 2018-05-03
+### Added
+- Add source code loading
+
 ## 0.0.3 - 2018-05-01
 ### Added
 - Add debug prints + instantiation for all main classes so Godot doesn't crash

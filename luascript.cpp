@@ -452,7 +452,8 @@ bool LuaScriptLanguage::is_using_templates() {
 	return true;
 }
 
-bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path, List<String> *r_functions) const { // TODO
+bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error,
+		const String &p_path, List<String> *r_functions) const { // TODO
 	print_line("LuaScriptLanguage::validate");
 	return false;
 }
@@ -503,12 +504,14 @@ bool LuaScriptLanguage::overrides_external_editor() { // TODO
 	return false;
 }
 
-Error LuaScriptLanguage::complete_code(const String &p_code, const String &p_base_path, Object *p_owner, List<String> *r_options, bool &r_force, String &r_call_hint) { // TODO
+Error LuaScriptLanguage::complete_code(const String &p_code, const String &p_base_path, Object *p_owner, List<String> *r_options,
+		bool &r_force, String &r_call_hint) { // TODO
 	print_line("LuaScriptLanguage::complete_code");
 	return ERR_UNAVAILABLE;
 }
 
-Error LuaScriptLanguage::lookup_code(const String &p_code, const String &p_symbol, const String &p_base_path, Object *p_owner, LookupResult &r_result) { // TODO
+Error LuaScriptLanguage::lookup_code(const String &p_code, const String &p_symbol, const String &p_base_path, Object *p_owner,
+		LookupResult &r_result) { // TODO
 	print_line("LuaScriptLanguage::lookup_code");
 	return ERR_UNAVAILABLE;
 }
@@ -677,14 +680,22 @@ Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const St
 
 	script->set_path(p_original_path);
 
-	auto error = script->reload();
+	Error error;
+
+	error = this->load_source_code(script);
 	if (error != OK) {
 		if (r_error) *r_error = error;
 		memdelete(script);
 		return nullptr;
 	}
 
-	print_line("LuaScriptResourceFormatLoader::load.about-to-return");
+	error = script->reload();
+	if (error != OK) {
+		if (r_error) *r_error = error;
+		memdelete(script);
+		return nullptr;
+	}
+
 	return Ref<LuaScript>(script);
 }
 
@@ -704,6 +715,43 @@ String LuaScriptResourceFormatLoader::get_resource_type(const String &p_path) co
 	print_line("LuaScriptResourceFormatLoader::get_resource_type=" + p_path);
 
 	return (p_path.get_extension().to_lower() == LUA_EXTENSION) ? LUA_TYPE : EMPTY_STRING;
+}
+
+Error LuaScriptResourceFormatLoader::load_source_code(LuaScript *script) {
+
+	Error error;
+
+	FileAccess *file = FileAccess::open(script->get_path(), FileAccess::READ, &error);
+	if (error) {
+		ERR_FAIL_COND_V(error, error);
+	}
+
+	PoolVector<uint8_t> buffer;
+
+	int len = file->get_len();
+	buffer.resize(len + 1);
+
+	PoolVector<uint8_t>::Write w = buffer.write();
+
+	int r = file->get_buffer(w.ptr(), len);
+
+	file->close();
+	memdelete(file);
+
+	ERR_FAIL_COND_V(r != len, ERR_CANT_OPEN);
+
+	w[len] = 0;
+
+	String source;
+	if (source.parse_utf8((const char *)w.ptr())) {
+		ERR_EXPLAIN("Script '" + script->get_path() +
+					"' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.");
+		ERR_FAIL_V(ERR_INVALID_DATA);
+	}
+
+	script->set_source_code(source);
+
+	return OK;
 }
 
 // LuaScriptResourceFormatSaver
@@ -754,3 +802,177 @@ bool LuaScriptResourceFormatSaver::recognize(const Ref<Resource> &p_resource) co
 
 	return Object::cast_to<LuaScript>(*p_resource) != nullptr;
 }
+PoolVector<uint8_t> sourcef;
+
+return OK;
+}
+
+// LuaScriptResourceFormatSaver
+
+LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::constructor");
+}
+
+LuaScriptResourceFormatSaver::~LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::destructor");
+}
+
+Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags) {
+	print_line("LuaScriptResourceFormatSaver::save");
+
+	Ref<LuaScript> script = p_resource;
+
+	if (script.is_null()) return ERR_INVALID_PARAMETER;
+
+	String source = script->get_source_code();
+
+	Error error;
+	PoolVector<uint8_t> sourcef;
+
+	return OK;
+	return OK;
+}
+
+// LuaScriptResourceFormatSaver
+
+LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::constructor");
+}
+
+LuaScriptResourceFormatSaver::~LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::destructor");
+}
+
+Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags) {
+	print_line("LuaScriptResourceFormatSaver::save");
+
+	Ref<LuaScript> script = p_resource;
+
+	if (script.is_null()) return ERR_INVALID_PARAMETER;
+
+	String source = script->get_source_code();
+
+	Error error;
+	PoolVector<uint8_t> sourcef;
+
+	return OK;
+}
+
+// LuaScriptResourceFormatSaver
+
+LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::constructor");
+}
+
+LuaScriptResourceFormatSaver::~LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::destructor");
+}
+
+Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags) {
+	print_line("LuaScriptResourceFormatSaver::save");
+
+	Ref<LuaScript> script = p_resource;
+
+	if (script.is_null()) return ERR_INVALID_PARAMETER;
+
+	String source = script->get_source_code();
+
+	Error error;
+	PoolVector<uint8_t> sourcef;
+
+	return OK;
+}
+
+// LuaScriptResourceFormatSaver
+
+LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::constructor");
+}
+
+LuaScriptResourceFormatSaver::~LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::destructor");
+}
+
+Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags) {
+	print_line("LuaScriptResourceFormatSaver::save");
+
+	Ref<LuaScript> script = p_resource;
+
+	if (script.is_null()) return ERR_INVALID_PARAMETER;
+
+	String source = script->get_source_code();
+
+	Error error;
+	return OK;
+}
+
+// LuaScriptResourceFormatSaver
+
+LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::constructor");
+}
+
+LuaScriptResourceFormatSaver::~LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::destructor");
+}
+
+Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags) {
+	print_line("LuaScriptResourceFormatSaver::save");
+
+	Ref<LuaScript> script = p_resource;
+
+	if (script.is_null()) return ERR_INVALID_PARAMETER;
+
+	String source = script->get_source_code();
+
+	Error error;
+	PoolVector<uint8_t> sourcef;
+
+	return OK;
+}
+
+// LuaScriptResourceFormatSaver
+
+LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::constructor");
+}
+
+LuaScriptResourceFormatSaver::~LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::destructor");
+}
+
+Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags) {
+	print_line("LuaScriptResourceFormatSaver::save");
+
+	Ref<LuaScript> script = p_resource;
+
+	if (script.is_null()) return ERR_INVALID_PARAMETER;
+
+	String source = script->get_source_code();
+
+	Error error;
+	PoolVector<uint8_t> sourcef;
+
+	return OK;
+}
+
+// LuaScriptResourceFormatSaver
+
+LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::constructor");
+}
+
+LuaScriptResourceFormatSaver::~LuaScriptResourceFormatSaver() {
+	print_line("LuaScriptResourceFormatSaver::destructor");
+}
+
+Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags) {
+	print_line("LuaScriptResourceFormatSaver::save");
+
+	Ref<LuaScript> script = p_resource;
+
+	if (script.is_null()) return ERR_INVALID_PARAMETER;
+
+	String source = script->get_source_code();
+
+	Error error;
