@@ -57,9 +57,12 @@ StringName LuaScript::get_instance_base_type() const { // TODO
 }
 
 ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
-	print_line("LuaScript::instance_create");
+	print_line("LuaScript::instance_create( p_this = " + p_this->get_class_name() + " )");
 
-	return memnew(LuaScriptInstance);
+	LuaScriptInstance *instance = memnew(LuaScriptInstance);
+	instance->script = Ref<LuaScript>(this);
+
+	return instance;
 }
 
 bool LuaScript::instance_has(const Object *p_this) const { // TODO
@@ -215,41 +218,25 @@ Object *LuaScriptInstance::get_owner() {
 	return nullptr;
 }
 
-void LuaScriptInstance::get_property_state(List<Pair<StringName, Variant> > &state) {
-	print_line("LuaScriptInstance::get_property_state");
-
-} // TODO
-
 void LuaScriptInstance::get_method_list(List<MethodInfo> *p_list) const {
 	print_line("LuaScriptInstance::get_method_list");
 
 } // TODO
 
 bool LuaScriptInstance::has_method(const StringName &p_method) const {
-	print_line("LuaScriptInstance::has_method");
+	print_line("LuaScriptInstance::has_method( p_method = " + p_method + " )");
 
 	return false;
 }
 
-Variant LuaScriptInstance::call(const StringName &p_method, VARIANT_ARG_DECLARE) {
-	print_line("LuaScriptInstance::call1");
-
-	return Variant();
-}
-
 Variant LuaScriptInstance::call(const StringName &p_method, const Variant **p_args, int p_argcount, Variant::CallError &r_error) {
-	print_line("LuaScriptInstance::call2");
+	print_line("LuaScriptInstance::call( p_method = " + p_method + " )");
 
 	return Variant();
 }
-
-void LuaScriptInstance::call_multilevel(const StringName &p_method, VARIANT_ARG_DECLARE) {
-	print_line("LuaScriptInstance::call_multilevel1");
-
-} // TODO
 
 void LuaScriptInstance::call_multilevel(const StringName &p_method, const Variant **p_args, int p_argcount) {
-	print_line("LuaScriptInstance::call_multilevel2");
+	print_line("LuaScriptInstance::call_multilevel");
 
 } // TODO
 
@@ -276,7 +263,8 @@ bool LuaScriptInstance::refcount_decremented() {
 Ref<Script> LuaScriptInstance::get_script() const {
 	print_line("LuaScriptInstance::get_script");
 
-} // TODO
+	return this->script;
+}
 
 bool LuaScriptInstance::is_placeholder() {
 	print_line("LuaScriptInstance::is_placeholder");
@@ -474,9 +462,10 @@ bool LuaScriptLanguage::has_named_classes() const { // TODO
 	return false;
 }
 
-bool LuaScriptLanguage::supports_builtin_mode() const { // TODO
+bool LuaScriptLanguage::supports_builtin_mode() const {
 	print_line("LuaScriptLanguage::supports_builtin_mode");
-	return false;
+
+	return true;
 }
 
 bool LuaScriptLanguage::can_inherit_from_file() { // TODO
@@ -489,9 +478,26 @@ int LuaScriptLanguage::find_function(const String &p_function, const String &p_c
 	return -1;
 }
 
-String LuaScriptLanguage::make_function(const String &p_class, const String &p_name, const PoolStringArray &p_args) const { // TODO
-	print_line("LuaScriptLanguage::make_function");
-	return EMPTY_STRING;
+String LuaScriptLanguage::make_function(const String &p_class, const String &p_name, const PoolStringArray &p_args) const {
+	print_line("LuaScriptLanguage::make_function( p_class = " + p_class + ", p_name = " + p_name + " )");
+
+	// FIXME! Godot does not pass p_class so the Lua class will be malformed.
+	// Another problem is that Godot will append the function to the end of
+	// the current file and this will broke the class as well.
+	// At the moment this seems to be an API limitation and apparently
+	// the C# backend devs have already acknowledged this issue
+	// (seen by the comments on the source code).
+
+	String funcDef = "function " + p_class + ":" + p_name + "(";
+	for (int i = 0; i < p_args.size(); i++) {
+		if (i > 0)
+			funcDef += ", ";
+		funcDef += p_args[i].get_slice(":", 0);
+	}
+
+	funcDef += ")\n\nend\n";
+
+	return funcDef;
 }
 
 Error LuaScriptLanguage::open_in_external_editor(const Ref<Script> &p_script, int p_line, int p_col) { // TODO
