@@ -85,6 +85,9 @@ class LuaScriptInstance : public ScriptInstance {
 
 	friend class LuaScript;
 
+private:
+	Ref<LuaScript> script;
+
 public:
 	LuaScriptInstance();
 	~LuaScriptInstance();
@@ -95,13 +98,10 @@ public:
 	virtual Variant::Type get_property_type(const StringName &p_name, bool *r_is_valid = NULL) const;
 
 	virtual Object *get_owner();
-	virtual void get_property_state(List<Pair<StringName, Variant> > &state);
 
 	virtual void get_method_list(List<MethodInfo> *p_list) const;
 	virtual bool has_method(const StringName &p_method) const;
-	virtual Variant call(const StringName &p_method, VARIANT_ARG_LIST);
 	virtual Variant call(const StringName &p_method, const Variant **p_args, int p_argcount, Variant::CallError &r_error);
-	virtual void call_multilevel(const StringName &p_method, VARIANT_ARG_LIST);
 	virtual void call_multilevel(const StringName &p_method, const Variant **p_args, int p_argcount);
 	virtual void call_multilevel_reversed(const StringName &p_method, const Variant **p_args, int p_argcount);
 	virtual void notification(int p_notification);
@@ -205,7 +205,7 @@ private:
 class LuaScriptResourceFormatLoader : public ResourceFormatLoader {
 public:
 	LuaScriptResourceFormatLoader();
-	~LuaScriptResourceFormatLoader();
+	virtual ~LuaScriptResourceFormatLoader();
 
 	virtual Ref<Resource> load(const String &p_path, const String &p_original_path = "", Error *r_error = NULL);
 	virtual void get_recognized_extensions(List<String> *p_extensions) const;
@@ -219,7 +219,7 @@ private:
 class LuaScriptResourceFormatSaver : public ResourceFormatSaver {
 public:
 	LuaScriptResourceFormatSaver();
-	~LuaScriptResourceFormatSaver();
+	virtual ~LuaScriptResourceFormatSaver();
 
 	virtual Error save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags = 0);
 	virtual void get_recognized_extensions(const Ref<Resource> &p_resource, List<String> *p_extensions) const;
