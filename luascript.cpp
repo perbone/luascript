@@ -17,14 +17,14 @@
  * limitations under the License
  */
 
-#include "debug.h"
 #include "luascript.h"
+#include "debug.h"
 
-#include "os/os.h"
-#include "os/file_access.h"
-#include "os/thread.h"
 #include "core/engine.h"
 #include "editor/editor_settings.h"
+#include "os/file_access.h"
+#include "os/os.h"
+#include "os/thread.h"
 
 const String EMPTY_STRING = "";
 const String SCRIPT_TYPE = "Script";
@@ -531,7 +531,7 @@ void LuaScriptLanguage::add_global_constant(const StringName &p_variable, const 
 } // TODO
 
 void LuaScriptLanguage::thread_enter() {
-//	print_debug("LuaScriptLanguage::thread_enter; threadId = %d, mainThreadId = %d", Thread::get_caller_id(), Thread::get_main_id());
+	//	print_debug("LuaScriptLanguage::thread_enter; threadId = %d, mainThreadId = %d", Thread::get_caller_id(), Thread::get_main_id());
 	print_debug("LuaScriptLanguage::thread_enter");
 } // TODO
 
