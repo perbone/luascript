@@ -17,11 +17,14 @@
  * limitations under the License
  */
 
+#include "debug.h"
 #include "luascript.h"
 
+#include "os/os.h"
+#include "os/file_access.h"
+#include "os/thread.h"
 #include "core/engine.h"
 #include "editor/editor_settings.h"
-#include "os/file_access.h"
 
 const String EMPTY_STRING = "";
 const String SCRIPT_TYPE = "Script";
@@ -30,34 +33,34 @@ const String LUA_TYPE = "LuaScript";
 const String LUA_EXTENSION = "lua";
 
 LuaScript::LuaScript() {
-	print_line("LuaScript::constructor");
+	print_debug("LuaScript::constructor");
 } // TODO
 
 LuaScript::~LuaScript() {
-	print_line("LuaScript::destructor");
+	print_debug("LuaScript::destructor");
 } // TODO
 
 bool LuaScript::can_instance() const {
-	print_line("LuaScript::can_instance");
+	print_debug("LuaScript::can_instance");
 
 	return true;
 }
 
 // Returns the script directly inherited by this script.
 Ref<Script> LuaScript::get_base_script() const { // TODO
-	print_line("LuaScript::get_base_script");
+	print_debug("LuaScript::get_base_script");
 
 	return Ref<Script>();
 }
 
 StringName LuaScript::get_instance_base_type() const { // TODO
-	print_line("LuaScript::get_instance_base_type");
+	print_debug("LuaScript::get_instance_base_type");
 
 	return StringName();
 }
 
 ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
-	print_line("LuaScript::instance_create( p_this = " + p_this->get_class_name() + " )");
+	print_debug("LuaScript::instance_create( p_this = " + p_this->get_class_name() + " )");
 
 	LuaScriptInstance *instance = memnew(LuaScriptInstance);
 	instance->script = Ref<LuaScript>(this);
@@ -66,25 +69,25 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 }
 
 bool LuaScript::instance_has(const Object *p_this) const { // TODO
-	print_line("LuaScript::instance_has");
+	print_debug("LuaScript::instance_has");
 
 	return false;
 }
 
 bool LuaScript::has_source_code() const {
-	print_line("LuaScript::has_source_code");
+	print_debug("LuaScript::has_source_code");
 
 	return !this->source.empty();
 }
 
 String LuaScript::get_source_code() const {
-	print_line("LuaScript::get_source_code");
+	print_debug("LuaScript::get_source_code");
 
 	return this->source;
 }
 
 void LuaScript::set_source_code(const String &p_code) {
-	print_line("LuaScript::set_source_code");
+	print_debug("LuaScript::set_source_code");
 
 	if (p_code != this->source) {
 		this->source = p_code;
@@ -95,196 +98,196 @@ void LuaScript::set_source_code(const String &p_code) {
 }
 
 Error LuaScript::reload(bool p_keep_state) { // TODO
-	print_line("LuaScript::reload");
+	print_debug("LuaScript::reload");
 
 	return OK;
 }
 
 bool LuaScript::has_method(const StringName &p_method) const { // TODO
-	print_line("LuaScript::has_method");
+	print_debug("LuaScript::has_method");
 
 	return false;
 }
 
 MethodInfo LuaScript::get_method_info(const StringName &p_method) const { // TODO
-	print_line("LuaScript::get_method_info");
+	print_debug("LuaScript::get_method_info");
 
 	return MethodInfo();
 }
 
 bool LuaScript::is_tool() const { // TODO
-	print_line("LuaScript::is_tool");
+	print_debug("LuaScript::is_tool");
 
 	return false;
 }
 
 ScriptLanguage *LuaScript::get_language() const { // TODO
-	print_line("LuaScript::get_language");
+	print_debug("LuaScript::get_language");
 
 	return LuaScriptLanguage::get_singleton();
 }
 
 bool LuaScript::has_script_signal(const StringName &p_signal) const { // TODO
-	print_line("LuaScript::has_script_signal");
+	print_debug("LuaScript::has_script_signal");
 
 	return false;
 }
 
 void LuaScript::get_script_signal_list(List<MethodInfo> *r_signals) const {
-	print_line("LuaScript::get_script_signal_list");
+	print_debug("LuaScript::get_script_signal_list");
 
 } // TODO
 
 bool LuaScript::get_property_default_value(const StringName &p_property, Variant &r_value) const { // TODO
-	print_line("LuaScript::get_property_default_value");
+	print_debug("LuaScript::get_property_default_value");
 
 	return false;
 }
 
 void LuaScript::update_exports() {
-	print_line("LuaScript::update_exports");
+	print_debug("LuaScript::update_exports");
 
 } // TODO
 
 void LuaScript::get_script_method_list(List<MethodInfo> *p_list) const {
-	print_line("LuaScript::get_script_method_list");
+	print_debug("LuaScript::get_script_method_list");
 
 } // TODO
 
 void LuaScript::get_script_property_list(List<PropertyInfo> *p_list) const {
-	print_line("LuaScript::get_script_property_list");
+	print_debug("LuaScript::get_script_property_list");
 
 } // TODO
 
 int LuaScript::get_member_line(const StringName &p_member) const {
-	print_line("LuaScript::get_member_line");
+	print_debug("LuaScript::get_member_line");
 
 	return -1;
 }
 
 void LuaScript::get_constants(Map<StringName, Variant> *p_constants) {
-	print_line("LuaScript::get_constants");
+	print_debug("LuaScript::get_constants");
 
 } // TODO
 
 void LuaScript::get_members(Set<StringName> *p_constants) {
-	print_line("LuaScript::get_members");
+	print_debug("LuaScript::get_members");
 
 } // TODO
 
 void LuaScript::_bind_methods() {
-	print_line("LuaScript::_bind_methods");
+	print_debug("LuaScript::_bind_methods");
 
 } // TODO
 
 // LuaScriptInstance definitions
 
 LuaScriptInstance::LuaScriptInstance() {
-	print_line("LuaScriptInstance::constructor");
+	print_debug("LuaScriptInstance::constructor");
 
 } // TODO
 
 LuaScriptInstance::~LuaScriptInstance() {
-	print_line("LuaScriptInstance::destructor");
+	print_debug("LuaScriptInstance::destructor");
 
 } // TODO
 
 bool LuaScriptInstance::set(const StringName &p_name, const Variant &p_value) {
-	print_line("LuaScriptInstance::set");
+	print_debug("LuaScriptInstance::set");
 
 	return false;
 }
 
 bool LuaScriptInstance::get(const StringName &p_name, Variant &r_ret) const {
-	print_line("LuaScriptInstance::get");
+	print_debug("LuaScriptInstance::get");
 
 	return false;
 }
 
 void LuaScriptInstance::get_property_list(List<PropertyInfo> *p_properties) const {
-	print_line("LuaScriptInstance::get_property_list");
+	print_debug("LuaScriptInstance::get_property_list");
 
 } // TODO
 
 Variant::Type LuaScriptInstance::get_property_type(const StringName &p_name, bool *r_is_valid) const {
-	print_line("LuaScriptInstance::get_property_type");
+	print_debug("LuaScriptInstance::get_property_type");
 
 	return Variant::Type();
 }
 
 Object *LuaScriptInstance::get_owner() {
-	print_line("LuaScriptInstance::get_owner");
+	print_debug("LuaScriptInstance::get_owner");
 
 	return nullptr;
 }
 
 void LuaScriptInstance::get_method_list(List<MethodInfo> *p_list) const {
-	print_line("LuaScriptInstance::get_method_list");
+	print_debug("LuaScriptInstance::get_method_list");
 
 } // TODO
 
 bool LuaScriptInstance::has_method(const StringName &p_method) const {
-	print_line("LuaScriptInstance::has_method( p_method = " + p_method + " )");
+	print_debug("LuaScriptInstance::has_method( p_method = " + p_method + " )");
 
 	return false;
 }
 
 Variant LuaScriptInstance::call(const StringName &p_method, const Variant **p_args, int p_argcount, Variant::CallError &r_error) {
-	print_line("LuaScriptInstance::call( p_method = " + p_method + " )");
+	print_debug("LuaScriptInstance::call( p_method = " + p_method + " )");
 
 	return Variant();
 }
 
 void LuaScriptInstance::call_multilevel(const StringName &p_method, const Variant **p_args, int p_argcount) {
-	print_line("LuaScriptInstance::call_multilevel");
+	print_debug("LuaScriptInstance::call_multilevel");
 
 } // TODO
 
 void LuaScriptInstance::call_multilevel_reversed(const StringName &p_method, const Variant **p_args, int p_argcount) {
-	print_line("LuaScriptInstance::call_multilevel_reversed");
+	print_debug("LuaScriptInstance::call_multilevel_reversed");
 
 } // TODO
 
 void LuaScriptInstance::notification(int p_notification) {
-	print_line("LuaScriptInstance::notification");
+	print_debug("LuaScriptInstance::notification");
 
 } // TODO
 
 void LuaScriptInstance::refcount_incremented() {
-	print_line("LuaScriptInstance::refcount_incremented");
+	print_debug("LuaScriptInstance::refcount_incremented");
 
 } // TODO
 
 bool LuaScriptInstance::refcount_decremented() {
-	print_line("LuaScriptInstance::refcount_decremented");
+	print_debug("LuaScriptInstance::refcount_decremented");
 
 } // TODO
 
 Ref<Script> LuaScriptInstance::get_script() const {
-	print_line("LuaScriptInstance::get_script");
+	print_debug("LuaScriptInstance::get_script");
 
 	return this->script;
 }
 
 bool LuaScriptInstance::is_placeholder() {
-	print_line("LuaScriptInstance::is_placeholder");
+	print_debug("LuaScriptInstance::is_placeholder");
 
 	return false;
 }
 
 ScriptInstance::RPCMode LuaScriptInstance::get_rpc_mode(const StringName &p_method) const { // TODO
-	print_line("LuaScriptInstance::get_rpc_mode");
+	print_debug("LuaScriptInstance::get_rpc_mode");
 
 	return RPC_MODE_DISABLED;
 }
 ScriptInstance::RPCMode LuaScriptInstance::get_rset_mode(const StringName &p_variable) const { // TODO
-	print_line("LuaScriptInstance::get_rset_mode");
+	print_debug("LuaScriptInstance::get_rset_mode");
 
 	return RPC_MODE_DISABLED;
 }
 
 ScriptLanguage *LuaScriptInstance::get_language() {
-	print_line("LuaScriptInstance::get_language");
+	print_debug("LuaScriptInstance::get_language");
 
 	return LuaScriptLanguage::get_singleton();
 }
@@ -294,49 +297,49 @@ ScriptLanguage *LuaScriptInstance::get_language() {
 LuaScriptLanguage *LuaScriptLanguage::singleton = nullptr;
 
 LuaScriptLanguage::LuaScriptLanguage() {
-	print_line("LuaScriptLanguage::constructor");
+	print_debug("LuaScriptLanguage::constructor");
 
 	ERR_FAIL_COND(singleton);
 	singleton = this;
 }
 
 LuaScriptLanguage::~LuaScriptLanguage() {
-	print_line("LuaScriptLanguage::destructor");
+	print_debug("LuaScriptLanguage::destructor");
 } // TODO
 
 void LuaScriptLanguage::init() {
-	print_line("LuaScriptLanguage::init");
+	print_debug("LuaScriptLanguage::init");
 } // TODO
 
 String LuaScriptLanguage::get_name() const {
-	print_line("LuaScriptLanguage::get_name");
+	print_debug("LuaScriptLanguage::get_name");
 
 	return LUA_NAME;
 }
 
 String LuaScriptLanguage::get_type() const {
-	print_line("LuaScriptLanguage::get_type");
+	print_debug("LuaScriptLanguage::get_type");
 
 	return LUA_TYPE;
 }
 
 String LuaScriptLanguage::get_extension() const {
-	print_line("LuaScriptLanguage::get_extension");
+	print_debug("LuaScriptLanguage::get_extension");
 
 	return LUA_EXTENSION;
 }
 
 Error LuaScriptLanguage::execute_file(const String &p_path) { // TODO
-	print_line("LuaScriptLanguage::execute_file");
+	print_debug("LuaScriptLanguage::execute_file");
 	OK;
 }
 
 void LuaScriptLanguage::finish() {
-	print_line("LuaScriptLanguage::finish");
+	print_debug("LuaScriptLanguage::finish");
 } // TODO
 
 void LuaScriptLanguage::get_reserved_words(List<String> *p_words) const {
-	print_line("LuaScriptLanguage::get_reserved_words");
+	print_debug("LuaScriptLanguage::get_reserved_words");
 
 	static const char *_reserved_words[] = {
 
@@ -375,32 +378,29 @@ void LuaScriptLanguage::get_reserved_words(List<String> *p_words) const {
 }
 
 void LuaScriptLanguage::get_comment_delimiters(List<String> *p_delimiters) const {
-	print_line("LuaScriptLanguage::get_comment_delimiters");
+	print_debug("LuaScriptLanguage::get_comment_delimiters");
 
 	p_delimiters->push_back("--"); // Single-line comment starts with a double hyphens
 	p_delimiters->push_back("--[[ ]]"); // Block comment starts with double shovel and runs until double close box
 }
 
 void LuaScriptLanguage::get_string_delimiters(List<String> *p_delimiters) const {
-	print_line("LuaScriptLanguage::get_string_delimiters");
+	print_debug("LuaScriptLanguage::get_string_delimiters");
 
 	p_delimiters->push_back("\" \"");
 	p_delimiters->push_back("' '");
 }
 
 Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const String &p_base_class_name) const {
-	print_line("LuaScriptLanguage::get_template");
+	print_debug("LuaScriptLanguage::get_template");
 
 	String _template = String() +
 
-					   "-- Import the classes library\n" +
-					   "local classes = require \"classes\"\n" +
+					   "local class = require \"sys.class\" -- Import the system class library\n" +
+					   "local godot.%BASE% = require \"godot.%BASE%\" -- Make sure to import the base class\n" +
 					   "\n" +
-					   "-- Make sure to import the base class\n" +
-					   "local %BASE% = require \"%BASE%\"\n" +
 					   "\n" +
-					   "-- Create the subclass\n" +
-					   "local %CLASS% = classes.class(%BASE%)\n" +
+					   "local %CLASS% = class:extends(godot.%BASE%) -- Create the user subclass\n" +
 					   "\n" +
 					   "function %CLASS%:_ready()\n" +
 					   "\n" +
@@ -410,10 +410,10 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 					   "\n" +
 					   "end\n" +
 					   "\n" +
-					   "-- Return the %CLASS% class\n" +
+					   "\n" +
 					   "return %CLASS%\n";
 
-	_template = _template.replace("%BASE%", p_base_class_name);
+	_template = _template.replace("%BASE%", p_base_class_name.capitalize());
 	_template = _template.replace("%CLASS%", p_class_name);
 
 	Ref<LuaScript> script;
@@ -425,7 +425,7 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 }
 
 void LuaScriptLanguage::make_template(const String &p_class_name, const String &p_base_class_name, Ref<Script> &p_script) {
-	print_line("LuaScriptLanguage::make_template");
+	print_debug("LuaScriptLanguage::make_template");
 
 	String src = p_script->get_source_code();
 	src = src.replace("%BASE%", p_base_class_name)
@@ -435,51 +435,51 @@ void LuaScriptLanguage::make_template(const String &p_class_name, const String &
 }
 
 bool LuaScriptLanguage::is_using_templates() {
-	print_line("LuaScriptLanguage::is_using_templates");
+	print_debug("LuaScriptLanguage::is_using_templates");
 
 	return true;
 }
 
 bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error,
 		const String &p_path, List<String> *r_functions) const { // TODO
-	print_line("LuaScriptLanguage::validate");
+	print_debug("LuaScriptLanguage::validate");
 	return false;
 }
 
 String LuaScriptLanguage::validate_path(const String &p_path) const { // TODO
-	print_line("LuaScriptLanguage::validate_path");
+	print_debug("LuaScriptLanguage::validate_path");
 	return EMPTY_STRING;
 }
 
 Script *LuaScriptLanguage::create_script() const {
-	print_line("LuaScriptLanguage::create_script");
+	print_debug("LuaScriptLanguage::create_script");
 
 	return memnew(LuaScript);
 }
 
 bool LuaScriptLanguage::has_named_classes() const { // TODO
-	print_line("LuaScriptLanguage::has_named_classes");
+	print_debug("LuaScriptLanguage::has_named_classes");
 	return false;
 }
 
 bool LuaScriptLanguage::supports_builtin_mode() const {
-	print_line("LuaScriptLanguage::supports_builtin_mode");
+	print_debug("LuaScriptLanguage::supports_builtin_mode");
 
 	return true;
 }
 
 bool LuaScriptLanguage::can_inherit_from_file() { // TODO
-	print_line("LuaScriptLanguage::can_inherit_from_file");
+	print_debug("LuaScriptLanguage::can_inherit_from_file");
 	return true;
 }
 
 int LuaScriptLanguage::find_function(const String &p_function, const String &p_code) const { // TODO
-	print_line("LuaScriptLanguage::find_function");
+	print_debug("LuaScriptLanguage::find_function");
 	return -1;
 }
 
 String LuaScriptLanguage::make_function(const String &p_class, const String &p_name, const PoolStringArray &p_args) const {
-	print_line("LuaScriptLanguage::make_function( p_class = " + p_class + ", p_name = " + p_name + " )");
+	print_debug("LuaScriptLanguage::make_function( p_class = " + p_class + ", p_name = " + p_name + " )");
 
 	// FIXME! Godot does not pass p_class so the Lua class will be malformed.
 	// Another problem is that Godot will append the function to the end of
@@ -501,149 +501,150 @@ String LuaScriptLanguage::make_function(const String &p_class, const String &p_n
 }
 
 Error LuaScriptLanguage::open_in_external_editor(const Ref<Script> &p_script, int p_line, int p_col) { // TODO
-	print_line("LuaScriptLanguage::open_in_external_editor");
+	print_debug("LuaScriptLanguage::open_in_external_editor");
 	return ERR_UNAVAILABLE;
 }
 
 bool LuaScriptLanguage::overrides_external_editor() { // TODO
-	print_line("LuaScriptLanguage::overrides_external_editor");
+	print_debug("LuaScriptLanguage::overrides_external_editor");
 	return false;
 }
 
 Error LuaScriptLanguage::complete_code(const String &p_code, const String &p_base_path, Object *p_owner, List<String> *r_options,
 		bool &r_force, String &r_call_hint) { // TODO
-	print_line("LuaScriptLanguage::complete_code");
+	print_debug("LuaScriptLanguage::complete_code");
 	return ERR_UNAVAILABLE;
 }
 
 Error LuaScriptLanguage::lookup_code(const String &p_code, const String &p_symbol, const String &p_base_path, Object *p_owner,
 		LookupResult &r_result) { // TODO
-	print_line("LuaScriptLanguage::lookup_code");
+	print_debug("LuaScriptLanguage::lookup_code");
 	return ERR_UNAVAILABLE;
 }
 
 void LuaScriptLanguage::auto_indent_code(String &p_code, int p_from_line, int p_to_line) const {
-	print_line("LuaScriptLanguage::auto_indent_code");
+	print_debug("LuaScriptLanguage::auto_indent_code");
 } // TODO
 
 void LuaScriptLanguage::add_global_constant(const StringName &p_variable, const Variant &p_value) {
-	print_line("LuaScriptLanguage::add_global_constant");
+	print_debug("LuaScriptLanguage::add_global_constant");
 } // TODO
 
 void LuaScriptLanguage::thread_enter() {
-	print_line("LuaScriptLanguage::thread_enter");
+//	print_debug("LuaScriptLanguage::thread_enter; threadId = %d, mainThreadId = %d", Thread::get_caller_id(), Thread::get_main_id());
+	print_debug("LuaScriptLanguage::thread_enter");
 } // TODO
 
 void LuaScriptLanguage::thread_exit() {
-	print_line("LuaScriptLanguage::thread_exit");
+	print_debug("LuaScriptLanguage::thread_exit");
 } // TODO
 
 String LuaScriptLanguage::debug_get_error() const {
-	print_line("LuaScriptLanguage::debug_get_error");
+	print_debug("LuaScriptLanguage::debug_get_error");
 } // TODO
 
 int LuaScriptLanguage::debug_get_stack_level_count() const { // TODO
-	print_line("LuaScriptLanguage::debug_get_stack_level_count");
+	print_debug("LuaScriptLanguage::debug_get_stack_level_count");
 	return -1;
 }
 
 int LuaScriptLanguage::debug_get_stack_level_line(int p_level) const { // TODO
-	print_line("LuaScriptLanguage::debug_get_stack_level_line");
+	print_debug("LuaScriptLanguage::debug_get_stack_level_line");
 	return -1;
 }
 
 String LuaScriptLanguage::debug_get_stack_level_function(int p_level) const { // TODO
-	print_line("LuaScriptLanguage::debug_get_stack_level_function");
+	print_debug("LuaScriptLanguage::debug_get_stack_level_function");
 	return EMPTY_STRING;
 }
 
 String LuaScriptLanguage::debug_get_stack_level_source(int p_level) const { // TODO
-	print_line("LuaScriptLanguage::debug_get_stack_level_source");
+	print_debug("LuaScriptLanguage::debug_get_stack_level_source");
 	return EMPTY_STRING;
 }
 
 void LuaScriptLanguage::debug_get_stack_level_locals(int p_level, List<String> *p_locals, List<Variant> *p_values, int p_max_subitems, int p_max_depth) {
-	print_line("LuaScriptLanguage::debug_get_stack_level_locals");
+	print_debug("LuaScriptLanguage::debug_get_stack_level_locals");
 } // TODO
 
 void LuaScriptLanguage::debug_get_stack_level_members(int p_level, List<String> *p_members, List<Variant> *p_values, int p_max_subitems, int p_max_depth) {
-	print_line("LuaScriptLanguage::debug_get_stack_level_members");
+	print_debug("LuaScriptLanguage::debug_get_stack_level_members");
 } // TODO
 
 ScriptInstance *LuaScriptLanguage::debug_get_stack_level_instance(int p_level) { // TODO
-	print_line("LuaScriptLanguage::debug_get_stack_level_instance");
+	print_debug("LuaScriptLanguage::debug_get_stack_level_instance");
 	return nullptr;
 }
 
 void LuaScriptLanguage::debug_get_globals(List<String> *p_globals, List<Variant> *p_values, int p_max_subitems, int p_max_depth) {
-	print_line("LuaScriptLanguage::debug_get_globals");
+	print_debug("LuaScriptLanguage::debug_get_globals");
 } // TODO
 
 String LuaScriptLanguage::debug_parse_stack_level_expression(int p_level, const String &p_expression, int p_max_subitems, int p_max_depth) { // TODO
-	print_line("LuaScriptLanguage::debug_parse_stack_level_expression");
+	print_debug("LuaScriptLanguage::debug_parse_stack_level_expression");
 	return EMPTY_STRING;
 }
 
 Vector<ScriptLanguage::StackInfo> LuaScriptLanguage::debug_get_current_stack_info() { // TODO
-	print_line("LuaScriptLanguage::debug_get_current_stack_info");
+	print_debug("LuaScriptLanguage::debug_get_current_stack_info");
 	return Vector<StackInfo>();
 }
 
 void LuaScriptLanguage::reload_all_scripts() {
-	print_line("LuaScriptLanguage::reload_all_scripts");
+	print_debug("LuaScriptLanguage::reload_all_scripts");
 } // TODO
 
 void LuaScriptLanguage::reload_tool_script(const Ref<Script> &p_script, bool p_soft_reload) {
-	print_line("LuaScriptLanguage::reload_tool_script");
+	print_debug("LuaScriptLanguage::reload_tool_script");
 } // TODO
 
 void LuaScriptLanguage::get_recognized_extensions(List<String> *p_extensions) const {
-	print_line("LuaScriptLanguage::get_recognized_extensions");
+	print_debug("LuaScriptLanguage::get_recognized_extensions");
 
 	p_extensions->push_back(LUA_EXTENSION);
 }
 
 void LuaScriptLanguage::get_public_functions(List<MethodInfo> *p_functions) const {
-	print_line("LuaScriptLanguage::get_public_functions");
+	print_debug("LuaScriptLanguage::get_public_functions");
 } // TODO
 
 void LuaScriptLanguage::get_public_constants(List<Pair<String, Variant> > *p_constants) const {
-	print_line("LuaScriptLanguage::get_public_constants");
+	print_debug("LuaScriptLanguage::get_public_constants");
 } // TODO
 
 void LuaScriptLanguage::profiling_start() {
-	print_line("LuaScriptLanguage::profiling_start");
+	print_debug("LuaScriptLanguage::profiling_start");
 } // TODO
 
 void LuaScriptLanguage::profiling_stop() {
-	print_line("LuaScriptLanguage::profiling_stop");
+	print_debug("LuaScriptLanguage::profiling_stop");
 } // TODO
 
 int LuaScriptLanguage::profiling_get_accumulated_data(ProfilingInfo *p_info_arr, int p_info_max) { // TODO
-	print_line("LuaScriptLanguage::profiling_get_accumulated_data");
+	print_debug("LuaScriptLanguage::profiling_get_accumulated_data");
 	return -1;
 }
 
 int LuaScriptLanguage::profiling_get_frame_data(ProfilingInfo *p_info_arr, int p_info_max) { // TODO
-	print_line("LuaScriptLanguage::profiling_get_frame_data");
+	print_debug("LuaScriptLanguage::profiling_get_frame_data");
 	return -1;
 }
 
 void *LuaScriptLanguage::alloc_instance_binding_data(Object *p_object) { // TODO
-	print_line("LuaScriptLanguage::alloc_instance_binding_data");
+	print_debug("LuaScriptLanguage::alloc_instance_binding_data");
 	return nullptr;
 }
 
 void LuaScriptLanguage::free_instance_binding_data(void *p_data) {
-	print_line("LuaScriptLanguage::free_instance_binding_data");
+	print_debug("LuaScriptLanguage::free_instance_binding_data");
 } // TODO
 
 void LuaScriptLanguage::frame() {
-	//	print_line("LuaScriptLanguage::frame");
+	//	print_debug("LuaScriptLanguage::frame");
 } // TODO
 
 String LuaScriptLanguage::get_indentation() const {
-	print_line("LuaScriptLanguage::get_indentation");
+	print_debug("LuaScriptLanguage::get_indentation");
 
 #ifdef TOOLS_ENABLED
 	if (Engine::get_singleton()->is_editor_hint()) {
@@ -667,15 +668,15 @@ String LuaScriptLanguage::get_indentation() const {
 // LuaScriptResourceFormatLoader
 
 LuaScriptResourceFormatLoader::LuaScriptResourceFormatLoader() {
-	print_line("LuaScriptResourceFormatLoader::constructor");
+	print_debug("LuaScriptResourceFormatLoader::constructor");
 }
 
 LuaScriptResourceFormatLoader::~LuaScriptResourceFormatLoader() {
-	print_line("LuaScriptResourceFormatLoader::destructor");
+	print_debug("LuaScriptResourceFormatLoader::destructor");
 }
 
 Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const String &p_original_path, Error *r_error) {
-	print_line("LuaScriptResourceFormatLoader::load");
+	print_debug("LuaScriptResourceFormatLoader::load");
 
 	LuaScript *script = memnew(LuaScript);
 
@@ -705,19 +706,19 @@ Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const St
 }
 
 void LuaScriptResourceFormatLoader::get_recognized_extensions(List<String> *p_extensions) const {
-	print_line("LuaScriptResourceFormatLoader::get_recognized_extensions");
+	print_debug("LuaScriptResourceFormatLoader::get_recognized_extensions");
 
 	p_extensions->push_back(LUA_EXTENSION);
 }
 
 bool LuaScriptResourceFormatLoader::handles_type(const String &p_type) const {
-	print_line("LuaScriptResourceFormatLoader::handles_type");
+	print_debug("LuaScriptResourceFormatLoader::handles_type");
 
 	return (p_type == SCRIPT_TYPE || p_type == LUA_TYPE);
 }
 
 String LuaScriptResourceFormatLoader::get_resource_type(const String &p_path) const {
-	print_line("LuaScriptResourceFormatLoader::get_resource_type=" + p_path);
+	print_debug("LuaScriptResourceFormatLoader::get_resource_type=" + p_path);
 
 	return (p_path.get_extension().to_lower() == LUA_EXTENSION) ? LUA_TYPE : EMPTY_STRING;
 }
@@ -763,15 +764,15 @@ Error LuaScriptResourceFormatLoader::load_source_code(LuaScript *script) {
 // LuaScriptResourceFormatSaver
 
 LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
-	print_line("LuaScriptResourceFormatSaver::constructor");
+	print_debug("LuaScriptResourceFormatSaver::constructor");
 }
 
 LuaScriptResourceFormatSaver::~LuaScriptResourceFormatSaver() {
-	print_line("LuaScriptResourceFormatSaver::destructor");
+	print_debug("LuaScriptResourceFormatSaver::destructor");
 }
 
 Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags) {
-	print_line("LuaScriptResourceFormatSaver::save");
+	print_debug("LuaScriptResourceFormatSaver::save");
 
 	Ref<LuaScript> script = p_resource;
 
@@ -796,7 +797,7 @@ Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resourc
 }
 
 void LuaScriptResourceFormatSaver::get_recognized_extensions(const Ref<Resource> &p_resource, List<String> *p_extensions) const {
-	print_line("LuaScriptResourceFormatSaver::get_recognized_extensions");
+	print_debug("LuaScriptResourceFormatSaver::get_recognized_extensions");
 
 	if (Object::cast_to<LuaScript>(*p_resource)) {
 		p_extensions->push_back(LUA_EXTENSION);
@@ -804,7 +805,7 @@ void LuaScriptResourceFormatSaver::get_recognized_extensions(const Ref<Resource>
 }
 
 bool LuaScriptResourceFormatSaver::recognize(const Ref<Resource> &p_resource) const {
-	print_line("LuaScriptResourceFormatSaver::recognize");
+	print_debug("LuaScriptResourceFormatSaver::recognize");
 
 	return Object::cast_to<LuaScript>(*p_resource) != nullptr;
 }
