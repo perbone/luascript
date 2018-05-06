@@ -69,7 +69,8 @@ atlassian-ide-plugin.xml
 .settings/
 *.sublime-workspace
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/
+.vscode/settings.json
