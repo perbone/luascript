@@ -32,7 +32,9 @@ const String LUA_NAME = "Lua";
 const String LUA_TYPE = "LuaScript";
 const String LUA_EXTENSION = "lua";
 
-LuaScript::LuaScript() {
+LuaScript::LuaScript() :
+		tool(false),
+		valid(false) {
 	print_debug("LuaScript::constructor");
 } // TODO
 
@@ -63,13 +65,14 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 	print_debug("LuaScript::instance_create( p_this = " + p_this->get_class_name() + " )");
 
 	LuaScriptInstance *instance = memnew(LuaScriptInstance);
+    instance->owner = p_this;
 	instance->script = Ref<LuaScript>(this);
 
 	return instance;
 }
 
 bool LuaScript::instance_has(const Object *p_this) const { // TODO
-	print_debug("LuaScript::instance_has");
+	print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + " )");
 
 	return false;
 }
@@ -118,7 +121,7 @@ MethodInfo LuaScript::get_method_info(const StringName &p_method) const { // TOD
 bool LuaScript::is_tool() const { // TODO
 	print_debug("LuaScript::is_tool");
 
-	return false;
+	return this->tool;
 }
 
 ScriptLanguage *LuaScript::get_language() const { // TODO
@@ -139,7 +142,7 @@ void LuaScript::get_script_signal_list(List<MethodInfo> *r_signals) const {
 } // TODO
 
 bool LuaScript::get_property_default_value(const StringName &p_property, Variant &r_value) const { // TODO
-    print_debug("LuaScript::get_property_default_value( " + p_property + " )");
+	print_debug("LuaScript::get_property_default_value( p_property = " + p_property + " )");
 
 	return false;
 }
@@ -207,7 +210,7 @@ bool LuaScriptInstance::set(const StringName &p_name, const Variant &p_value) {
 }
 
 bool LuaScriptInstance::get(const StringName &p_name, Variant &r_ret) const {
-	print_debug("LuaScriptInstance::get");
+	print_debug("LuaScriptInstance::get( p_name = " + p_name + " )");
 
 	return false;
 }
@@ -218,7 +221,7 @@ void LuaScriptInstance::get_property_list(List<PropertyInfo> *p_properties) cons
 } // TODO
 
 Variant::Type LuaScriptInstance::get_property_type(const StringName &p_name, bool *r_is_valid) const {
-	print_debug("LuaScriptInstance::get_property_type");
+	print_debug("LuaScriptInstance::get_property_type( p_name = " + p_name + " )");
 
 	return Variant::Type();
 }
@@ -226,7 +229,7 @@ Variant::Type LuaScriptInstance::get_property_type(const StringName &p_name, boo
 Object *LuaScriptInstance::get_owner() {
 	print_debug("LuaScriptInstance::get_owner");
 
-	return nullptr;
+    return this->owner;
 }
 
 void LuaScriptInstance::get_method_list(List<MethodInfo> *p_list) const {
@@ -727,7 +730,7 @@ bool LuaScriptResourceFormatLoader::handles_type(const String &p_type) const {
 }
 
 String LuaScriptResourceFormatLoader::get_resource_type(const String &p_path) const {
-    print_debug("LuaScriptResourceFormatLoader::get_resource_type( " + p_path + " )");
+	print_debug("LuaScriptResourceFormatLoader::get_resource_type( " + p_path + " )");
 
 	return (p_path.get_extension().to_lower() == LUA_EXTENSION) ? LUA_TYPE : EMPTY_STRING;
 }
