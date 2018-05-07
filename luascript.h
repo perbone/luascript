@@ -31,6 +31,9 @@ class LuaScript : public Script {
 	friend class LuaScriptLanguage;
 
 private:
+    bool tool;
+    bool valid;
+
 	String source;
 
 #ifdef TOOLS_ENABLED
@@ -87,6 +90,7 @@ class LuaScriptInstance : public ScriptInstance {
 	friend class LuaScript;
 
 private:
+    Object *owner;
 	Ref<LuaScript> script;
 
 public:
