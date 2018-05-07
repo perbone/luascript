@@ -396,7 +396,7 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 
 	String _template = String() +
 
-					   "local class = require \"sys.class\" -- Import the system class library\n" +
+                       "local class = require \"luascript.class\" -- Import the system class library\n" +
 					   "local godot.%BASE% = require \"godot.%BASE%\" -- Make sure to import the base class\n" +
 					   "\n" +
 					   "\n" +
@@ -413,8 +413,8 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 					   "\n" +
 					   "return %CLASS%\n";
 
-	_template = _template.replace("%BASE%", p_base_class_name.capitalize());
-	_template = _template.replace("%CLASS%", p_class_name);
+    _template = _template.replace("%BASE%", p_base_class_name);
+    _template = _template.replace("%CLASS%", p_class_name.capitalize());
 
 	Ref<LuaScript> script;
 	script.instance();
@@ -443,7 +443,8 @@ bool LuaScriptLanguage::is_using_templates() {
 bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error,
 		const String &p_path, List<String> *r_functions) const { // TODO
 	print_debug("LuaScriptLanguage::validate");
-	return false;
+
+    return true;
 }
 
 String LuaScriptLanguage::validate_path(const String &p_path) const { // TODO
