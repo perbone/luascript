@@ -65,8 +65,11 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 	print_debug("LuaScript::instance_create( p_this = " + p_this->get_class_name() + " )");
 
 	LuaScriptInstance *instance = memnew(LuaScriptInstance);
-    instance->owner = p_this;
+	instance->owner = p_this;
 	instance->script = Ref<LuaScript>(this);
+
+	auto guard = LuaScriptLanguage::acquire();
+	this->instances.insert(p_this);
 
 	return instance;
 }
@@ -74,7 +77,11 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 bool LuaScript::instance_has(const Object *p_this) const { // TODO
 	print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + " )");
 
-	return false;
+    auto guard = LuaScriptLanguage::acquire();
+    bool found = this->instances.has((Object *)p_this);
+    print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + ", found = " + (found?"yes":"no") + " )");
+
+    return found;
 }
 
 bool LuaScript::has_source_code() const {
@@ -229,7 +236,7 @@ Variant::Type LuaScriptInstance::get_property_type(const StringName &p_name, boo
 Object *LuaScriptInstance::get_owner() {
 	print_debug("LuaScriptInstance::get_owner");
 
-    return this->owner;
+	return this->owner;
 }
 
 void LuaScriptInstance::get_method_list(List<MethodInfo> *p_list) const {
@@ -272,6 +279,7 @@ void LuaScriptInstance::refcount_incremented() {
 bool LuaScriptInstance::refcount_decremented() {
 	print_debug("LuaScriptInstance::refcount_decremented");
 
+    return true;
 } // TODO
 
 Ref<Script> LuaScriptInstance::get_script() const {
@@ -312,6 +320,7 @@ LuaScriptLanguage::LuaScriptLanguage() {
 
 	ERR_FAIL_COND(singleton);
 	singleton = this;
+	mutex = Mutex::create();
 }
 
 LuaScriptLanguage::~LuaScriptLanguage() {

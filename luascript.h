@@ -21,6 +21,7 @@
 
 #include "io/resource_loader.h"
 #include "io/resource_saver.h"
+#include "os/mutex.h"
 #include "script_language.h"
 
 class LuaScript : public Script {
@@ -31,10 +32,12 @@ class LuaScript : public Script {
 	friend class LuaScriptLanguage;
 
 private:
-    bool tool;
-    bool valid;
+	bool tool;
+	bool valid;
 
 	String source;
+
+    Set<Object *> instances;
 
 #ifdef TOOLS_ENABLED
 	bool source_changed_cache;
@@ -82,7 +85,7 @@ protected:
 	static void _bind_methods();
 
 private:
-    Variant _new(const Variant **p_args, int p_argcount, Variant::CallError &r_error);
+	Variant _new(const Variant **p_args, int p_argcount, Variant::CallError &r_error);
 };
 
 class LuaScriptInstance : public ScriptInstance {
@@ -90,7 +93,7 @@ class LuaScriptInstance : public ScriptInstance {
 	friend class LuaScript;
 
 private:
-    Object *owner;
+	Object *owner;
 	Ref<LuaScript> script;
 
 public:
@@ -131,11 +134,16 @@ class LuaScriptLanguage : public ScriptLanguage {
 	friend class LuaScript;
 	friend class LuaScriptInstance;
 
+    _FORCE_INLINE_ static LuaScriptLanguage *get_singleton() { return singleton; }
+    _FORCE_INLINE_ static MutexLock& acquire() { return *(memnew(MutexLock(LuaScriptLanguage::singleton->mutex))); }
+
+private:
+	Mutex *mutex;
+
 public:
 	LuaScriptLanguage();
 	~LuaScriptLanguage();
 
-	_FORCE_INLINE_ static LuaScriptLanguage *get_singleton() { return singleton; }
 
 	virtual String get_name() const;
 
