@@ -79,6 +79,7 @@ protected:
 	static void _bind_methods();
 
 private:
+    Variant _new(const Variant **p_args, int p_argcount, Variant::CallError &r_error);
 };
 
 class LuaScriptInstance : public ScriptInstance {
