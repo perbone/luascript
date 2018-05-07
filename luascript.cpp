@@ -139,7 +139,7 @@ void LuaScript::get_script_signal_list(List<MethodInfo> *r_signals) const {
 } // TODO
 
 bool LuaScript::get_property_default_value(const StringName &p_property, Variant &r_value) const { // TODO
-	print_debug("LuaScript::get_property_default_value");
+    print_debug("LuaScript::get_property_default_value( " + p_property + " )");
 
 	return false;
 }
@@ -178,7 +178,15 @@ void LuaScript::get_members(Set<StringName> *p_constants) {
 void LuaScript::_bind_methods() {
 	print_debug("LuaScript::_bind_methods");
 
+	ClassDB::bind_vararg_method(METHOD_FLAGS_DEFAULT, "new", &LuaScript::_new, MethodInfo(Variant::OBJECT, "new"));
+
 } // TODO
+
+Variant LuaScript::_new(const Variant **p_args, int p_argcount, Variant::CallError &r_error) { // TODO
+	print_debug("LuaScript::_new");
+
+	return Variant();
+}
 
 // LuaScriptInstance definitions
 
@@ -396,7 +404,7 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 
 	String _template = String() +
 
-                       "local class = require \"luascript.class\" -- Import the system class library\n" +
+					   "local class = require \"luascript.class\" -- Import the system class library\n" +
 					   "local godot.%BASE% = require \"godot.%BASE%\" -- Make sure to import the base class\n" +
 					   "\n" +
 					   "\n" +
@@ -413,8 +421,8 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 					   "\n" +
 					   "return %CLASS%\n";
 
-    _template = _template.replace("%BASE%", p_base_class_name);
-    _template = _template.replace("%CLASS%", p_class_name.capitalize());
+	_template = _template.replace("%BASE%", p_base_class_name);
+	_template = _template.replace("%CLASS%", p_class_name.capitalize());
 
 	Ref<LuaScript> script;
 	script.instance();
@@ -444,7 +452,7 @@ bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int 
 		const String &p_path, List<String> *r_functions) const { // TODO
 	print_debug("LuaScriptLanguage::validate");
 
-    return true;
+	return true;
 }
 
 String LuaScriptLanguage::validate_path(const String &p_path) const { // TODO
@@ -719,7 +727,7 @@ bool LuaScriptResourceFormatLoader::handles_type(const String &p_type) const {
 }
 
 String LuaScriptResourceFormatLoader::get_resource_type(const String &p_path) const {
-	print_debug("LuaScriptResourceFormatLoader::get_resource_type=" + p_path);
+    print_debug("LuaScriptResourceFormatLoader::get_resource_type( " + p_path + " )");
 
 	return (p_path.get_extension().to_lower() == LUA_EXTENSION) ? LUA_TYPE : EMPTY_STRING;
 }
