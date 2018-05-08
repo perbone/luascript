@@ -37,7 +37,7 @@ private:
 
 	String source;
 
-    Set<Object *> instances;
+	Set<Object *> instances;
 
 #ifdef TOOLS_ENABLED
 	bool source_changed_cache;
@@ -134,8 +134,8 @@ class LuaScriptLanguage : public ScriptLanguage {
 	friend class LuaScript;
 	friend class LuaScriptInstance;
 
-    _FORCE_INLINE_ static LuaScriptLanguage *get_singleton() { return singleton; }
-    _FORCE_INLINE_ static MutexLock& acquire() { return *(memnew(MutexLock(LuaScriptLanguage::singleton->mutex))); }
+	_FORCE_INLINE_ static LuaScriptLanguage *get_singleton() { return singleton; }
+	_FORCE_INLINE_ static MutexLock &acquire() { return *(memnew(MutexLock(LuaScriptLanguage::singleton->mutex))); }
 
 private:
 	Mutex *mutex;
@@ -143,7 +143,6 @@ private:
 public:
 	LuaScriptLanguage();
 	~LuaScriptLanguage();
-
 
 	virtual String get_name() const;
 
