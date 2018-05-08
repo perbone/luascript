@@ -77,11 +77,11 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 bool LuaScript::instance_has(const Object *p_this) const { // TODO
 	print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + " )");
 
-    auto guard = LuaScriptLanguage::acquire();
-    bool found = this->instances.has((Object *)p_this);
-    print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + ", found = " + (found?"yes":"no") + " )");
+	auto guard = LuaScriptLanguage::acquire();
+	bool found = this->instances.has((Object *)p_this);
+	print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + ", found = " + (found ? "yes" : "no") + " )");
 
-    return found;
+	return found;
 }
 
 bool LuaScript::has_source_code() const {
@@ -279,7 +279,7 @@ void LuaScriptInstance::refcount_incremented() {
 bool LuaScriptInstance::refcount_decremented() {
 	print_debug("LuaScriptInstance::refcount_decremented");
 
-    return true;
+	return true;
 } // TODO
 
 Ref<Script> LuaScriptInstance::get_script() const {
@@ -434,7 +434,7 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 					   "return %CLASS%\n";
 
 	_template = _template.replace("%BASE%", p_base_class_name);
-	_template = _template.replace("%CLASS%", p_class_name.capitalize());
+	_template = _template.replace("%CLASS%", p_class_name.capitalize().replace(" ", "").strip_edges());
 
 	Ref<LuaScript> script;
 	script.instance();
