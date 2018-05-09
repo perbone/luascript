@@ -33,6 +33,9 @@ const String LUA_TYPE = "LuaScript";
 const String LUA_EXTENSION = "lua";
 
 const String METHOD_NAME_INIT = "_init";
+const String METHOD_NAME_ENTER_TREE = "_enter_tree";
+const String METHOD_NAME_EXIT_TREE = "_exit_tree";
+const String METHOD_NAME_UPDATE_CALLBACK = "_update_callback";
 const String METHOD_NAME_READY = "_ready";
 const String METHOD_NAME_INPUT = "_input";
 const String METHOD_NAME_UNHANDLED_INPUT = "_unhandled_input";
@@ -755,7 +758,6 @@ String LuaScriptResourceFormatLoader::get_resource_type(const String &p_path) co
 }
 
 Error LuaScriptResourceFormatLoader::load_source_code(LuaScript *script) {
-	print_debug("LuaScriptResourceFormatLoader::load_source_code( script = " + script->get_path() + " )");
 
 	Error error;
 
