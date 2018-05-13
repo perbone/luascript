@@ -51,6 +51,6 @@ void print_debug(const String fmt, ...) {
 
 #else
 
-#define print_debug(fmt)
+#define print_debug(fmt, ...)
 
 #endif
