@@ -613,7 +613,7 @@ String LuaScriptLanguage::make_function(const String &p_class, const String &p_n
 	// the current file and this will broke the class as well.
 	// At the moment this seems to be an API limitation and apparently
 	// the C# backend devs have already acknowledged this issue
-	// (seen by the comments on the source code).
+    // (seen by their comments in the c# backend source code).
 
 	String funcDef = "function " + p_class + ":" + p_name + "(";
 	for (int i = 0; i < p_args.size(); i++) {
