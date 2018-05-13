@@ -35,6 +35,8 @@ private:
 	bool tool;
 	bool valid;
 
+	SelfList<LuaScript> self;
+
 	String source;
 
 	Set<Object *> instances;
@@ -74,6 +76,7 @@ public:
 	virtual bool get_property_default_value(const StringName &p_property, Variant &r_value) const;
 
 	virtual void update_exports();
+
 	virtual void get_script_method_list(List<MethodInfo> *p_list) const;
 	virtual void get_script_property_list(List<PropertyInfo> *p_list) const;
 
@@ -81,6 +84,11 @@ public:
 
 	virtual void get_constants(Map<StringName, Variant> *p_constants);
 	virtual void get_members(Set<StringName> *p_constants);
+
+	Error load_source_code(const String &p_path);
+
+    // Supports sorting based on inheritance; parent must came first // TODO
+    bool operator()(const Ref<LuaScript> &a, const Ref<LuaScript> &b) const { return true; }
 
 protected:
 	static void _bind_methods();
@@ -99,7 +107,7 @@ private:
 
 class LuaScriptInstance : public ScriptInstance {
 
-	friend class LuaScript;
+    friend class LuaScript;
 
 private:
 	Object *owner;
@@ -146,6 +154,7 @@ class LuaScriptLanguage : public ScriptLanguage {
 
 private:
 	Mutex *mutex;
+	SelfList<LuaScript>::List script_list;
 
 public:
 	LuaScriptLanguage();
@@ -230,9 +239,6 @@ public:
 	virtual void get_recognized_extensions(List<String> *p_extensions) const;
 	virtual bool handles_type(const String &p_type) const;
 	virtual String get_resource_type(const String &p_path) const;
-
-private:
-	Error load_source_code(LuaScript *script);
 };
 
 class LuaScriptResourceFormatSaver : public ResourceFormatSaver {

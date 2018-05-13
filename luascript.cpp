@@ -44,12 +44,23 @@ const String METHOD_NAME_PHYSICS_PROCESS = "_physics_process";
 
 LuaScript::LuaScript() :
 		tool(false),
-		valid(false) {
+		valid(false),
+		self(this) {
 	print_debug("LuaScript::constructor");
+
+#ifdef DEBUG_ENABLED
+	auto guard = LuaScriptLanguage::acquire();
+	LuaScriptLanguage::get_singleton()->script_list.add(&this->self);
+#endif
 } // TODO
 
 LuaScript::~LuaScript() {
 	print_debug("LuaScript::destructor");
+
+#ifdef DEBUG_ENABLED
+	auto guard = LuaScriptLanguage::acquire();
+	LuaScriptLanguage::get_singleton()->script_list.remove(&this->self);
+#endif
 } // TODO
 
 bool LuaScript::can_instance() const {
@@ -161,6 +172,44 @@ MethodInfo LuaScript::get_method_info(const StringName &p_method) const { // TOD
 	print_debug("LuaScript::get_method_info( p_method = " + p_method + " )");
 
 	return MethodInfo();
+}
+
+Error LuaScript::load_source_code(const String &p_path) {
+	print_debug("LuaScript::load_source_code( p_path = " + p_path + " )");
+
+	Error error;
+
+	FileAccess *file = FileAccess::open(p_path, FileAccess::READ, &error);
+	if (error) {
+		ERR_FAIL_COND_V(error, error);
+	}
+
+	PoolVector<uint8_t> buffer;
+
+	int len = file->get_len();
+	buffer.resize(len + 1);
+
+	PoolVector<uint8_t>::Write w = buffer.write();
+
+	int r = file->get_buffer(w.ptr(), len);
+
+	file->close();
+	memdelete(file);
+
+	ERR_FAIL_COND_V(r != len, ERR_CANT_OPEN);
+
+	w[len] = 0;
+
+	String source;
+
+	if (source.parse_utf8((const char *)w.ptr())) {
+		ERR_EXPLAIN("Script '" + p_path + "' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.");
+		ERR_FAIL_V(ERR_INVALID_DATA);
+	}
+
+	this->set_source_code(source);
+
+	return OK;
 }
 
 bool LuaScript::is_tool() const { // TODO
@@ -533,9 +582,10 @@ Script *LuaScriptLanguage::create_script() const {
 	return memnew(LuaScript);
 }
 
-bool LuaScriptLanguage::has_named_classes() const { // TODO
+bool LuaScriptLanguage::has_named_classes() const {
 	print_debug("LuaScriptLanguage::has_named_classes");
-	return true;
+
+	return false;
 }
 
 bool LuaScriptLanguage::supports_builtin_mode() const {
@@ -668,6 +718,29 @@ Vector<ScriptLanguage::StackInfo> LuaScriptLanguage::debug_get_current_stack_inf
 
 void LuaScriptLanguage::reload_all_scripts() {
 	print_debug("LuaScriptLanguage::reload_all_scripts");
+
+#ifdef DEBUG_ENABLED
+	List<Ref<LuaScript> > scripts;
+
+	{
+		auto guard = LuaScriptLanguage::acquire();
+
+		SelfList<LuaScript> *elem = script_list.first();
+		while (elem) {
+			if (elem->self()->get_path().is_resource_file()) {
+				scripts.push_back(Ref<LuaScript>(elem->self()));
+			}
+			elem = elem->next();
+		}
+	}
+
+	scripts.sort(); // update in inheritance dependency order, parent must ve reload first
+
+	for (List<Ref<LuaScript> >::Element *E = scripts.front(); E; E = E->next()) {
+		E->get()->load_source_code(E->get()->get_path());
+		E->get()->reload(true);
+	}
+#endif
 } // TODO
 
 void LuaScriptLanguage::reload_tool_script(const Ref<Script> &p_script, bool p_soft_reload) {
@@ -761,8 +834,8 @@ Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const St
 
 	script->set_path(p_original_path);
 
-	Error error;
-	error = this->load_source_code(script);
+	Error error = script->load_source_code(p_original_path);
+
 	if (error != OK) {
 		if (r_error) *r_error = error;
 		memdelete(script);
@@ -770,6 +843,7 @@ Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const St
 	}
 
 	error = script->reload();
+
 	if (error != OK) {
 		if (r_error) *r_error = error;
 		memdelete(script);
@@ -795,44 +869,6 @@ String LuaScriptResourceFormatLoader::get_resource_type(const String &p_path) co
 	print_debug("LuaScriptResourceFormatLoader::get_resource_type( p_path = " + p_path + " )");
 
 	return (p_path.get_extension().to_lower() == LUA_EXTENSION) ? LUA_TYPE : EMPTY_STRING;
-}
-
-Error LuaScriptResourceFormatLoader::load_source_code(LuaScript *script) {
-
-	Error error;
-
-	FileAccess *file = FileAccess::open(script->get_path(), FileAccess::READ, &error);
-	if (error) {
-		ERR_FAIL_COND_V(error, error);
-	}
-
-	PoolVector<uint8_t> buffer;
-
-	int len = file->get_len();
-	buffer.resize(len + 1);
-
-	PoolVector<uint8_t>::Write w = buffer.write();
-
-	int r = file->get_buffer(w.ptr(), len);
-
-	file->close();
-	memdelete(file);
-
-	ERR_FAIL_COND_V(r != len, ERR_CANT_OPEN);
-
-	w[len] = 0;
-
-	String source;
-
-	if (source.parse_utf8((const char *)w.ptr())) {
-		ERR_EXPLAIN("Script '" + script->get_path() +
-					"' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.");
-		ERR_FAIL_V(ERR_INVALID_DATA);
-	}
-
-	script->set_source_code(source);
-
-	return OK;
 }
 
 LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
