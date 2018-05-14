@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.9 - 2018-05-13
+### Added
+- Refectoring for script load
+- Fix print_debug macron when not debugging
+- Fix comments
+
+## 0.0.8 - 2018-05-12
+### Added
+- Add LuaScriptLanguage singlenton
+- Add placeholder support
+- Add lots of debug logging
+- Add vscode ignore
+
+## 0.0.7 - 2018-05-09
+### Added
+- Add constants for some of the virtual methods from Godot API
+- Add more debug print information
+
+## 0.0.6 - 2018-05-07
+### Added
+- Add syncronization support to LuaScriptLanguage
+- Add some missing field members
+
 ## 0.0.5 - 2018-05-06
 ### Added
 - Add debug helper functions
