@@ -422,12 +422,35 @@ LuaScriptLanguage::LuaScriptLanguage() {
 	print_debug("LuaScriptLanguage::constructor");
 
 	ERR_FAIL_COND(singleton);
-	singleton = this;
-	mutex = Mutex::create();
+	this->singleton = this;
+
+	this->mutex = Mutex::create();
+
+	this->lua = luaL_newstate();
+
+#ifdef TOOLS_ENABLED
+	this->lua_tools = luaL_newstate();
+#endif
 }
 
 LuaScriptLanguage::~LuaScriptLanguage() {
 	print_debug("LuaScriptLanguage::destructor");
+
+#ifdef TOOLS_ENABLED
+	if (this->lua_tools) {
+		lua_close(this->lua_tools);
+		this->lua_tools = nullptr;
+	}
+#endif
+
+	if (this->lua) {
+		lua_close(lua);
+		this->lua = nullptr;
+	}
+
+	memdelete(this->mutex);
+
+	this->singleton = nullptr;
 } // TODO
 
 void LuaScriptLanguage::init() {
@@ -613,7 +636,7 @@ String LuaScriptLanguage::make_function(const String &p_class, const String &p_n
 	// the current file and this will broke the class as well.
 	// At the moment this seems to be an API limitation and apparently
 	// the C# backend devs have already acknowledged this issue
-    // (seen by their comments in the c# backend source code).
+	// (seen by their comments in the c# backend source code).
 
 	String funcDef = "function " + p_class + ":" + p_name + "(";
 	for (int i = 0; i < p_args.size(); i++) {

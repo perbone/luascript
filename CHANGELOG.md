@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.10 - 2018-05-14
+### Added
+- Add Lua 5.4 implementation support via SCons command line opion 'lua_home'
+
 ## 0.0.9 - 2018-05-13
 ### Added
 - Refectoring for script load

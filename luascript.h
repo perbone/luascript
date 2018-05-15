@@ -24,6 +24,8 @@
 #include "os/mutex.h"
 #include "script_language.h"
 
+#include <lua.hpp>
+
 class LuaScript : public Script {
 
 	GDCLASS(LuaScript, Script)
@@ -87,8 +89,8 @@ public:
 
 	Error load_source_code(const String &p_path);
 
-    // Supports sorting based on inheritance; parent must came first // TODO
-    bool operator()(const Ref<LuaScript> &a, const Ref<LuaScript> &b) const { return true; }
+	// Supports sorting based on inheritance; parent must came first // TODO
+	bool operator()(const Ref<LuaScript> &a, const Ref<LuaScript> &b) const { return true; }
 
 protected:
 	static void _bind_methods();
@@ -107,7 +109,7 @@ private:
 
 class LuaScriptInstance : public ScriptInstance {
 
-    friend class LuaScript;
+	friend class LuaScript;
 
 private:
 	Object *owner;
@@ -155,6 +157,11 @@ class LuaScriptLanguage : public ScriptLanguage {
 private:
 	Mutex *mutex;
 	SelfList<LuaScript>::List script_list;
+
+	lua_State *lua;
+#ifdef TOOLS_ENABLED
+	lua_State *lua_tools;
+#endif
 
 public:
 	LuaScriptLanguage();
