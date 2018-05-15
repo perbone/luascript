@@ -425,28 +425,10 @@ LuaScriptLanguage::LuaScriptLanguage() {
 	this->singleton = this;
 
 	this->mutex = Mutex::create();
-
-	this->lua = luaL_newstate();
-
-#ifdef TOOLS_ENABLED
-	this->lua_tools = luaL_newstate();
-#endif
 }
 
 LuaScriptLanguage::~LuaScriptLanguage() {
 	print_debug("LuaScriptLanguage::destructor");
-
-#ifdef TOOLS_ENABLED
-	if (this->lua_tools) {
-		lua_close(this->lua_tools);
-		this->lua_tools = nullptr;
-	}
-#endif
-
-	if (this->lua) {
-		lua_close(lua);
-		this->lua = nullptr;
-	}
 
 	memdelete(this->mutex);
 
@@ -455,6 +437,12 @@ LuaScriptLanguage::~LuaScriptLanguage() {
 
 void LuaScriptLanguage::init() {
 	print_debug("LuaScriptLanguage::init");
+
+	this->lua = luaL_newstate();
+
+#ifdef TOOLS_ENABLED
+	this->lua_tools = luaL_newstate();
+#endif
 } // TODO
 
 String LuaScriptLanguage::get_name() const {
@@ -483,6 +471,18 @@ Error LuaScriptLanguage::execute_file(const String &p_path) { // TODO
 
 void LuaScriptLanguage::finish() {
 	print_debug("LuaScriptLanguage::finish");
+
+#ifdef TOOLS_ENABLED
+	if (this->lua_tools) {
+		lua_close(this->lua_tools);
+		this->lua_tools = nullptr;
+	}
+#endif
+
+	if (this->lua) {
+		lua_close(lua);
+		this->lua = nullptr;
+	}
 } // TODO
 
 void LuaScriptLanguage::get_reserved_words(List<String> *p_words) const {
@@ -567,6 +567,10 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 	script.instance();
 	script->set_source_code(_template);
 	script->set_name(p_class_name);
+
+	// FIXME! Probably I'm doing this wrong! But without this I get an error at instance_create method.
+	// GDScript doesn't do like this and works fine. So I need help...
+	script->valid = true;
 
 	return script;
 }
