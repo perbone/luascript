@@ -158,10 +158,7 @@ private:
 	Mutex *mutex;
 	SelfList<LuaScript>::List script_list;
 
-	lua_State *lua;
-#ifdef TOOLS_ENABLED
-	lua_State *lua_tools;
-#endif
+    lua_State *L;
 
 public:
 	LuaScriptLanguage();

@@ -432,17 +432,15 @@ LuaScriptLanguage::~LuaScriptLanguage() {
 
 	memdelete(this->mutex);
 
-	this->singleton = nullptr;
+	if (this->singleton == this)
+		this->singleton = nullptr;
 } // TODO
 
 void LuaScriptLanguage::init() {
 	print_debug("LuaScriptLanguage::init");
 
-	this->lua = luaL_newstate();
-
-#ifdef TOOLS_ENABLED
-	this->lua_tools = luaL_newstate();
-#endif
+	this->L = luaL_newstate();
+	luaL_openlibs(this->L);
 } // TODO
 
 String LuaScriptLanguage::get_name() const {
@@ -472,23 +470,16 @@ Error LuaScriptLanguage::execute_file(const String &p_path) { // TODO
 void LuaScriptLanguage::finish() {
 	print_debug("LuaScriptLanguage::finish");
 
-#ifdef TOOLS_ENABLED
-	if (this->lua_tools) {
-		lua_close(this->lua_tools);
-		this->lua_tools = nullptr;
-	}
-#endif
-
-	if (this->lua) {
-		lua_close(lua);
-		this->lua = nullptr;
+	if (this->L) {
+		lua_close(L);
+		this->L = nullptr;
 	}
 } // TODO
 
 void LuaScriptLanguage::get_reserved_words(List<String> *p_words) const {
 	print_debug("LuaScriptLanguage::get_reserved_words");
 
-	static const char *_reserved_words[] = {
+	static const char *keywords[] = {
 
 		"and",
 		"break",
@@ -516,7 +507,7 @@ void LuaScriptLanguage::get_reserved_words(List<String> *p_words) const {
 		nullptr
 	};
 
-	const char **w = _reserved_words;
+	const char **w = keywords;
 
 	while (*w) {
 		p_words->push_back(*w);
