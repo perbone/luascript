@@ -1,13 +1,32 @@
-LuaScript [![License](https://img.shields.io/:license-apache-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
-======
+# LuaScript [![License](https://img.shields.io/:license-apache-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 > WIP (heavily updated so you can expect constants changes - no commitment with feature freezing at this moment)
 
-Lua language support for Godot Engine
+Lua 5.4 language support for Godot Engine
 
 ## Features
 
 TBD
+
+## How to Build
+
+My development environment is based on Linux so I don't know if it will work on Windows and Mac. I'm afraid probably not for the time been.
+
+So first of all you have to have Godot successfully built in your system. That's out of scope of this simple how to.
+
+Second, you have to have Lua 5.4 distribution available to the build process. Specifically you'll need 'liblua.a' and 'lua.hpp' to successfully compile the LuaScript source code.
+
+Now, assuming you can git clone from GitHub, just clone LuaScript into Godo's source code 'modules' folder and then, build Godot again adding to the command line the following options
+
+module_luascript_enabled=yes lua_home=<lua-5.4.0-work1 folder path>
+
+If everything has gone well, you'll have a running Godot with Lua support!
+
+For now not much is done but the simple fact of having Godot built with this initial code is already a cool thing!
+
+So keep watching the development as I'm slowlly but steadly adding more features.
+
+Have fun!
 
 ## Issues and Support
 
