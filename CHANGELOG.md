@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 * Add missing new keyword 'undef' from Lua 5.4
+* Add missing copyright header from Godot project to .clang-format file
 
 ### Fixed
 
