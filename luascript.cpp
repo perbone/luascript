@@ -434,6 +434,13 @@ LuaScriptLanguage::~LuaScriptLanguage() {
 
 	if (this->singleton == this)
 		this->singleton = nullptr;
+
+	// In case the method finish() has not been called
+	if (this->L) {
+		lua_close(L);
+		this->L = nullptr;
+		print_debug("LuaScriptLanguage::destructor; Lua Virtual Machine was shut down and freed from memory...");
+	}
 } // TODO
 
 void LuaScriptLanguage::init() {
@@ -441,6 +448,7 @@ void LuaScriptLanguage::init() {
 
 	this->L = luaL_newstate();
 	luaL_openlibs(this->L);
+	print_debug("LuaScriptLanguage::init; Lua Virtual Machine have been initialized...");
 } // TODO
 
 String LuaScriptLanguage::get_name() const {
@@ -473,6 +481,7 @@ void LuaScriptLanguage::finish() {
 	if (this->L) {
 		lua_close(L);
 		this->L = nullptr;
+		print_debug("LuaScriptLanguage::finish; Lua Virtual Machine was shut down and freed from memory...");
 	}
 } // TODO
 
