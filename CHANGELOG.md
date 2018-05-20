@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.14 - 2018-05-20
+
+### Added
+
+* Add product feature list to base the stories backlog
+
 ## 0.0.12 - 2018-05-19
 
 ### Added

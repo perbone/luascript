@@ -6,7 +6,32 @@ Lua 5.4 language support for Godot Engine
 
 ## Features
 
-TBD
+* Full Godot's gameplay API implementation (feature complete on par with GDScript)
+* Object Oriented Programming based on Lua's tables and metatables
+* Support for inheritance from Lua base class and file
+* Support for inheritance from native base class and file
+* Support for properties 
+    * Getters, setters and default values
+    * Editing properties values in the property editor
+* Support for signals
+    * Signal connect, emit and receive from code 
+    * Signal connect from the editor (currently not well supported by Godot)
+* Lua language coding in Godot's built in editor
+    * On the fly source code linting and static analysis
+    * On the fly source code syntax highlighting
+    * Source code beautifier
+        * Format the entire active file
+        * Format the selected text
+        * Format automatically when saving
+    * Source code refactoring (currently not supported by Godot)
+* Lua language coding in external editor (possibly with the same capabilities as the built in editor)
+* Debugging tools (possibly with all Godot's debugging capabilities)
+* Tool creation to extend the built in editor functionalities
+* Support for advanced package assembling
+    * Dead code elimination throught tree-shaking
+    * Code uglifier and minifier
+    * Compilation into binary bytecode
+    * Compression or encryption
 
 ## How to Build
 
