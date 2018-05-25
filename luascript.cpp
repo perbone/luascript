@@ -534,8 +534,8 @@ void LuaScriptLanguage::get_reserved_words(List<String> *p_words) const {
 void LuaScriptLanguage::get_comment_delimiters(List<String> *p_delimiters) const {
 	print_debug("LuaScriptLanguage::get_comment_delimiters");
 
-	p_delimiters->push_back("--"); // Single-line comment starts with a double hyphens
 	p_delimiters->push_back("--[[ ]]"); // Block comment starts with double shovel and runs until double close box
+	p_delimiters->push_back("--"); // Single-line comment starts with a double hyphens
 }
 
 void LuaScriptLanguage::get_string_delimiters(List<String> *p_delimiters) const {
