@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.14 - 2018-05-27
+
+### Added
+
+* Add missing multi-line strings delimiter
+
 ## 0.0.14 - 2018-05-20
 
 ### Added
