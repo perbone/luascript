@@ -551,11 +551,12 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 
 	String _template = String() +
 
-					   "local class = require \"luascript.class\" -- Import the system class library\n" +
-					   "local godot.%BASE% = require \"godot.%BASE%\" -- Make sure to import the base class\n" +
+					   "\n" +
+					   "local class = require 'lua.class' -- Import the system class library\n" +
+					   "godot.%BASE% = require 'godot.%BASE%' -- Make sure to import the base class\n" +
 					   "\n" +
 					   "\n" +
-					   "local %CLASS% = class:extends(godot.%BASE%) -- Create the user subclass\n" +
+					   "local %CLASS% = class.extends(godot.%BASE%) -- Create the user subclass\n" +
 					   "\n" +
 					   "function %CLASS%:_ready()\n" +
 					   "\n" +
