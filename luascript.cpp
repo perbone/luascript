@@ -403,15 +403,16 @@ Ref<Script> LuaScriptInstance::get_script() const {
 	return this->script;
 }
 
-ScriptInstance::RPCMode LuaScriptInstance::get_rpc_mode(const StringName &p_method) const { // TODO
+MultiplayerAPI::RPCMode LuaScriptInstance::get_rpc_mode(const StringName &p_method) const { // TODO
 	print_debug("LuaScriptInstance::get_rpc_mode( p_method = " + p_method + " )");
 
-	return RPC_MODE_DISABLED;
+	return MultiplayerAPI::RPC_MODE_DISABLED;
 }
-ScriptInstance::RPCMode LuaScriptInstance::get_rset_mode(const StringName &p_variable) const { // TODO
+
+MultiplayerAPI::RPCMode LuaScriptInstance::get_rset_mode(const StringName &p_variable) const { // TODO
 	print_debug("LuaScriptInstance::get_rset_mode( p_variable = " + p_variable + " )");
 
-	return RPC_MODE_DISABLED;
+	return MultiplayerAPI::RPC_MODE_DISABLED;
 }
 
 ScriptLanguage *LuaScriptInstance::get_language() {

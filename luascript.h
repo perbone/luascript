@@ -138,8 +138,8 @@ public:
 
 	virtual Ref<Script> get_script() const;
 
-	virtual RPCMode get_rpc_mode(const StringName &p_method) const;
-	virtual RPCMode get_rset_mode(const StringName &p_variable) const;
+	virtual MultiplayerAPI::RPCMode get_rpc_mode(const StringName &p_method) const;
+	virtual MultiplayerAPI::RPCMode get_rset_mode(const StringName &p_variable) const;
 
 	virtual ScriptLanguage *get_language();
 };
@@ -158,7 +158,7 @@ private:
 	Mutex *mutex;
 	SelfList<LuaScript>::List script_list;
 
-    lua_State *L;
+	lua_State *L;
 
 public:
 	LuaScriptLanguage();
