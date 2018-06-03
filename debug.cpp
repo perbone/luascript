@@ -17,19 +17,31 @@
  * limitations under the License
  */
 
-#pragma once
-
-#define LUA_SCRIPT_DEBUG_ENABLED
+#include "debug.h"
 
 #if defined(LUA_SCRIPT_DEBUG_ENABLED)
 
-#include "os/os.h"
-#include "os/thread.h"
+void print_debug(const String fmt, ...) {
 
-void print_debug(const String fmt, ...);
+	char fmtbuf[fmt.size()], tmpbuf[256], finalbuf[512];
 
-#else
+	wcstombs(fmtbuf, fmt.c_str(), fmt.size());
 
-#define print_debug(fmt, ...)
+	sprintf(tmpbuf, "%d %2d %2d ",
+			OS::get_singleton()->get_unix_time(),
+			Thread::get_main_id(),
+			Thread::get_caller_id());
+
+	strcat(tmpbuf, fmtbuf);
+
+	va_list ap;
+	va_start(ap, fmt);
+
+	vsprintf(finalbuf, tmpbuf, ap);
+
+	va_end(ap);
+
+	print_line(finalbuf);
+}
 
 #endif
