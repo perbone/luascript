@@ -21,6 +21,11 @@
 
 #include "luascript.h"
 
+#ifdef TOOLS_ENABLED
+#include "editor/luascript_syntax_highlighter.h"
+#include "editor/plugins/script_editor_plugin.h"
+#endif
+
 LuaScriptLanguage *script_language = nullptr;
 LuaScriptResourceFormatLoader *resource_loader = nullptr;
 LuaScriptResourceFormatSaver *resource_saver = nullptr;
@@ -39,8 +44,7 @@ void register_luascript_types() {
 	ResourceSaver::add_resource_format_saver(resource_saver);
 
 #ifdef TOOLS_ENABLED
-	//    ScriptEditor::register_create_syntax_highlighter_function(LuaSyntaxHighlighter::create);
-	//    EditorNode::add_init_callback(_editor_init);
+	ScriptEditor::register_create_syntax_highlighter_function(LuaScriptSyntaxHighlighter::create);
 #endif
 }
 
