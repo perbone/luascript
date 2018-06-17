@@ -26,13 +26,3 @@ const String SCRIPT_TYPE = "Script";
 const String LUA_NAME = "Lua";
 const String LUA_TYPE = "LuaScript";
 const String LUA_EXTENSION = "lua";
-
-const String METHOD_NAME_INIT = "_init";
-const String METHOD_NAME_ENTER_TREE = "_enter_tree";
-const String METHOD_NAME_EXIT_TREE = "_exit_tree";
-const String METHOD_NAME_READY = "_ready";
-const String METHOD_NAME_INPUT = "_input";
-const String METHOD_NAME_UNHANDLED_INPUT = "_unhandled_input";
-const String METHOD_NAME_UNHANDLED_KEY_INPUT = "_unhandled_key_input";
-const String METHOD_NAME_PROCESS = "_process";
-const String METHOD_NAME_PHYSICS_PROCESS = "_physics_process";
