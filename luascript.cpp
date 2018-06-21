@@ -502,7 +502,6 @@ void LuaScriptLanguage::get_reserved_words(List<String> *p_words) const {
 		"return",
 		"then",
 		"true",
-		"undef",
 		"until",
 		"while",
 
