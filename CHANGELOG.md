@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.17 - 2018-06-23
+
+### Added
+
+- Add lua-5.4.0-work2 dependency source code
+- Add lpeg-1.0.1 dependency source code
+
 ## 0.0.16 - 2018-06-05
 
 ### Added
