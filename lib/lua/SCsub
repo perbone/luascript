@@ -1,0 +1,12 @@
+#!/usr/bin/env python
+
+Import('env')
+Import('env_modules')
+
+env_lua = env_modules.Clone()
+
+env_lua.Append(CFLAGS=['-O2', '-std=c99'])
+
+env_lua.add_source_files(env.modules_sources,'*.c')
+
+Export('env')

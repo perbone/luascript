@@ -439,6 +439,7 @@ void LuaScriptLanguage::init() {
 	this->L = luaL_newstate();
 	if (this->L) {
 		luaL_openlibs(this->L);
+		luaopen_lpeg(this->L);
 		print_debug("LuaScriptLanguage::init; Lua Virtual Machine have been initialized...");
 	}
 } // TODO

@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add lua-5.4.0-work2 dependency source code
 - Add lpeg-1.0.1 dependency source code
 
+### Changed
+
+- Scons scripts to build all dependencies
+
 ## 0.0.16 - 2018-06-05
 
 ### Added
