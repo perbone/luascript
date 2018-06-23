@@ -41,11 +41,9 @@ My development environment is based on Linux so I don't know if it will work on 
 
 So first of all you have to have Godot successfully built in your system. That's out of scope of this simple how to.
 
-Second, you have to have Lua 5.4 distribution available to the build process. Specifically you'll need 'liblua.a' and 'lua.hpp' to successfully compile the LuaScript source code.
-
 Now, assuming you can git clone from GitHub, just clone LuaScript into Godo's source code 'modules' folder and then, build Godot again adding to the command line the following options
 
-module_luascript_enabled=yes lua_home=<lua-5.4.0-work1 folder path>
+module_luascript_enabled=yes
 
 If everything has gone well, you'll have a running Godot with Lua support!
 
