@@ -37,7 +37,7 @@ Lua 5.4 language support for Godot Engine
 
 ## How to Build
 
-My development environment is based on Linux so I don't know if it will work on Windows and Mac. I'm afraid probably not for the time been.
+My development environment is based on Linux and Mac so I don't know if it will work on Windows. I'm afraid probably not for the time been.
 
 So first of all you have to have Godot successfully built in your system. That's out of scope of this simple how to.
 
