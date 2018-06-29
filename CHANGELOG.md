@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.17 - 2018-06-28
+
+### Changed
+
+- Add Mac as development environment
+
 ## 0.0.17 - 2018-06-23
 
 ### Added
