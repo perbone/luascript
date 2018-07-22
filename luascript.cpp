@@ -586,8 +586,8 @@ bool LuaScriptLanguage::is_using_templates() {
 	return true;
 }
 
-bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error,
-		const String &p_path, List<String> *r_functions) const { // TODO
+bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path,
+								 List<String> *r_functions, Set<int> *r_safe_lines) const { // TODO
 	print_debug("LuaScriptLanguage::validate");
 
 	return true;

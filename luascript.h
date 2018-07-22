@@ -26,7 +26,7 @@
 
 #include <lua/lua.hpp>
 extern "C" {
-int luaopen_lpeg (lua_State *L);
+int luaopen_lpeg(lua_State *L);
 }
 
 class LuaScript : public Script {
@@ -181,7 +181,7 @@ public:
 	virtual Ref<Script> get_template(const String &p_class_name, const String &p_base_class_name) const;
 	virtual void make_template(const String &p_class_name, const String &p_base_class_name, Ref<Script> &p_script);
 	virtual bool is_using_templates();
-	virtual bool validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path = "", List<String> *r_functions = NULL) const;
+	virtual bool validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path = "", List<String> *r_functions = NULL, Set<int> *r_safe_lines = NULL) const;
 	virtual String validate_path(const String &p_path) const;
 	virtual Script *create_script() const;
 	virtual bool has_named_classes() const;
