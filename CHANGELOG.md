@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.20 - 2018-07-23
+
+### Added
+
+- Add pegtl dependency source code
+- Add basic support for script validation
+
+### Removed
+
+- Remove lpeg dependency
+
 ## 0.0.19 - 2018-07-22
 
 ### Changed

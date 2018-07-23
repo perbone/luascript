@@ -25,9 +25,6 @@
 #include "script_language.h"
 
 #include <lua/lua.hpp>
-extern "C" {
-int luaopen_lpeg(lua_State *L);
-}
 
 class LuaScript : public Script {
 

@@ -12,7 +12,6 @@ env_luascript.Append(CPPPATH=lib_include_path)
 
 env_luascript.add_source_files(env.modules_sources,'*.cpp')
 
-SConscript('lib/lpeg/SCsub')
 SConscript('lib/lua/SCsub')
 
 if env['tools']:

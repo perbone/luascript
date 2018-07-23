@@ -26,6 +26,9 @@
 #include "constants.h"
 #include "debug.h"
 #include "luascript.h"
+#include "pegtl/lua_grammar.h"
+
+namespace pegtl = tao::TAO_PEGTL_NAMESPACE;
 
 LuaScript::LuaScript() :
 		tool(false),
@@ -439,7 +442,6 @@ void LuaScriptLanguage::init() {
 	this->L = luaL_newstate();
 	if (this->L) {
 		luaL_openlibs(this->L);
-		luaopen_lpeg(this->L);
 		print_debug("LuaScriptLanguage::init; Lua Virtual Machine have been initialized...");
 	}
 } // TODO
@@ -587,14 +589,33 @@ bool LuaScriptLanguage::is_using_templates() {
 }
 
 bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path,
-								 List<String> *r_functions, Set<int> *r_safe_lines) const { // TODO
+		List<String> *r_functions, Set<int> *r_safe_lines) const {
 	print_debug("LuaScriptLanguage::validate");
 
-	return true;
-}
+	const std::string code(p_script.ascii().get_data());
+	const std::string source_name(p_path.ascii().get_data());
+
+	pegtl::string_input<> in(code, source_name);
+
+	try {
+
+		return pegtl::parse<pegtl::lua::grammar>(in);
+
+	} catch (const pegtl::parse_error &e) {
+		print_debug("LuaScriptLanguage::validate; Error parsing script: %s", e.what());
+
+		const auto pos = e.positions.front();
+
+		r_line_error = pos.line;
+		r_col_error = pos.byte_in_line; // FIXME currently ignoring TAB size
+
+		return false;
+	}
+} // TODO
 
 String LuaScriptLanguage::validate_path(const String &p_path) const { // TODO
 	print_debug("LuaScriptLanguage::validate_path( p_path = " + p_path + " )");
+
 	return EMPTY_STRING;
 }
 
