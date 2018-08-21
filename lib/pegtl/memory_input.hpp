@@ -352,6 +352,11 @@ namespace tao
          }
       };
 
+#ifdef __cpp_deduction_guides
+      template< typename... Ts >
+      memory_input( Ts&&... )->memory_input<>;
+#endif
+
    }  // namespace TAO_PEGTL_NAMESPACE
 
 }  // namespace tao
