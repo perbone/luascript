@@ -467,7 +467,7 @@ String LuaScriptLanguage::get_extension() const {
 Error LuaScriptLanguage::execute_file(const String &p_path) { // TODO
 	print_debug("LuaScriptLanguage::execute_file( p_path = " + p_path + " )");
 
-	OK;
+	return OK;
 }
 
 void LuaScriptLanguage::finish() {
