@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.22 - 2018-08-20
+
+### Changed
+
+- Update pegtl library from master
+
+### Fixed
+
+- Fix missing return keyword (how could I miss that?!)
+
 ## 0.0.21 - 2018-08-11
 
 ### Changed
