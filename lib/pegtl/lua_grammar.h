@@ -1,98 +1,98 @@
 // Copyright (c) 2015-2018 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
-#include <pegtl/analyze.hpp>
-#include <pegtl/contrib/raw_string.hpp>
-#include <pegtl/pegtl.hpp>
+#include "pegtl/pegtl.hpp"
+#include "pegtl/analyze.hpp"
+#include "pegtl/contrib/raw_string.hpp"
 
 namespace tao {
 namespace TAO_PEGTL_NAMESPACE {
 namespace lua {
-// PEGTL grammar for the Lua 5.3.0 lexer and parser.
-//
-// The grammar here is not very similar to the grammar
-// in the Lua reference documentation on which it is based
-// which is due to multiple causes.
-//
-// The main difference is that this grammar includes really
-// "everything", not just the structural parts from the
-// reference documentation:
-// - The PEG-approach combines lexer and parser; this grammar
-//   handles comments and tokenisation.
-// - The operator precedence and associativity are reflected
-//   in the structure of this grammar.
-// - All details for all types of literals are included, with
-//   escape-sequences for literal strings, and long literals.
-//
-// The second necessary difference is that all left-recursion
-// had to be eliminated.
-//
-// In some places the grammar was optimised to require as little
-// back-tracking as possible, most prominently for expressions.
-// The original grammar contains the following production rules:
-//
-//   prefixexp ::= var | functioncall | ‘(’ exp ‘)’
-//   functioncall ::=  prefixexp args | prefixexp ‘:’ Name args
-//   var ::=  Name | prefixexp ‘[’ exp ‘]’ | prefixexp ‘.’ Name
-//
-// We need to eliminate the left-recursion, and we also want to
-// remove the ambiguity between function calls and variables,
-// i.e. the fact that we can have expressions like
-//
-//   ( a * b ).c()[ d ].e:f()
-//
-// where only the last element decides between function call and
-// variable, making it necessary to parse the whole thing again
-// if we chose wrong at the beginning.
-// First we eliminate prefixexp and obtain:
-//
-//   functioncall ::=  ( var | functioncall | ‘(’ exp ‘)’ ) ( args | ‘:’ Name args )
-//   var ::=  Name | ( var | functioncall | ‘(’ exp ‘)’ ) ( ‘[’ exp ‘]’ | ‘.’ Name )
-//
-// Next we split function_call and variable into a first part,
-// a "head", or how they can start, and a second part, the "tail",
-// which, in a sequence like above, is the final deciding part:
-//
-//   vartail ::= '[' exp ']' | '.' Name
-//   varhead ::= Name | '(' exp ')' vartail
-//   functail ::= args | ':' Name args
-//   funchead ::= Name | '(' exp ')'
-//
-// This allows us to rewrite var and function_call as follows.
-//
-//   var ::= varhead { { functail } vartail }
-//   function_call ::= funchead [ { vartail } functail ]
-//
-// Finally we can define a single expression that takes care
-// of var, function_call, and expressions in a bracket:
-//
-//   chead ::= '(' exp ')' | Name
-//   combined ::= chead { functail | vartail }
-//
-// Such a combined expression starts with a bracketed
-// expression or a name, and continues with an arbitrary
-// number of functail and/or vartail parts, all in a one
-// grammar rule without back-tracking.
-//
-// The rule expr_thirteen below implements "combined".
-//
-// Another issue of interest when writing a PEG is how to
-// manage the separators, the white-space and comments that
-// can occur in many places; in the classical two-stage
-// lexer-parser approach the lexer would have taken care of
-// this, but here we use the PEG approach that combines both.
-//
-// In the following grammar most rules adopt the convention
-// that they take care of "internal padding", i.e. spaces
-// and comments that can occur within the rule, but not
-// "external padding", i.e. they don't start or end with
-// a rule that "eats up" all extra padding (spaces and
-// comments). In some places, where it is more efficient,
-// right padding is used.pegtl
+	// PEGTL grammar for the Lua 5.3.0 lexer and parser.
+	//
+	// The grammar here is not very similar to the grammar
+	// in the Lua reference documentation on which it is based
+	// which is due to multiple causes.
+	//
+	// The main difference is that this grammar includes really
+	// "everything", not just the structural parts from the
+	// reference documentation:
+	// - The PEG-approach combines lexer and parser; this grammar
+	//   handles comments and tokenisation.
+	// - The operator precedence and associativity are reflected
+	//   in the structure of this grammar.
+	// - All details for all types of literals are included, with
+	//   escape-sequences for literal strings, and long literals.
+	//
+	// The second necessary difference is that all left-recursion
+	// had to be eliminated.
+	//
+	// In some places the grammar was optimised to require as little
+	// back-tracking as possible, most prominently for expressions.
+	// The original grammar contains the following production rules:
+	//
+	//   prefixexp ::= var | functioncall | ‘(’ exp ‘)’
+	//   functioncall ::=  prefixexp args | prefixexp ‘:’ Name args
+	//   var ::=  Name | prefixexp ‘[’ exp ‘]’ | prefixexp ‘.’ Name
+	//
+	// We need to eliminate the left-recursion, and we also want to
+	// remove the ambiguity between function calls and variables,
+	// i.e. the fact that we can have expressions like
+	//
+	//   ( a * b ).c()[ d ].e:f()
+	//
+	// where only the last element decides between function call and
+	// variable, making it necessary to parse the whole thing again
+	// if we chose wrong at the beginning.
+	// First we eliminate prefixexp and obtain:
+	//
+	//   functioncall ::=  ( var | functioncall | ‘(’ exp ‘)’ ) ( args | ‘:’ Name args )
+	//   var ::=  Name | ( var | functioncall | ‘(’ exp ‘)’ ) ( ‘[’ exp ‘]’ | ‘.’ Name )
+	//
+	// Next we split function_call and variable into a first part,
+	// a "head", or how they can start, and a second part, the "tail",
+	// which, in a sequence like above, is the final deciding part:
+	//
+	//   vartail ::= '[' exp ']' | '.' Name
+	//   varhead ::= Name | '(' exp ')' vartail
+	//   functail ::= args | ':' Name args
+	//   funchead ::= Name | '(' exp ')'
+	//
+	// This allows us to rewrite var and function_call as follows.
+	//
+	//   var ::= varhead { { functail } vartail }
+	//   function_call ::= funchead [ { vartail } functail ]
+	//
+	// Finally we can define a single expression that takes care
+	// of var, function_call, and expressions in a bracket:
+	//
+	//   chead ::= '(' exp ')' | Name
+	//   combined ::= chead { functail | vartail }
+	//
+	// Such a combined expression starts with a bracketed
+	// expression or a name, and continues with an arbitrary
+	// number of functail and/or vartail parts, all in a one
+	// grammar rule without back-tracking.
+	//
+	// The rule expr_thirteen below implements "combined".
+	//
+	// Another issue of interest when writing a PEG is how to
+	// manage the separators, the white-space and comments that
+	// can occur in many places; in the classical two-stage
+	// lexer-parser approach the lexer would have taken care of
+	// this, but here we use the PEG approach that combines both.
+	//
+	// In the following grammar most rules adopt the convention
+	// that they take care of "internal padding", i.e. spaces
+	// and comments that can occur within the rule, but not
+	// "external padding", i.e. they don't start or end with
+	// a rule that "eats up" all extra padding (spaces and
+	// comments). In some places, where it is more efficient,
+	// right padding is used.
 
-namespace pegtl = tao::TAO_PEGTL_NAMESPACE;
+	namespace pegtl = tao::TAO_PEGTL_NAMESPACE;
 
-// clang-format off
+	// clang-format off
    struct short_comment : pegtl::until< pegtl::eolf > {};
    struct long_string : pegtl::raw_string< '[', '=', ']' > {};
    struct comment : pegtl::disable< pegtl::two< '-' >, pegtl::sor< long_string, short_comment > > {};
@@ -332,7 +332,7 @@ namespace pegtl = tao::TAO_PEGTL_NAMESPACE;
 
    struct interpreter : pegtl::seq< pegtl::one< '#' >, pegtl::until< pegtl::eolf > > {};
    struct grammar : pegtl::must< pegtl::opt< interpreter >, statement_list< pegtl::eof > > {};
-// clang-format on
+	// clang-format on
 
 } // namespace lua
 } // namespace TAO_PEGTL_NAMESPACE
