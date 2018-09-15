@@ -19,9 +19,9 @@
 
 #include "core/engine.h"
 #include "editor/editor_settings.h"
-#include "os/file_access.h"
-#include "os/os.h"
-#include "os/thread.h"
+#include "core/os/file_access.h"
+#include "core/os/os.h"
+#include "core/os/thread.h"
 
 #include "constants.h"
 #include "debug.h"

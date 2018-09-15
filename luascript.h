@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include "io/resource_loader.h"
-#include "io/resource_saver.h"
-#include "os/mutex.h"
-#include "script_language.h"
+#include "core/io/resource_loader.h"
+#include "core/io/resource_saver.h"
+#include "core/os/mutex.h"
+#include "core/script_language.h"
 
 #include <lua/lua.hpp>
 

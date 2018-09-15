@@ -23,8 +23,8 @@
 
 #if defined(LUA_SCRIPT_DEBUG_ENABLED)
 
-#include "os/os.h"
-#include "os/thread.h"
+#include "core/os/os.h"
+#include "core/os/thread.h"
 
 void print_debug(const String fmt, ...);
 

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.23 - 2018-09-15
+
+### Fixed
+
+- Fix include path for Godot's headers
+
 ## 0.0.22 - 2018-08-20
 
 ### Changed
