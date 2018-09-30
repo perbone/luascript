@@ -31,7 +31,7 @@
 
 # Commented out parameters are those with the same value as base LLVM style
 # We can uncomment them if we want to change their value, or enforce the
-# chosen value in case the base style changes (last sync: Clang 5.0.0).
+# chosen value in case the base style changes (last sync: Clang 6.0.1).
 ---
 ### General config, applies to all languages ###
 BasedOnStyle:  LLVM
@@ -63,6 +63,7 @@ AllowShortIfStatementsOnASingleLine: true
 #   AfterObjCDeclaration: false
 #   AfterStruct:     false
 #   AfterUnion:      false
+#   AfterExternBlock: false
 #   BeforeCatch:     false
 #   BeforeElse:      false
 #   IndentBraces:    false
@@ -91,6 +92,7 @@ Cpp11BracedListStyle: false
 #   - foreach
 #   - Q_FOREACH
 #   - BOOST_FOREACH
+# IncludeBlocks:   Preserve
 IncludeCategories:
   - Regex:           '".*"'
     Priority:        1
@@ -100,6 +102,7 @@ IncludeCategories:
     Priority:        3
 # IncludeIsMainRegex: '(Test)?$'
 IndentCaseLabels: true
+# IndentPPDirectives: None
 IndentWidth:     4
 # IndentWrappedFunctionNames: false
 # JavaScriptQuotes: Leave
@@ -117,6 +120,10 @@ IndentWidth:     4
 # PenaltyExcessCharacter: 1000000
 # PenaltyReturnTypeOnItsOwnLine: 60
 # PointerAlignment: Right
+# RawStringFormats:
+#   - Delimiter:       pb
+#     Language:        TextProto
+#     BasedOnStyle:    google
 # ReflowComments:  true
 # SortIncludes:    true
 # SortUsingDeclarations: true
