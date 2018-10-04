@@ -27,7 +27,7 @@ void print_debug(const String fmt, ...) {
 
 	wcstombs(fmtbuf, fmt.c_str(), fmt.size());
 
-	sprintf(tmpbuf, "%d %2d %2d ",
+	sprintf(tmpbuf, "%lu %2lu %2lu ",
 			OS::get_singleton()->get_unix_time(),
 			Thread::get_main_id(),
 			Thread::get_caller_id());

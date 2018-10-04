@@ -715,6 +715,8 @@ void LuaScriptLanguage::thread_exit() {
 
 String LuaScriptLanguage::debug_get_error() const {
 	print_debug("LuaScriptLanguage::debug_get_error");
+
+	return EMPTY_STRING;
 } // TODO
 
 int LuaScriptLanguage::debug_get_stack_level_count() const { // TODO
