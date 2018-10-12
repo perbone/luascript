@@ -17,7 +17,7 @@
 #include "tracking_mode.hpp"
 
 #include "internal/action_input.hpp"
-#include "internal/bump_impl.hpp"
+#include "internal/bump.hpp"
 #include "internal/iterator.hpp"
 #include "internal/marker.hpp"
 
@@ -176,7 +176,6 @@ namespace tao
          iterator_t m_current;
          char* m_end;
          const Source m_source;
-         void* internal_state = nullptr;
       };
 
    }  // namespace TAO_PEGTL_NAMESPACE

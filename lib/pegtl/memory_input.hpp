@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <cstring>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 
@@ -20,7 +21,7 @@
 
 #include "internal/action_input.hpp"
 #include "internal/at.hpp"
-#include "internal/bump_impl.hpp"
+#include "internal/bump.hpp"
 #include "internal/eolf.hpp"
 #include "internal/iterator.hpp"
 #include "internal/marker.hpp"
@@ -42,7 +43,7 @@ namespace tao
             using iterator_t = internal::iterator;
 
             template< typename T >
-            memory_input_base( const iterator_t& in_begin, const char* in_end, T&& in_source ) noexcept( std::is_nothrow_constructible< Source, T&& >::value )
+            memory_input_base( const iterator_t& in_begin, const char* in_end, T&& in_source ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )
                : m_begin( in_begin.data ),
                  m_current( in_begin ),
                  m_end( in_end ),
@@ -51,7 +52,7 @@ namespace tao
             }
 
             template< typename T >
-            memory_input_base( const char* in_begin, const char* in_end, T&& in_source ) noexcept( std::is_nothrow_constructible< Source, T&& >::value )
+            memory_input_base( const char* in_begin, const char* in_end, T&& in_source ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )
                : m_begin( in_begin ),
                  m_current( in_begin ),
                  m_end( in_end ),
@@ -139,7 +140,7 @@ namespace tao
             using iterator_t = const char*;
 
             template< typename T >
-            memory_input_base( const internal::iterator& in_begin, const char* in_end, T&& in_source ) noexcept( std::is_nothrow_constructible< Source, T&& >::value )
+            memory_input_base( const internal::iterator& in_begin, const char* in_end, T&& in_source ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )
                : m_begin( in_begin ),
                  m_current( in_begin.data ),
                  m_end( in_end ),
@@ -148,7 +149,7 @@ namespace tao
             }
 
             template< typename T >
-            memory_input_base( const char* in_begin, const char* in_end, T&& in_source ) noexcept( std::is_nothrow_constructible< Source, T&& >::value )
+            memory_input_base( const char* in_begin, const char* in_end, T&& in_source ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )
                : m_begin( in_begin ),
                  m_current( in_begin ),
                  m_end( in_end ),
@@ -237,13 +238,19 @@ namespace tao
          using internal::memory_input_base< P, Eol, Source >::memory_input_base;
 
          template< typename T >
-         memory_input( const char* in_begin, const std::size_t in_size, T&& in_source ) noexcept( std::is_nothrow_constructible< Source, T&& >::value )
+         memory_input( const char* in_begin, const std::size_t in_size, T&& in_source ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )  // NOLINT
             : memory_input( in_begin, in_begin + in_size, std::forward< T >( in_source ) )
          {
          }
 
          template< typename T >
-         memory_input( const std::string& in_string, T&& in_source ) noexcept( std::is_nothrow_constructible< Source, T&& >::value )
+         memory_input( const std::string& in_string, T&& in_source ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )
+            : memory_input( in_string.data(), in_string.size(), std::forward< T >( in_source ) )
+         {
+         }
+
+         template< typename T >
+         memory_input( const std::string_view in_string, T&& in_source ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )  // NOLINT
             : memory_input( in_string.data(), in_string.size(), std::forward< T >( in_source ) )
          {
          }
@@ -252,13 +259,13 @@ namespace tao
          memory_input( std::string&&, T&& ) = delete;
 
          template< typename T >
-         memory_input( const char* in_begin, T&& in_source ) noexcept( std::is_nothrow_constructible< Source, T&& >::value )
+         memory_input( const char* in_begin, T&& in_source ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )
             : memory_input( in_begin, std::strlen( in_begin ), std::forward< T >( in_source ) )
          {
          }
 
          template< typename T >
-         memory_input( const char* in_begin, const char* in_end, T&& in_source, const std::size_t in_byte, const std::size_t in_line, const std::size_t in_byte_in_line ) noexcept( std::is_nothrow_constructible< Source, T&& >::value )
+         memory_input( const char* in_begin, const char* in_end, T&& in_source, const std::size_t in_byte, const std::size_t in_line, const std::size_t in_byte_in_line ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )  // NOLINT
             : memory_input( { in_begin, in_byte, in_line, in_byte_in_line }, in_end, std::forward< T >( in_source ) )
          {
          }
@@ -350,14 +357,10 @@ namespace tao
          {
             return std::string( begin_of_line( p ), end_of_line( p ) );
          }
-
-         void* internal_state = nullptr;
       };
 
-#ifdef __cpp_deduction_guides
       template< typename... Ts >
       memory_input( Ts&&... )->memory_input<>;
-#endif
 
    }  // namespace TAO_PEGTL_NAMESPACE
 

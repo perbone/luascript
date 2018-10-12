@@ -38,10 +38,8 @@ namespace tao
                s.template success< A, M, Action, Control >( in, st... );
             }
 
-            // NOTE: The additional "int = 0" is a work-around for missing expression SFINAE in VS2015.
-
-            template< apply_mode,
-                      rewind_mode,
+            template< apply_mode A,
+                      rewind_mode M,
                       template< typename... > class Action,
                       template< typename... > class Control,
                       typename Input,
@@ -72,9 +70,7 @@ namespace tao
          };
 
          template< typename State, typename... Rules >
-         struct skip_control< state< State, Rules... > > : std::true_type
-         {
-         };
+         inline constexpr bool skip_control< state< State, Rules... > > = true;
 
       }  // namespace internal
 

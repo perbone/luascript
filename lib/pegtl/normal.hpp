@@ -4,6 +4,7 @@
 #ifndef TAO_PEGTL_NORMAL_HPP
 #define TAO_PEGTL_NORMAL_HPP
 
+#include <type_traits>
 #include <utility>
 
 #include "apply_mode.hpp"
@@ -49,14 +50,12 @@ namespace tao
 
          template< template< typename... > class Action, typename Input, typename... States >
          static auto apply0( const Input& /*unused*/, States&&... st )
-            -> decltype( Action< Rule >::apply0( st... ) )
          {
             return Action< Rule >::apply0( st... );
          }
 
          template< template< typename... > class Action, typename Iterator, typename Input, typename... States >
          static auto apply( const Iterator& begin, const Input& in, States&&... st )
-            -> decltype( Action< Rule >::apply( std::declval< typename Input::action_t >(), st... ) )
          {
             const typename Input::action_t action_input( begin, in );
             return Action< Rule >::apply( action_input, st... );
@@ -70,8 +69,8 @@ namespace tao
                    typename... States >
          static bool match( Input& in, States&&... st )
          {
-            constexpr char use_control = !internal::skip_control< Rule >::value;
-            constexpr char use_action = use_control && ( A == apply_mode::ACTION ) && ( !is_nothing< Action, Rule >::value );
+            constexpr char use_control = !internal::skip_control< Rule >;
+            constexpr char use_action = use_control && ( A == apply_mode::ACTION ) && ( !std::is_base_of_v< nothing< Rule >, Action< Rule > > );
             constexpr char use_apply_void = use_action && internal::has_apply< Action< Rule >, void, typename Input::action_t, States... >::value;
             constexpr char use_apply_bool = use_action && internal::has_apply< Action< Rule >, bool, typename Input::action_t, States... >::value;
             constexpr char use_apply0_void = use_action && internal::has_apply0< Action< Rule >, void, States... >::value;

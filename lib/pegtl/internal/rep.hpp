@@ -6,7 +6,6 @@
 
 #include "../config.hpp"
 
-#include "rule_conjunction.hpp"
 #include "skip_control.hpp"
 #include "trivial.hpp"
 
@@ -53,7 +52,7 @@ namespace tao
                using m_t = decltype( m );
 
                for( unsigned i = 0; i != Num; ++i ) {
-                  if( !rule_conjunction< Rules... >::template match< A, m_t::next_rewind_mode, Action, Control >( in, st... ) ) {
+                  if( !( Control< Rules >::template match< A, m_t::next_rewind_mode, Action, Control >( in, st... ) && ... ) ) {
                      return false;
                   }
                }
@@ -62,9 +61,7 @@ namespace tao
          };
 
          template< unsigned Num, typename... Rules >
-         struct skip_control< rep< Num, Rules... > > : std::true_type
-         {
-         };
+         inline constexpr bool skip_control< rep< Num, Rules... > > = true;
 
       }  // namespace internal
 

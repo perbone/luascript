@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "../config.hpp"
+#include "../memory_input.hpp"
 #include "../normal.hpp"
 #include "../nothing.hpp"
 #include "../parse.hpp"
@@ -93,6 +94,13 @@ namespace tao
                return std::string( m_begin.data, m_end.data );
             }
 
+            template< tracking_mode P = tracking_mode::IMMEDIATE, typename Eol = eol::lf_crlf >
+            memory_input< P, Eol > as_memory_input() const
+            {
+               assert( has_content() );
+               return { m_begin.data, m_end.data, source, m_begin.byte, m_begin.line, m_begin.byte_in_line };
+            }
+
             template< typename... States >
             void remove_content( States&&... /*unused*/ ) noexcept
             {
@@ -166,24 +174,18 @@ namespace tao
                }
             };
 
-            template< typename Node, typename Selector, typename = void >
-            struct transform
+            template< typename Selector, typename... Parameters >
+            void transform( Parameters&&... /*unused*/ ) noexcept
             {
-               template< typename... States >
-               static void call( std::unique_ptr< Node >& /*unused*/, States&&... /*unused*/ ) noexcept
-               {
-               }
-            };
+            }
 
-            template< typename Node, typename Selector >
-            struct transform< Node, Selector, decltype( Selector::transform( std::declval< std::unique_ptr< Node >& >() ), void() ) >
+            // this one, if applicable, is more specialized than the above
+            template< typename Selector, typename Node, typename... States >
+            auto transform( std::unique_ptr< Node >& n, States&&... st ) noexcept( noexcept( Selector::transform( n, st... ) ) )
+               -> decltype( Selector::transform( n, st... ), void() )
             {
-               template< typename... States >
-               static void call( std::unique_ptr< Node >& n, States&&... st ) noexcept( noexcept( Selector::transform( n, st... ) ) )
-               {
-                  Selector::transform( n, st... );
-               }
-            };
+               Selector::transform( n, st... );
+            }
 
             template< unsigned Level, typename Analyse, template< typename... > class Selector >
             struct is_leaf
@@ -215,24 +217,18 @@ namespace tao
             {
             };
 
-            template< bool... >
-            struct bool_sequence;
-
-            template< bool... Bs >
-            using is_all = std::is_same< bool_sequence< Bs..., true >, bool_sequence< true, Bs... > >;
-
             template< unsigned Level, typename Rule, template< typename... > class Selector >
-            using is_unselected_leaf = std::integral_constant< bool, !Selector< Rule >::value && is_leaf< Level, typename Rule::analyze_t, Selector >::value >;
+            inline constexpr bool is_unselected_leaf = !Selector< Rule >::value && is_leaf< Level, typename Rule::analyze_t, Selector >::value;
 
             template< unsigned Level, analysis::rule_type Type, typename... Rules, template< typename... > class Selector >
             struct is_leaf< Level, analysis::generic< Type, Rules... >, Selector >
-               : is_all< is_unselected_leaf< Level - 1, Rules, Selector >::value... >
+               : std::bool_constant< ( is_unselected_leaf< Level - 1, Rules, Selector > && ... ) >
             {
             };
 
             template< unsigned Level, analysis::rule_type Type, unsigned Count, typename... Rules, template< typename... > class Selector >
             struct is_leaf< Level, analysis::counted< Type, Count, Rules... >, Selector >
-               : is_all< is_unselected_leaf< Level - 1, Rules, Selector >::value... >
+               : std::bool_constant< ( is_unselected_leaf< Level - 1, Rules, Selector > && ... ) >
             {
             };
 
@@ -251,6 +247,41 @@ namespace tao
             struct make_control< Node, Selector, Control >::control< Rule, false, true >
                : Control< Rule >
             {
+               template< typename Input, typename... States >
+               static void start( const Input& in, States&&... st, state< Node >& /*unused*/ ) noexcept( noexcept( Control< Rule >::start( in, st... ) ) )
+               {
+                  Control< Rule >::start( in, st... );
+               }
+
+               template< typename Input, typename... States >
+               static void success( const Input& in, States&&... st, state< Node >& /*unused*/ ) noexcept( noexcept( Control< Rule >::success( in, st... ) ) )
+               {
+                  Control< Rule >::success( in, st... );
+               }
+
+               template< typename Input, typename... States >
+               static void failure( const Input& in, States&&... st, state< Node >& /*unused*/ ) noexcept( noexcept( Control< Rule >::failure( in, st... ) ) )
+               {
+                  Control< Rule >::failure( in, st... );
+               }
+
+               template< typename Input, typename... States >
+               static void raise( const Input& in, States&&... st, state< Node >& /*unused*/ )
+               {
+                  Control< Rule >::raise( in, st... );
+               }
+
+               template< template< typename... > class Action, typename Input, typename... States >
+               static auto apply0( const Input& in, States&&... st, state< Node >& /*unused*/ ) noexcept( noexcept( Control< Rule >::template apply0< Action >( in, st... ) ) )
+               {
+                  return Control< Rule >::template apply0< Action >( in, st... );
+               }
+
+               template< template< typename... > class Action, typename Iterator, typename Input, typename... States >
+               static auto apply( const Iterator& begin, const Input& in, States&&... st, state< Node >& /*unused*/ ) noexcept( noexcept( Control< Rule >::template apply< Action >( begin, in, st... ) ) )
+               {
+                  return Control< Rule >::template apply< Action >( begin, in, st... );
+               }
             };
 
             template< typename Node, template< typename... > class Selector, template< typename... > class Control >
@@ -259,18 +290,16 @@ namespace tao
                : Control< Rule >
             {
                template< typename Input, typename... States >
-               static void start( const Input& in, States&&... st )
+               static void start( const Input& in, States&&... st, state< Node >& state )
                {
                   Control< Rule >::start( in, st... );
-                  auto& state = *static_cast< internal::state< Node >* >( in.internal_state );
                   state.emplace_back();
                }
 
                template< typename Input, typename... States >
-               static void success( const Input& in, States&&... st )
+               static void success( const Input& in, States&&... st, state< Node >& state )
                {
                   Control< Rule >::success( in, st... );
-                  auto& state = *static_cast< internal::state< Node >* >( in.internal_state );
                   auto n = std::move( state.back() );
                   state.pop_back();
                   for( auto& c : n->children ) {
@@ -279,11 +308,28 @@ namespace tao
                }
 
                template< typename Input, typename... States >
-               static void failure( const Input& in, States&&... st ) noexcept( noexcept( Control< Rule >::failure( in, st... ) ) )
+               static void failure( const Input& in, States&&... st, state< Node >& state ) noexcept( noexcept( Control< Rule >::failure( in, st... ) ) )
                {
                   Control< Rule >::failure( in, st... );
-                  auto& state = *static_cast< internal::state< Node >* >( in.internal_state );
                   state.pop_back();
+               }
+
+               template< typename Input, typename... States >
+               static void raise( const Input& in, States&&... st, state< Node >& /*unused*/ )
+               {
+                  Control< Rule >::raise( in, st... );
+               }
+
+               template< template< typename... > class Action, typename Input, typename... States >
+               static auto apply0( const Input& in, States&&... st, state< Node >& /*unused*/ ) noexcept( noexcept( Control< Rule >::template apply0< Action >( in, st... ) ) )
+               {
+                  return Control< Rule >::template apply0< Action >( in, st... );
+               }
+
+               template< template< typename... > class Action, typename Iterator, typename Input, typename... States >
+               static auto apply( const Iterator& begin, const Input& in, States&&... st, state< Node >& /*unused*/ ) noexcept( noexcept( Control< Rule >::template apply< Action >( begin, in, st... ) ) )
+               {
+                  return Control< Rule >::template apply< Action >( begin, in, st... );
                }
             };
 
@@ -293,35 +339,50 @@ namespace tao
                : Control< Rule >
             {
                template< typename Input, typename... States >
-               static void start( const Input& in, States&&... st )
+               static void start( const Input& in, States&&... st, state< Node >& state )
                {
                   Control< Rule >::start( in, st... );
-                  auto& state = *static_cast< internal::state< Node >* >( in.internal_state );
                   state.emplace_back();
                   state.back()->template start< Rule >( in, st... );
                }
 
                template< typename Input, typename... States >
-               static void success( const Input& in, States&&... st )
+               static void success( const Input& in, States&&... st, state< Node >& state )
                {
                   Control< Rule >::success( in, st... );
-                  auto& state = *static_cast< internal::state< Node >* >( in.internal_state );
                   auto n = std::move( state.back() );
                   state.pop_back();
                   n->template success< Rule >( in, st... );
-                  transform< Node, Selector< Rule > >::call( n, st... );
+                  transform< Selector< Rule > >( n, st... );
                   if( n ) {
                      state.back()->emplace_back( std::move( n ), st... );
                   }
                }
 
                template< typename Input, typename... States >
-               static void failure( const Input& in, States&&... st ) noexcept( noexcept( Control< Rule >::failure( in, st... ) ) && noexcept( std::declval< node& >().template failure< Rule >( in, st... ) ) )
+               static void failure( const Input& in, States&&... st, state< Node >& state ) noexcept( noexcept( Control< Rule >::failure( in, st... ) ) && noexcept( std::declval< node& >().template failure< Rule >( in, st... ) ) )
                {
                   Control< Rule >::failure( in, st... );
-                  auto& state = *static_cast< internal::state< Node >* >( in.internal_state );
                   state.back()->template failure< Rule >( in, st... );
                   state.pop_back();
+               }
+
+               template< typename Input, typename... States >
+               static void raise( const Input& in, States&&... st, state< Node >& /*unused*/ )
+               {
+                  Control< Rule >::raise( in, st... );
+               }
+
+               template< template< typename... > class Action, typename Input, typename... States >
+               static auto apply0( const Input& in, States&&... st, state< Node >& /*unused*/ ) noexcept( noexcept( Control< Rule >::template apply0< Action >( in, st... ) ) )
+               {
+                  return Control< Rule >::template apply0< Action >( in, st... );
+               }
+
+               template< template< typename... > class Action, typename Iterator, typename Input, typename... States >
+               static auto apply( const Iterator& begin, const Input& in, States&&... st, state< Node >& /*unused*/ ) noexcept( noexcept( Control< Rule >::template apply< Action >( begin, in, st... ) ) )
+               {
+                  return Control< Rule >::template apply< Action >( begin, in, st... );
                }
             };
 
@@ -331,19 +392,11 @@ namespace tao
             };
 
             template< typename >
-            struct store_all : std::true_type
-            {
-            };
+            using store_all = std::true_type;
 
          }  // namespace internal
 
-         struct store_content : std::true_type
-         {
-            template< typename Node, typename... States >
-            static void transform( std::unique_ptr< Node >& /*unused*/, States&&... /*unused*/ ) noexcept
-            {
-            }
-         };
+         using store_content = std::true_type;
 
          // some nodes don't need to store their content
          struct remove_content : std::true_type
@@ -432,9 +485,7 @@ namespace tao
          std::unique_ptr< Node > parse( Input&& in, States&&... st )
          {
             internal::state< Node > state;
-            assert( in.internal_state == nullptr );
-            in.internal_state = &state;
-            if( !TAO_PEGTL_NAMESPACE::parse< Rule, Action, internal::make_control< Node, Selector, Control >::template type >( in, st... ) ) {
+            if( !TAO_PEGTL_NAMESPACE::parse< Rule, Action, internal::make_control< Node, Selector, Control >::template type >( in, st..., state ) ) {
                return nullptr;
             }
             assert( state.stack.size() == 1 );
