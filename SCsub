@@ -7,7 +7,7 @@ env_luascript = env_modules.Clone()
 
 lib_include_path = './lib'
 
-env_luascript.Append(CXXFLAGS=['-O2', '-std=c++17'])
+env_luascript.Append(CXXFLAGS=['-O0', '-std=c++17'])
 env_luascript.Append(CPPPATH=lib_include_path)
 
 env_luascript.add_source_files(env.modules_sources,'*.cpp')
