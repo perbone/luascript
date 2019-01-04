@@ -209,6 +209,12 @@ bool LuaScript::is_tool() const { // TODO
 	return this->tool;
 }
 
+bool LuaScript::is_valid() const { // TODO
+	print_debug("LuaScript::is_valid");
+
+	return this->valid;
+}
+
 ScriptLanguage *LuaScript::get_language() const { // TODO
 	print_debug("LuaScript::get_language");
 

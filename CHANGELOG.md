@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.25 - 2019-01-04
+
+### Added
+
+- Add new Script::is_valid() method (fix broken compilation for 3.1-alphas)
+
 ## 0.0.24 - 2018-10-11
 
 ### Changed
