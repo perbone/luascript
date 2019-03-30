@@ -147,6 +147,7 @@ Standard:        Cpp03
 ---
 ### ObjC specific config ###
 Language:        ObjC
+Standard:        Cpp03
 ObjCBlockIndentWidth: 4
 # ObjCSpaceAfterProperty: false
 # ObjCSpaceBeforeProtocolList: true
