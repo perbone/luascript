@@ -17,6 +17,8 @@
  * limitations under the License
  */
 
+#include <cstdlib>
+
 #include "debug.h"
 
 #if defined(LUA_SCRIPT_DEBUG_ENABLED)

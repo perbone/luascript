@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.26 - 2019-03-03
+
+### Fixed
+
+- Fix missing include cstdlib that was previously included from godot's
+
 ## 0.0.25 - 2019-01-04
 
 ### Added
