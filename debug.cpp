@@ -25,7 +25,9 @@
 
 void print_debug(const String fmt, ...) {
 
-	char fmtbuf[fmt.size()], tmpbuf[256], finalbuf[512];
+	char fmtbuf=new char[fmt.size()];
+	char tmpbuf[256];
+	char finalbuf[512];
 
 	wcstombs(fmtbuf, fmt.c_str(), fmt.size());
 
