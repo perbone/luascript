@@ -25,7 +25,7 @@
 
 void print_debug(const String fmt, ...) {
 
-	char fmtbuf=new char[fmt.size()];
+	char* fmtbuf=new char[fmt.size()];
 	char tmpbuf[256];
 	char finalbuf[512];
 
