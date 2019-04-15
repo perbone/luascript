@@ -289,7 +289,7 @@ void LuaScript::_get_property_list(List<PropertyInfo> *p_list) const { // TODO
 
 #ifdef TOOLS_ENABLED
 void LuaScript::_placeholder_erased(PlaceHolderScriptInstance *p_placeholder) {
-	print_debug("LuaScript::_placeholder_erased() tools enabled...");
+	print_debug("LuaScript::_placeholder_erased()");
 
 	this->placeholders.erase(p_placeholder);
 }
