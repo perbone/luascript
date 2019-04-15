@@ -444,7 +444,6 @@ void LuaScriptLanguage::init() {
 	this->L = luaL_newstate();
 	if (this->L) {
 		luaL_openlibs(this->L);
-		print_debug("LuaScriptLanguage::init; Lua Virtual Machine have been initialized...");
 	}
 } // TODO
 
@@ -478,7 +477,6 @@ void LuaScriptLanguage::finish() {
 	if (this->L) {
 		lua_close(L);
 		this->L = nullptr;
-		print_debug("LuaScriptLanguage::finish; Lua Virtual Machine was shut down and freed from memory...");
 	}
 } // TODO
 
