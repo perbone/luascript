@@ -18,10 +18,10 @@
  */
 
 #include "core/engine.h"
-#include "editor/editor_settings.h"
 #include "core/os/file_access.h"
 #include "core/os/os.h"
 #include "core/os/thread.h"
+#include "editor/editor_settings.h"
 
 #include "constants.h"
 #include "debug.h"
@@ -177,12 +177,12 @@ Error LuaScript::load_source_code(const String &p_path) {
 
 	PoolVector<uint8_t> buffer;
 
-    const int len = static_cast<const int>(file->get_len());
-    buffer.resize(len + 1);
+	const int len = static_cast<const int>(file->get_len());
+	buffer.resize(len + 1);
 
 	PoolVector<uint8_t>::Write w = buffer.write();
 
-    int r = file->get_buffer(w.ptr(), len);
+	int r = file->get_buffer(w.ptr(), len);
 
 	file->close();
 	memdelete(file);
@@ -193,7 +193,7 @@ Error LuaScript::load_source_code(const String &p_path) {
 
 	String source;
 
-    if (source.parse_utf8((const char *)w.ptr())) {
+	if (source.parse_utf8((const char *)w.ptr())) {
 		ERR_EXPLAIN("Script '" + p_path + "' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.");
 		ERR_FAIL_V(ERR_INVALID_DATA);
 	}
@@ -376,7 +376,7 @@ void LuaScriptInstance::call_multilevel_reversed(const StringName &p_method, con
 } // TODO
 
 void LuaScriptInstance::notification(int p_notification) {
-	print_debug("LuaScriptInstance::notification( p_notification = %d )", p_notification);
+	print_debug("LuaScriptInstance::notification( p_notification = %d:%s )", p_notification, get_notification_name(p_notification).c_str());
 
 } // TODO
 

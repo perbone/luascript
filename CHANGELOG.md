@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.27 - 2019-04-14
+
+### Added
+
+- Add debug helper function std::string get_notification_name(const int constant_value)
+
 ## 0.0.26 - 2019-03-03
 
 ### Fixed

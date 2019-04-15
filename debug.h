@@ -23,9 +23,12 @@
 
 #if defined(LUA_SCRIPT_DEBUG_ENABLED)
 
+#include <string>
+
 #include "core/os/os.h"
 #include "core/os/thread.h"
 
+std::string get_notification_name(const int constant_value);
 void print_debug(const String fmt, ...);
 
 #else
