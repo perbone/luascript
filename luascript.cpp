@@ -72,15 +72,12 @@ StringName LuaScript::get_instance_base_type() const { // TODO
 }
 
 ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
-#ifndef TOOLS_ENABLED
 	print_debug("LuaScript::instance_create( p_this = " + p_this->get_class_name() + " )");
-#endif
 
 	ERR_FAIL_COND_V(!this->valid, nullptr);
 
 	if (!tool && !ScriptServer::is_scripting_enabled()) {
 #ifdef TOOLS_ENABLED
-		print_debug("LuaScript::instance_create( p_this = " + p_this->get_class_name() + " ) tools enabled...");
 		PlaceHolderScriptInstance *placeHolder = memnew(PlaceHolderScriptInstance(LuaScriptLanguage::get_singleton(), Ref<Script>(this), p_this));
 		placeholders.insert(placeHolder);
 
@@ -438,7 +435,6 @@ LuaScriptLanguage::~LuaScriptLanguage() {
 	if (this->L) {
 		lua_close(L);
 		this->L = nullptr;
-		print_debug("LuaScriptLanguage::destructor; Lua Virtual Machine was shut down and freed from memory...");
 	}
 } // TODO
 
