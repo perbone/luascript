@@ -24,7 +24,8 @@
 #include "core/os/mutex.h"
 #include "core/script_language.h"
 
-#include <lua/lua.hpp>
+#include "debug.h"
+#include "lua/lua.hpp"
 
 class LuaScript : public Script {
 
@@ -152,8 +153,15 @@ class LuaScriptLanguage : public ScriptLanguage {
 	friend class LuaScript;
 	friend class LuaScriptInstance;
 
-	_FORCE_INLINE_ static LuaScriptLanguage *get_singleton() { return singleton; }
-	_FORCE_INLINE_ static MutexLock &acquire() { return *(memnew(MutexLock(LuaScriptLanguage::singleton->mutex))); }
+	_FORCE_INLINE_ static LuaScriptLanguage *get_singleton() {
+		print_debug("LuaScriptLanguage::get_singleton");
+		return singleton;
+	}
+
+	_FORCE_INLINE_ static MutexLock &acquire() {
+		print_debug("LuaScriptLanguage::acquire");
+		return *(memnew(MutexLock(LuaScriptLanguage::singleton->mutex)));
+	}
 
 private:
 	Mutex *mutex;
