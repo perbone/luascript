@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.28 - 2019-05-22
+
+### Added
+
+- Fix broken compilation for 3.2-master after API change
+- Add const modifier to LuaScriptSyntaxHighlighter::get_name() method
+
 ## 0.0.27 - 2019-04-14
 
 ### Added

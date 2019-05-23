@@ -49,7 +49,7 @@ Map<int, TextEdit::HighlighterInfo> LuaScriptSyntaxHighlighter::_get_line_syntax
 	return lsh_map;
 } // TODO
 
-String LuaScriptSyntaxHighlighter::get_name() {
+String LuaScriptSyntaxHighlighter::get_name() const {
 	print_debug("LuaScriptSyntaxHighlighter::get_name");
 
 	return LUA_NAME;
