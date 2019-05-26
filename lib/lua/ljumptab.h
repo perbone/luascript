@@ -1,3 +1,10 @@
+/*
+** $Id: ljumptab.h $
+** Jump Table for the Lua interpreter
+** See Copyright Notice in lua.h
+*/
+
+
 #undef vmdispatch
 #undef vmcase
 #undef vmbreak
@@ -9,7 +16,7 @@
 #define vmbreak		vmfetch(); vmdispatch(GET_OPCODE(i));
 
 
-static void *disptab[] = {
+static void *disptab[NUM_OPCODES] = {
 
 #if 0
 ** you can update the following list with this command:
@@ -44,6 +51,13 @@ static void *disptab[] = {
 &&L_OP_POWI,
 &&L_OP_DIVI,
 &&L_OP_IDIVI,
+&&L_OP_ADDK,
+&&L_OP_SUBK,
+&&L_OP_MULK,
+&&L_OP_MODK,
+&&L_OP_POWK,
+&&L_OP_DIVK,
+&&L_OP_IDIVK,
 &&L_OP_BANDK,
 &&L_OP_BORK,
 &&L_OP_BXORK,
@@ -67,6 +81,7 @@ static void *disptab[] = {
 &&L_OP_LEN,
 &&L_OP_CONCAT,
 &&L_OP_CLOSE,
+&&L_OP_TBC,
 &&L_OP_JMP,
 &&L_OP_EQ,
 &&L_OP_LT,
@@ -84,16 +99,15 @@ static void *disptab[] = {
 &&L_OP_RETURN,
 &&L_OP_RETURN0,
 &&L_OP_RETURN1,
-&&L_OP_FORLOOP1,
-&&L_OP_FORPREP1,
 &&L_OP_FORLOOP,
 &&L_OP_FORPREP,
+&&L_OP_TFORPREP,
 &&L_OP_TFORCALL,
 &&L_OP_TFORLOOP,
 &&L_OP_SETLIST,
 &&L_OP_CLOSURE,
 &&L_OP_VARARG,
-&&L_OP_PREPVARARG,
+&&L_OP_VARARGPREP,
 &&L_OP_EXTRAARG
 
 };

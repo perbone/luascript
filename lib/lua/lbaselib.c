@@ -1,5 +1,5 @@
 /*
-** $Id: lbaselib.c,v 1.323 2018/03/07 15:55:38 roberto Exp $
+** $Id: lbaselib.c $
 ** Basic library
 ** See Copyright Notice in lua.h
 */
@@ -24,21 +24,22 @@
 static int luaB_print (lua_State *L) {
   int n = lua_gettop(L);  /* number of arguments */
   int i;
-  lua_getglobal(L, "tostring");
-  for (i=1; i<=n; i++) {
-    const char *s;
+  for (i = 1; i <= n; i++) {  /* for each argument */
     size_t l;
-    lua_pushvalue(L, -1);  /* function to be called */
-    lua_pushvalue(L, i);   /* value to print */
-    lua_call(L, 1, 1);
-    s = lua_tolstring(L, -1, &l);  /* get result */
-    if (s == NULL)
-      return luaL_error(L, "'tostring' must return a string to 'print'");
-    if (i>1) lua_writestring("\t", 1);
-    lua_writestring(s, l);
+    const char *s = luaL_tolstring(L, i, &l);  /* convert it to string */
+    if (i > 1)  /* not the first element? */
+      lua_writestring("\t", 1);  /* add a tab before it */
+    lua_writestring(s, l);  /* print it */
     lua_pop(L, 1);  /* pop result */
   }
   lua_writeline();
+  return 0;
+}
+
+
+static int luaB_warn (lua_State *L) {
+  const char *msg = luaL_checkstring(L, 1);
+  lua_warning(L, msg, lua_toboolean(L, 2));
   return 0;
 }
 
@@ -68,7 +69,6 @@ static const char *b_str2int (const char *s, int base, lua_Integer *pn) {
 
 static int luaB_tonumber (lua_State *L) {
   if (lua_isnoneornil(L, 2)) {  /* standard conversion? */
-    luaL_checkany(L, 1);
     if (lua_type(L, 1) == LUA_TNUMBER) {  /* already a number? */
       lua_settop(L, 1);  /* yes; return it */
       return 1;
@@ -79,6 +79,7 @@ static int luaB_tonumber (lua_State *L) {
       if (s != NULL && lua_stringtonumber(L, s) == l + 1)
         return 1;  /* successful conversion to number */
       /* else not a number */
+      luaL_checkany(L, 1);  /* (but there must be some parameter) */
     }
   }
   else {
@@ -125,8 +126,7 @@ static int luaB_getmetatable (lua_State *L) {
 static int luaB_setmetatable (lua_State *L) {
   int t = lua_type(L, 2);
   luaL_checktype(L, 1, LUA_TTABLE);
-  luaL_argcheck(L, t == LUA_TNIL || t == LUA_TTABLE, 2,
-                    "nil or table expected");
+  luaL_argexpected(L, t == LUA_TNIL || t == LUA_TTABLE, 2, "nil or table");
   if (luaL_getmetafield(L, 1, "__metatable") != LUA_TNIL)
     return luaL_error(L, "cannot change a protected metatable");
   lua_settop(L, 2);
@@ -145,8 +145,8 @@ static int luaB_rawequal (lua_State *L) {
 
 static int luaB_rawlen (lua_State *L) {
   int t = lua_type(L, 1);
-  luaL_argcheck(L, t == LUA_TTABLE || t == LUA_TSTRING, 1,
-                   "table or string expected");
+  luaL_argexpected(L, t == LUA_TTABLE || t == LUA_TSTRING, 1,
+                      "table or string");
   lua_pushinteger(L, lua_rawlen(L, 1));
   return 1;
 }
@@ -483,6 +483,7 @@ static const luaL_Reg base_funcs[] = {
   {"pairs", luaB_pairs},
   {"pcall", luaB_pcall},
   {"print", luaB_print},
+  {"warn", luaB_warn},
   {"rawequal", luaB_rawequal},
   {"rawlen", luaB_rawlen},
   {"rawget", luaB_rawget},

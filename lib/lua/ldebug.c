@@ -1,5 +1,5 @@
 /*
-** $Id: ldebug.c,v 2.158 2018/06/08 19:06:59 roberto Exp $
+** $Id: ldebug.c $
 ** Debug Interface
 ** See Copyright Notice in lua.h
 */
@@ -192,15 +192,14 @@ static const char *findvararg (CallInfo *ci, int n, StkId *pos) {
     int nextra = ci->u.l.nextraargs;
     if (n <= nextra) {
       *pos = ci->func - nextra + (n - 1);
-      return "(*vararg)";  /* generic name for any vararg */
+      return "(vararg)";  /* generic name for any vararg */
     }
   }
   return NULL;  /* no such vararg */
 }
 
 
-static const char *findlocal (lua_State *L, CallInfo *ci, int n,
-                              StkId *pos) {
+const char *luaG_findlocal (lua_State *L, CallInfo *ci, int n, StkId *pos) {
   StkId base = ci->func + 1;
   const char *name = NULL;
   if (isLua(ci)) {
@@ -211,12 +210,15 @@ static const char *findlocal (lua_State *L, CallInfo *ci, int n,
   }
   if (name == NULL) {  /* no 'standard' name? */
     StkId limit = (ci == L->ci) ? L->top : ci->next->func;
-    if (limit - base >= n && n > 0)  /* is 'n' inside 'ci' stack? */
-      name = "(*temporary)";  /* generic name for any valid slot */
+    if (limit - base >= n && n > 0) {  /* is 'n' inside 'ci' stack? */
+      /* generic name for any valid slot */
+      name = isLua(ci) ? "(temporary)" : "(C temporary)";
+    }
     else
       return NULL;  /* no name */
   }
-  *pos = base + (n - 1);
+  if (pos)
+    *pos = base + (n - 1);
   return name;
 }
 
@@ -232,7 +234,7 @@ LUA_API const char *lua_getlocal (lua_State *L, const lua_Debug *ar, int n) {
   }
   else {  /* active function; get information through 'ar' */
     StkId pos = NULL;  /* to avoid warnings */
-    name = findlocal(L, ar->i_ci, n, &pos);
+    name = luaG_findlocal(L, ar->i_ci, n, &pos);
     if (name) {
       setobjs2s(L, L->top, pos);
       api_incr_top(L);
@@ -247,7 +249,7 @@ LUA_API const char *lua_setlocal (lua_State *L, const lua_Debug *ar, int n) {
   StkId pos = NULL;  /* to avoid warnings */
   const char *name;
   lua_lock(L);
-  name = findlocal(L, ar->i_ci, n, &pos);
+  name = luaG_findlocal(L, ar->i_ci, n, &pos);
   if (name) {
     setobjs2s(L, pos, L->top - 1);
     L->top--;  /* pop value */
@@ -260,18 +262,26 @@ LUA_API const char *lua_setlocal (lua_State *L, const lua_Debug *ar, int n) {
 static void funcinfo (lua_Debug *ar, Closure *cl) {
   if (noLuaClosure(cl)) {
     ar->source = "=[C]";
+    ar->srclen = LL("=[C]");
     ar->linedefined = -1;
     ar->lastlinedefined = -1;
     ar->what = "C";
   }
   else {
     const Proto *p = cl->l.p;
-    ar->source = p->source ? getstr(p->source) : "=?";
+    if (p->source) {
+      ar->source = getstr(p->source);
+      ar->srclen = tsslen(p->source);
+    }
+    else {
+      ar->source = "=?";
+      ar->srclen = LL("=?");
+    }
     ar->linedefined = p->linedefined;
     ar->lastlinedefined = p->lastlinedefined;
     ar->what = (ar->linedefined == 0) ? "main" : "Lua";
   }
-  luaO_chunkid(ar->short_src, ar->source, LUA_IDSIZE);
+  luaO_chunkid(ar->short_src, ar->source, ar->srclen);
 }
 
 
@@ -610,9 +620,15 @@ static const char *funcnamefromcode (lua_State *L, CallInfo *ci,
       tm = TM_NEWINDEX;
       break;
     case OP_ADDI: case OP_SUBI: case OP_MULI: case OP_MODI:
-    case OP_POWI: case OP_DIVI: case OP_IDIVI:
-    case OP_BANDK: case OP_BORK: case OP_BXORK: {
+    case OP_POWI: case OP_DIVI: case OP_IDIVI: {
       int offset = GET_OPCODE(i) - OP_ADDI;  /* ORDER OP */
+      tm = cast(TMS, offset + TM_ADD);  /* ORDER TM */
+      break;
+    }
+    case OP_ADDK: case OP_SUBK: case OP_MULK: case OP_MODK:
+    case OP_POWK: case OP_DIVK: case OP_IDIVK:
+    case OP_BANDK: case OP_BORK: case OP_BXORK: {
+      int offset = GET_OPCODE(i) - OP_ADDK;  /* ORDER OP */
       tm = cast(TMS, offset + TM_ADD);  /* ORDER TM */
       break;
     }
@@ -696,6 +712,12 @@ l_noret luaG_typeerror (lua_State *L, const TValue *o, const char *op) {
 }
 
 
+l_noret luaG_forerror (lua_State *L, const TValue *o, const char *what) {
+  luaG_runerror(L, "bad 'for' %s (number expected, got %s)",
+                   what, luaT_objtypename(L, o));
+}
+
+
 l_noret luaG_concaterror (lua_State *L, const TValue *p1, const TValue *p2) {
   if (ttisstring(p1) || cvt2str(p1)) p1 = p2;
   luaG_typeerror(L, p1, "concatenate");
@@ -736,7 +758,7 @@ const char *luaG_addinfo (lua_State *L, const char *msg, TString *src,
                                         int line) {
   char buff[LUA_IDSIZE];
   if (src)
-    luaO_chunkid(buff, getstr(src), LUA_IDSIZE);
+    luaO_chunkid(buff, getstr(src), tsslen(src));
   else {  /* no source available; use "?" instead */
     buff[0] = '?'; buff[1] = '\0';
   }

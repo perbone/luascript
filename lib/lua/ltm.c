@@ -1,5 +1,5 @@
 /*
-** $Id: ltm.c,v 2.70 2018/06/15 19:31:22 roberto Exp $
+** $Id: ltm.c $
 ** Tag methods
 ** See Copyright Notice in lua.h
 */
@@ -43,7 +43,7 @@ void luaT_init (lua_State *L) {
     "__div", "__idiv",
     "__band", "__bor", "__bxor", "__shl", "__shr",
     "__unm", "__bnot", "__lt", "__le",
-    "__concat", "__call"
+    "__concat", "__call", "__close"
   };
   int i;
   for (i=0; i<TM_N; i++) {
@@ -176,7 +176,7 @@ void luaT_trybinassocTM (lua_State *L, const TValue *p1, const TValue *p2,
 }
 
 
-void luaT_trybiniTM (lua_State *L, const TValue *p1, int i2,
+void luaT_trybiniTM (lua_State *L, const TValue *p1, lua_Integer i2,
                                    int inv, StkId res, TMS event) {
   TValue aux;
   setivalue(&aux, i2);
@@ -188,6 +188,7 @@ int luaT_callorderTM (lua_State *L, const TValue *p1, const TValue *p2,
                       TMS event) {
   if (callbinTM(L, p1, p2, L->top, event))  /* try original event */
     return !l_isfalse(s2v(L->top));
+#if defined(LUA_COMPAT_LT_LE)
   else if (event == TM_LE) {
       /* try '!(p2 < p1)' for '(p1 <= p2)' */
       L->ci->callstatus |= CIST_LEQ;  /* mark it is doing 'lt' for 'le' */
@@ -197,15 +198,20 @@ int luaT_callorderTM (lua_State *L, const TValue *p1, const TValue *p2,
       }
       /* else error will remove this 'ci'; no need to clear mark */
   }
+#endif
   luaG_ordererror(L, p1, p2);  /* no metamethod found */
   return 0;  /* to avoid warnings */
 }
 
 
 int luaT_callorderiTM (lua_State *L, const TValue *p1, int v2,
-                       int inv, TMS event) {
+                       int inv, int isfloat, TMS event) {
   TValue aux; const TValue *p2;
-  setivalue(&aux, v2);
+  if (isfloat) {
+    setfltvalue(&aux, cast_num(v2));
+  }
+  else
+    setivalue(&aux, v2);
   if (inv) {  /* arguments were exchanged? */
     p2 = p1; p1 = &aux;  /* correct them */
   }

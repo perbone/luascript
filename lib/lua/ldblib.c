@@ -1,5 +1,5 @@
 /*
-** $Id: ldblib.c,v 1.155 2018/03/16 15:33:34 roberto Exp $
+** $Id: ldblib.c $
 ** Interface from Lua to its debug API
 ** See Copyright Notice in lua.h
 */
@@ -55,8 +55,7 @@ static int db_getmetatable (lua_State *L) {
 
 static int db_setmetatable (lua_State *L) {
   int t = lua_type(L, 2);
-  luaL_argcheck(L, t == LUA_TNIL || t == LUA_TTABLE, 2,
-                    "nil or table expected");
+  luaL_argexpected(L, t == LUA_TNIL || t == LUA_TTABLE, 2, "nil or table");
   lua_settop(L, 2);
   lua_setmetatable(L, 1);
   return 1;  /* return 1st argument */
@@ -168,7 +167,8 @@ static int db_getinfo (lua_State *L) {
     return luaL_argerror(L, arg+2, "invalid option");
   lua_newtable(L);  /* table to collect results */
   if (strchr(options, 'S')) {
-    settabss(L, "source", ar.source);
+    lua_pushlstring(L, ar.source, ar.srclen);
+    lua_setfield(L, -2, "source");
     settabss(L, "short_src", ar.short_src);
     settabsi(L, "linedefined", ar.linedefined);
     settabsi(L, "lastlinedefined", ar.lastlinedefined);

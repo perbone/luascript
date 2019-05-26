@@ -1,5 +1,5 @@
 /*
-** $Id: loadlib.c,v 1.132 2018/02/27 18:47:32 roberto Exp $
+** $Id: loadlib.c $
 ** Dynamic library loader for Lua
 ** See Copyright Notice in lua.h
 **
@@ -290,22 +290,33 @@ static int noenv (lua_State *L) {
 static void setpath (lua_State *L, const char *fieldname,
                                    const char *envname,
                                    const char *dft) {
+  const char *dftmark;
   const char *nver = lua_pushfstring(L, "%s%s", envname, LUA_VERSUFFIX);
-  const char *path = getenv(nver);  /* use versioned name */
-  if (path == NULL)  /* no environment variable? */
+  const char *path = getenv(nver);  /* try versioned name */
+  if (path == NULL)  /* no versioned environment variable? */
     path = getenv(envname);  /* try unversioned name */
   if (path == NULL || noenv(L))  /* no environment variable? */
     lua_pushstring(L, dft);  /* use default */
-  else {
-    /* replace ";;" by ";AUXMARK;" and then AUXMARK by default path */
-    path = luaL_gsub(L, path, LUA_PATH_SEP LUA_PATH_SEP,
-                              LUA_PATH_SEP AUXMARK LUA_PATH_SEP);
-    luaL_gsub(L, path, AUXMARK, dft);
-    lua_remove(L, -2); /* remove result from 1st 'gsub' */
+  else if ((dftmark = strstr(path, LUA_PATH_SEP LUA_PATH_SEP)) == NULL)
+    lua_pushstring(L, path);  /* nothing to change */
+  else {  /* path contains a ";;": insert default path in its place */
+    size_t len = strlen(path);
+    luaL_Buffer b;
+    luaL_buffinit(L, &b);
+    if (path < dftmark) {  /* is there a prefix before ';;'? */
+      luaL_addlstring(&b, path, dftmark - path);  /* add it */
+      luaL_addchar(&b, *LUA_PATH_SEP);
+    }
+    luaL_addstring(&b, dft);  /* add default */
+    if (dftmark < path + len - 2) {  /* is there a sufix after ';;'? */
+      luaL_addchar(&b, *LUA_PATH_SEP);
+      luaL_addlstring(&b, dftmark + 2, (path + len - 2) - dftmark);
+    }
+    luaL_pushresult(&b);
   }
   setprogdir(L);
   lua_setfield(L, -3, fieldname);  /* package[fieldname] = path value */
-  lua_pop(L, 1);  /* pop versioned variable name */
+  lua_pop(L, 1);  /* pop versioned variable name ('nver') */
 }
 
 /* }================================================================== */
@@ -421,14 +432,42 @@ static int readable (const char *filename) {
 }
 
 
-static const char *pushnexttemplate (lua_State *L, const char *path) {
-  const char *l;
-  while (*path == *LUA_PATH_SEP) path++;  /* skip separators */
-  if (*path == '\0') return NULL;  /* no more templates */
-  l = strchr(path, *LUA_PATH_SEP);  /* find next separator */
-  if (l == NULL) l = path + strlen(path);
-  lua_pushlstring(L, path, l - path);  /* template */
-  return l;
+/*
+** Get the next name in '*path' = 'name1;name2;name3;...', changing
+** the ending ';' to '\0' to create a zero-terminated string. Return
+** NULL when list ends.
+*/
+static const char *getnextfilename (char **path, char *end) {
+  char *sep;
+  char *name = *path;
+  if (name == end)
+    return NULL;  /* no more names */
+  else if (*name == '\0') {  /* from previous iteration? */
+    *name = *LUA_PATH_SEP;  /* restore separator */
+    name++;  /* skip it */
+  }
+  sep = strchr(name, *LUA_PATH_SEP);  /* find next separator */
+  if (sep == NULL)  /* separator not found? */
+    sep = end;  /* name goes until the end */
+  *sep = '\0';  /* finish file name */
+  *path = sep;  /* will start next search from here */
+  return name;
+}
+
+
+/*
+** Given a path such as ";blabla.so;blublu.so", pushes the string
+**
+** 	no file 'blabla.so'
+**	no file 'blublu.so'
+*/
+static void pusherrornotfound (lua_State *L, const char *path) {
+  luaL_Buffer b;
+  luaL_buffinit(L, &b);
+  luaL_addstring(&b, "\n\tno file '");
+  luaL_addgsub(&b, path, LUA_PATH_SEP, "'\n\tno file '");
+  luaL_addstring(&b, "'");
+  luaL_pushresult(&b);
 }
 
 
@@ -436,21 +475,25 @@ static const char *searchpath (lua_State *L, const char *name,
                                              const char *path,
                                              const char *sep,
                                              const char *dirsep) {
-  luaL_Buffer msg;  /* to build error message */
-  if (*sep != '\0')  /* non-empty separator? */
+  luaL_Buffer buff;
+  char *pathname;  /* path with name inserted */
+  char *endpathname;  /* its end */
+  const char *filename;
+  /* separator is non-empty and appears in 'name'? */
+  if (*sep != '\0' && strchr(name, *sep) != NULL)
     name = luaL_gsub(L, name, sep, dirsep);  /* replace it by 'dirsep' */
-  luaL_buffinit(L, &msg);
-  while ((path = pushnexttemplate(L, path)) != NULL) {
-    const char *filename = luaL_gsub(L, lua_tostring(L, -1),
-                                     LUA_PATH_MARK, name);
-    lua_remove(L, -2);  /* remove path template */
+  luaL_buffinit(L, &buff);
+  /* add path to the buffer, replacing marks ('?') with the file name */
+  luaL_addgsub(&buff, path, LUA_PATH_MARK, name);
+  luaL_addchar(&buff, '\0');
+  pathname = luaL_buffaddr(&buff);  /* writable list of file names */
+  endpathname = pathname + luaL_bufflen(&buff) - 1;
+  while ((filename = getnextfilename(&pathname, endpathname)) != NULL) {
     if (readable(filename))  /* does file exist and is readable? */
-      return filename;  /* return that file name */
-    lua_pushfstring(L, "\n\tno file '%s'", filename);
-    lua_remove(L, -2);  /* remove file name */
-    luaL_addvalue(&msg);  /* concatenate error msg. entry */
+      return lua_pushstring(L, filename);  /* save and return name */
   }
-  luaL_pushresult(&msg);  /* create error message */
+  luaL_pushresult(&buff);  /* push path to create error message */
+  pusherrornotfound(L, lua_tostring(L, -1));  /* create error message */
   return NULL;  /* not found */
 }
 
@@ -560,9 +603,14 @@ static int searcher_Croot (lua_State *L) {
 static int searcher_preload (lua_State *L) {
   const char *name = luaL_checkstring(L, 1);
   lua_getfield(L, LUA_REGISTRYINDEX, LUA_PRELOAD_TABLE);
-  if (lua_getfield(L, -1, name) == LUA_TNIL)  /* not found? */
+  if (lua_getfield(L, -1, name) == LUA_TNIL) {  /* not found? */
     lua_pushfstring(L, "\n\tno field package.preload['%s']", name);
-  return 1;
+    return 1;
+  }
+  else {
+    lua_pushliteral(L, ":preload:");
+    return 2;
+  }
 }
 
 
@@ -604,17 +652,23 @@ static int ll_require (lua_State *L) {
   /* else must load package */
   lua_pop(L, 1);  /* remove 'getfield' result */
   findloader(L, name);
-  lua_pushstring(L, name);  /* pass name as argument to module loader */
-  lua_insert(L, -2);  /* name is 1st argument (before search data) */
+  lua_rotate(L, -2, 1);  /* function <-> loader data */
+  lua_pushvalue(L, 1);  /* name is 1st argument to module loader */
+  lua_pushvalue(L, -3);  /* loader data is 2nd argument */
+  /* stack: ...; loader data; loader function; mod. name; loader data */
   lua_call(L, 2, 1);  /* run loader to load module */
+  /* stack: ...; loader data; result from loader */
   if (!lua_isnil(L, -1))  /* non-nil return? */
     lua_setfield(L, 2, name);  /* LOADED[name] = returned value */
+  else
+    lua_pop(L, 1);  /* pop nil */
   if (lua_getfield(L, 2, name) == LUA_TNIL) {   /* module set no value? */
     lua_pushboolean(L, 1);  /* use true as result */
-    lua_pushvalue(L, -1);  /* extra copy to be returned */
+    lua_copy(L, -1, -2);  /* replace loader result */
     lua_setfield(L, 2, name);  /* LOADED[name] = true */
   }
-  return 1;
+  lua_rotate(L, -2, 1);  /* loader data <-> module result  */
+  return 2;  /* return module result and loader data */
 }
 
 /* }====================================================== */

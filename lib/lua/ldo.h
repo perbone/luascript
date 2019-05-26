@@ -1,5 +1,5 @@
 /*
-** $Id: ldo.h,v 2.44 2018/05/22 12:02:36 roberto Exp $
+** $Id: ldo.h $
 ** Stack and Call structure of Lua
 ** See Copyright Notice in lua.h
 */
@@ -50,6 +50,7 @@
 /* type of protected functions, to be ran by 'runprotected' */
 typedef void (*Pfunc) (lua_State *L, void *ud);
 
+LUAI_FUNC void luaD_seterrorobj (lua_State *L, int errcode, StkId oldtop);
 LUAI_FUNC int luaD_protectedparser (lua_State *L, ZIO *z, const char *name,
                                                   const char *mode);
 LUAI_FUNC void luaD_hook (lua_State *L, int event, int line,

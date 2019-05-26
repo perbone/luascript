@@ -1,5 +1,5 @@
 /*
-** $Id: lobject.h,v 2.146 2018/06/15 19:31:22 roberto Exp $
+** $Id: lobject.h $
 ** Type definitions for Lua objects
 ** See Copyright Notice in lua.h
 */
@@ -350,21 +350,13 @@ typedef struct TString {
 } TString;
 
 
-/*
-** Ensures that address after this type is always fully aligned.
-*/
-typedef union UTString {
-  LUAI_MAXALIGN;  /* ensures maximum alignment for strings */
-  TString tsv;
-} UTString;
-
 
 /*
 ** Get the actual string (array of bytes) from a 'TString'.
 ** (Access to 'extra' ensures that value is really a 'TString'.)
 */
 #define getstr(ts)  \
-  check_exp(sizeof((ts)->extra), cast_charp((ts)) + sizeof(UTString))
+  check_exp(sizeof((ts)->extra), cast_charp((ts)) + sizeof(TString))
 
 
 /* get the actual string (array of bytes) from a Lua value */
@@ -505,7 +497,6 @@ typedef struct Proto {
   lu_byte numparams;  /* number of fixed (named) parameters */
   lu_byte is_vararg;
   lu_byte maxstacksize;  /* number of registers needed by this function */
-  lu_byte cachemiss;  /* count for successive misses for 'cache' field */
   int sizeupvalues;  /* size of 'upvalues' */
   int sizek;  /* size of 'k' */
   int sizecode;
@@ -516,7 +507,6 @@ typedef struct Proto {
   int linedefined;  /* debug information  */
   int lastlinedefined;  /* debug information  */
   TValue *k;  /* constants used by the function */
-  struct LClosure *cache;  /* last-created closure with this prototype */
   Instruction *code;  /* opcodes */
   struct Proto **p;  /* functions defined inside the function */
   Upvaldesc *upvalues;  /* upvalue information */
@@ -586,6 +576,10 @@ typedef struct UpVal {
     TValue value;  /* the value (when closed) */
   } u;
 } UpVal;
+
+
+/* variant for "To Be Closed" upvalues */
+#define LUA_TUPVALTBC	(LUA_TUPVAL | (1 << 4))
 
 
 #define ClosureHeader \
@@ -753,7 +747,7 @@ LUAI_FUNC void luaO_tostring (lua_State *L, TValue *obj);
 LUAI_FUNC const char *luaO_pushvfstring (lua_State *L, const char *fmt,
                                                        va_list argp);
 LUAI_FUNC const char *luaO_pushfstring (lua_State *L, const char *fmt, ...);
-LUAI_FUNC void luaO_chunkid (char *out, const char *source, size_t len);
+LUAI_FUNC void luaO_chunkid (char *out, const char *source, size_t srclen);
 
 
 #endif

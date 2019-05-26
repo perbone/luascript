@@ -1,5 +1,5 @@
 /*
-** $Id: ltablib.c,v 1.97 2018/04/04 14:23:41 roberto Exp $
+** $Id: ltablib.c $
 ** Library for Table Manipulation
 ** See Copyright Notice in lua.h
 */
@@ -69,7 +69,9 @@ static int tinsert (lua_State *L) {
     case 3: {
       lua_Integer i;
       pos = luaL_checkinteger(L, 2);  /* 2nd argument is the position */
-      luaL_argcheck(L, 1 <= pos && pos <= e, 2, "position out of bounds");
+      /* check whether 'pos' is in [1, e] */
+      luaL_argcheck(L, (lua_Unsigned)pos - 1u < (lua_Unsigned)e, 2,
+                       "position out of bounds");
       for (i = e; i > pos; i--) {  /* move up elements */
         lua_geti(L, 1, i - 1);
         lua_seti(L, 1, i);  /* t[i] = t[i - 1] */
@@ -89,7 +91,9 @@ static int tremove (lua_State *L) {
   lua_Integer size = aux_getn(L, 1, TAB_RW);
   lua_Integer pos = luaL_optinteger(L, 2, size);
   if (pos != size)  /* validate 'pos' if given */
-    luaL_argcheck(L, 1 <= pos && pos <= size + 1, 1, "position out of bounds");
+    /* check whether 'pos' is in [1, size + 1] */
+    luaL_argcheck(L, (lua_Unsigned)pos - 1u <= (lua_Unsigned)size, 1,
+                     "position out of bounds");
   lua_geti(L, 1, pos);  /* result = t[pos] */
   for ( ; pos < size; pos++) {
     lua_geti(L, 1, pos + 1);
@@ -295,7 +299,7 @@ static IdxT partition (lua_State *L, IdxT lo, IdxT up) {
   /* loop invariant: a[lo .. i] <= P <= a[j .. up] */
   for (;;) {
     /* next loop: repeat ++i while a[i] < P */
-    while (lua_geti(L, 1, ++i), sort_comp(L, -1, -2)) {
+    while ((void)lua_geti(L, 1, ++i), sort_comp(L, -1, -2)) {
       if (i == up - 1)  /* a[i] < P  but a[up - 1] == P  ?? */
         luaL_error(L, "invalid order function for sorting");
       lua_pop(L, 1);  /* remove a[i] */

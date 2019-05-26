@@ -1,5 +1,5 @@
 /*
-** $Id: ldo.c,v 2.202 2018/05/30 14:25:52 roberto Exp $
+** $Id: ldo.c $
 ** Stack and Call structure of Lua
 ** See Copyright Notice in lua.h
 */
@@ -88,15 +88,18 @@ struct lua_longjmp {
 };
 
 
-static void seterrorobj (lua_State *L, int errcode, StkId oldtop) {
+void luaD_seterrorobj (lua_State *L, int errcode, StkId oldtop) {
   switch (errcode) {
     case LUA_ERRMEM: {  /* memory error? */
-      TString *memerrmsg = luaS_newliteral(L, MEMERRMSG);
-      setsvalue2s(L, oldtop, memerrmsg); /* reuse preregistered msg. */
+      setsvalue2s(L, oldtop, G(L)->memerrmsg); /* reuse preregistered msg. */
       break;
     }
     case LUA_ERRERR: {
       setsvalue2s(L, oldtop, luaS_newliteral(L, "error in error handling"));
+      break;
+    }
+    case CLOSEPROTECT: {
+      setnilvalue(s2v(oldtop));  /* no error message */
       break;
     }
     default: {
@@ -115,6 +118,7 @@ l_noret luaD_throw (lua_State *L, int errcode) {
   }
   else {  /* thread has no error handler */
     global_State *g = G(L);
+    errcode = luaF_close(L, L->stack, errcode);  /* close all upvalues */
     L->status = cast_byte(errcode);  /* mark it as dead */
     if (g->mainthread->errorJmp) {  /* main thread has a handler? */
       setobjs2s(L, g->mainthread->top++, L->top - 1);  /* copy error obj. */
@@ -122,7 +126,7 @@ l_noret luaD_throw (lua_State *L, int errcode) {
     }
     else {  /* no handler at all; abort */
       if (g->panic) {  /* panic function? */
-        seterrorobj(L, errcode, L->top);  /* assume EXTRA_STACK */
+        luaD_seterrorobj(L, errcode, L->top);  /* assume EXTRA_STACK */
         if (L->ci->top < L->top)
           L->ci->top = L->top;  /* pushing msg. can break this invariant */
         lua_unlock(L);
@@ -135,8 +139,9 @@ l_noret luaD_throw (lua_State *L, int errcode) {
 
 
 int luaD_rawrunprotected (lua_State *L, Pfunc f, void *ud) {
-  unsigned short oldnCcalls = L->nCcalls - L->nci;
+  l_uint32 oldnCcalls = L->nCcalls - L->nci;
   struct lua_longjmp lj;
+  lua_assert(L->nCcalls >= L->nci);
   lj.status = LUA_OK;
   lj.previous = L->errorJmp;  /* chain new error handler */
   L->errorJmp = &lj;
@@ -366,32 +371,40 @@ void luaD_tryfuncTM (lua_State *L, StkId func) {
 ** separated.
 */
 static void moveresults (lua_State *L, StkId res, int nres, int wanted) {
+  StkId firstresult;
+  int i;
   switch (wanted) {  /* handle typical cases separately */
     case 0:  /* no values needed */
       L->top = res;
-      break;
+      return;
     case 1:  /* one value needed */
       if (nres == 0)   /* no results? */
         setnilvalue(s2v(res));  /* adjust with nil */
       else
         setobjs2s(L, res, L->top - nres);  /* move it to proper place */
       L->top = res + 1;
-      break;
+      return;
     case LUA_MULTRET:
       wanted = nres;  /* we want all results */
-      /* FALLTHROUGH */
-    default: {  /* multiple results */
-      StkId firstresult = L->top - nres;  /* index of first result */
-      int i;
-      /* move all results to correct place */
-      for (i = 0; i < nres && i < wanted; i++)
-        setobjs2s(L, res + i, firstresult + i);
-      for (; i < wanted; i++)  /* complete wanted number of results */
-        setnilvalue(s2v(res + i));
-      L->top = res + wanted;  /* top points after the last result */
       break;
-    }
+    default:  /* multiple results (or to-be-closed variables) */
+      if (hastocloseCfunc(wanted)) {  /* to-be-closed variables? */
+        ptrdiff_t savedres = savestack(L, res);
+        luaF_close(L, res, LUA_OK);  /* may change the stack */
+        res = restorestack(L, savedres);
+        wanted = codeNresults(wanted);  /* correct value */
+        if (wanted == LUA_MULTRET)
+          wanted = nres;
+      }
+      break;
   }
+  firstresult = L->top - nres;  /* index of first result */
+  /* move all results to correct place */
+  for (i = 0; i < nres && i < wanted; i++)
+    setobjs2s(L, res + i, firstresult + i);
+  for (; i < wanted; i++)  /* complete wanted number of results */
+    setnilvalue(s2v(res + i));
+  L->top = res + wanted;  /* top points after the last result */
 }
 
 
@@ -501,12 +514,17 @@ void luaD_call (lua_State *L, StkId func, int nresults) {
 
 
 /*
-** Similar to 'luaD_call', but does not allow yields during the call
+** Similar to 'luaD_call', but does not allow yields during the call.
+** If there is a stack overflow, freeing all CI structures will
+** force the subsequent call to invoke 'luaE_extendCI', which then
+** will raise any errors.
 */
 void luaD_callnoyield (lua_State *L, StkId func, int nResults) {
-  L->nny++;
+  incXCcalls(L);
+  if (getCcalls(L) >= LUAI_MAXCSTACK)  /* possible stack overflow? */
+    luaE_freeCI(L);
   luaD_call(L, func, nResults);
-  L->nny--;
+  decXCcalls(L);
 }
 
 
@@ -518,7 +536,7 @@ static void finishCcall (lua_State *L, int status) {
   CallInfo *ci = L->ci;
   int n;
   /* must have a continuation and must be able to call it */
-  lua_assert(ci->u.c.k != NULL && L->nny == 0);
+  lua_assert(ci->u.c.k != NULL && yieldable(L));
   /* error status can only happen in a protected call */
   lua_assert((ci->callstatus & CIST_YPCALL) || status == LUA_YIELD);
   if (ci->callstatus & CIST_YPCALL) {  /* was inside a pcall? */
@@ -584,11 +602,11 @@ static int recover (lua_State *L, int status) {
   if (ci == NULL) return 0;  /* no recovery point */
   /* "finish" luaD_pcall */
   oldtop = restorestack(L, ci->u2.funcidx);
-  luaF_close(L, oldtop);
-  seterrorobj(L, status, oldtop);
+  luaF_close(L, oldtop, status);  /* may change the stack */
+  oldtop = restorestack(L, ci->u2.funcidx);
+  luaD_seterrorobj(L, status, oldtop);
   L->ci = ci;
   L->allowhook = getoah(ci->callstatus);  /* restore original 'allowhook' */
-  L->nny = 0;  /* should be zero to be yieldable */
   luaD_shrinkstack(L);
   L->errfunc = ci->u.c.old_errfunc;
   return 1;  /* continue running the coroutine */
@@ -641,50 +659,48 @@ static void resume (lua_State *L, void *ud) {
   }
 }
 
-
 LUA_API int lua_resume (lua_State *L, lua_State *from, int nargs,
                                       int *nresults) {
   int status;
-  unsigned short oldnny = L->nny;  /* save "number of non-yieldable" calls */
   lua_lock(L);
   if (L->status == LUA_OK) {  /* may be starting a coroutine */
     if (L->ci != &L->base_ci)  /* not in base level? */
       return resume_error(L, "cannot resume non-suspended coroutine", nargs);
+    else if (L->top - (L->ci->func + 1) == nargs)  /* no function? */
+      return resume_error(L, "cannot resume dead coroutine", nargs);
   }
-  else if (L->status != LUA_YIELD)
+  else if (L->status != LUA_YIELD)  /* ended with errors? */
     return resume_error(L, "cannot resume dead coroutine", nargs);
-  L->nCcalls = (from) ? from->nCcalls + 1 : 1;
-  if (L->nCcalls >= LUAI_MAXCCALLS)
+  if (from == NULL)
+    L->nCcalls = 1;
+  else  /* correct 'nCcalls' for this thread */
+    L->nCcalls = getCcalls(from) - from->nci + L->nci + CSTACKCF;
+  if (L->nCcalls >= LUAI_MAXCSTACK)
     return resume_error(L, "C stack overflow", nargs);
   luai_userstateresume(L, nargs);
-  L->nny = 0;  /* allow yields */
   api_checknelems(L, (L->status == LUA_OK) ? nargs + 1 : nargs);
   status = luaD_rawrunprotected(L, resume, &nargs);
-  if (unlikely(status == -1))  /* error calling 'lua_resume'? */
-    status = LUA_ERRRUN;
-  else {  /* continue running after recoverable errors */
-    while (errorstatus(status) && recover(L, status)) {
-      /* unroll continuation */
-      status = luaD_rawrunprotected(L, unroll, &status);
-    }
-    if (unlikely(errorstatus(status))) {  /* unrecoverable error? */
-      L->status = cast_byte(status);  /* mark thread as 'dead' */
-      seterrorobj(L, status, L->top);  /* push error message */
-      L->ci->top = L->top;
-    }
-    else lua_assert(status == L->status);  /* normal end or yield */
+   /* continue running after recoverable errors */
+  while (errorstatus(status) && recover(L, status)) {
+    /* unroll continuation */
+    status = luaD_rawrunprotected(L, unroll, &status);
+  }
+  if (likely(!errorstatus(status)))
+    lua_assert(status == L->status);  /* normal end or yield */
+  else {  /* unrecoverable error */
+    L->status = cast_byte(status);  /* mark thread as 'dead' */
+    luaD_seterrorobj(L, status, L->top);  /* push error message */
+    L->ci->top = L->top;
   }
   *nresults = (status == LUA_YIELD) ? L->ci->u2.nyield
                                     : cast_int(L->top - (L->ci->func + 1));
-  L->nny = oldnny;  /* restore 'nny' */
-  L->nCcalls--;
   lua_unlock(L);
   return status;
 }
 
 
 LUA_API int lua_isyieldable (lua_State *L) {
-  return (L->nny == 0);
+  return yieldable(L);
 }
 
 
@@ -694,7 +710,7 @@ LUA_API int lua_yieldk (lua_State *L, int nresults, lua_KContext ctx,
   luai_userstateyield(L, nresults);
   lua_lock(L);
   api_checknelems(L, nresults);
-  if (unlikely(L->nny > 0)) {
+  if (unlikely(!yieldable(L))) {
     if (L != G(L)->mainthread)
       luaG_runerror(L, "attempt to yield across a C-call boundary");
     else
@@ -718,22 +734,26 @@ LUA_API int lua_yieldk (lua_State *L, int nresults, lua_KContext ctx,
 }
 
 
+/*
+** Call the C function 'func' in protected mode, restoring basic
+** thread information ('allowhook', etc.) and in particular
+** its stack level in case of errors.
+*/
 int luaD_pcall (lua_State *L, Pfunc func, void *u,
                 ptrdiff_t old_top, ptrdiff_t ef) {
   int status;
   CallInfo *old_ci = L->ci;
   lu_byte old_allowhooks = L->allowhook;
-  unsigned short old_nny = L->nny;
   ptrdiff_t old_errfunc = L->errfunc;
   L->errfunc = ef;
   status = luaD_rawrunprotected(L, func, u);
   if (unlikely(status != LUA_OK)) {  /* an error occurred? */
     StkId oldtop = restorestack(L, old_top);
-    luaF_close(L, oldtop);  /* close possible pending closures */
-    seterrorobj(L, status, oldtop);
     L->ci = old_ci;
     L->allowhook = old_allowhooks;
-    L->nny = old_nny;
+    status = luaF_close(L, oldtop, status);
+    oldtop = restorestack(L, old_top);  /* previous call may change stack */
+    luaD_seterrorobj(L, status, oldtop);
     luaD_shrinkstack(L);
   }
   L->errfunc = old_errfunc;
@@ -784,7 +804,7 @@ int luaD_protectedparser (lua_State *L, ZIO *z, const char *name,
                                         const char *mode) {
   struct SParser p;
   int status;
-  L->nny++;  /* cannot yield during parsing */
+  incnny(L);  /* cannot yield during parsing */
   p.z = z; p.name = name; p.mode = mode;
   p.dyd.actvar.arr = NULL; p.dyd.actvar.size = 0;
   p.dyd.gt.arr = NULL; p.dyd.gt.size = 0;
@@ -795,7 +815,7 @@ int luaD_protectedparser (lua_State *L, ZIO *z, const char *name,
   luaM_freearray(L, p.dyd.actvar.arr, p.dyd.actvar.size);
   luaM_freearray(L, p.dyd.gt.arr, p.dyd.gt.size);
   luaM_freearray(L, p.dyd.label.arr, p.dyd.label.size);
-  L->nny--;
+  decnny(L);
   return status;
 }
 

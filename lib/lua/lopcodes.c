@@ -1,5 +1,5 @@
 /*
-** $Id: lopcodes.c,v 1.82 2018/04/19 15:42:41 roberto Exp $
+** $Id: lopcodes.c $
 ** Opcodes for Lua virtual machine
 ** See Copyright Notice in lua.h
 */
@@ -16,92 +16,6 @@
 
 
 /* ORDER OP */
-
-#if defined(LUAI_DEFOPNAMES)
-
-LUAI_DDEF const char *const luaP_opnames[NUM_OPCODES+1] = {
-  "MOVE",
-  "LOADI",
-  "LOADF",
-  "LOADK",
-  "LOADKX",
-  "LOADBOOL",
-  "LOADNIL",
-  "GETUPVAL",
-  "SETUPVAL",
-  "GETTABUP",
-  "GETTABLE",
-  "GETI",
-  "GETFIELD",
-  "SETTABUP",
-  "SETTABLE",
-  "SETI",
-  "SETFIELD",
-  "NEWTABLE",
-  "SELF",
-  "ADDI",
-  "SUBI",
-  "MULI",
-  "MODI",
-  "POWI",
-  "DIVI",
-  "IDIVI",
-  "BANDK",
-  "BORK",
-  "BXORK",
-  "SHRI",
-  "SHLI",
-  "ADD",
-  "SUB",
-  "MUL",
-  "MOD",
-  "POW",
-  "DIV",
-  "IDIV",
-  "BAND",
-  "BOR",
-  "BXOR",
-  "SHL",
-  "SHR",
-  "UNM",
-  "BNOT",
-  "NOT",
-  "LEN",
-  "CONCAT",
-  "CLOSE",
-  "JMP",
-  "EQ",
-  "LT",
-  "LE",
-  "EQK",
-  "EQI",
-  "LTI",
-  "LEI",
-  "GTI",
-  "GEI",
-  "TEST",
-  "TESTSET",
-  "CALL",
-  "TAILCALL",
-  "RETURN",
-  "RETURN0",
-  "RETURN1",
-  "FORLOOP1",
-  "FORPREP1",
-  "FORLOOP",
-  "FORPREP",
-  "TFORCALL",
-  "TFORLOOP",
-  "SETLIST",
-  "CLOSURE",
-  "VARARG",
-  "PREPVARARG",
-  "EXTRAARG",
-  NULL
-};
-
-#endif
-
 
 LUAI_DDEF const lu_byte luaP_opmodes[NUM_OPCODES] = {
 /*       OT IT T  A  mode		   opcode  */
@@ -131,6 +45,13 @@ LUAI_DDEF const lu_byte luaP_opmodes[NUM_OPCODES] = {
  ,opmode(0, 0, 0, 1, iABC)		/* OP_POWI */
  ,opmode(0, 0, 0, 1, iABC)		/* OP_DIVI */
  ,opmode(0, 0, 0, 1, iABC)		/* OP_IDIVI */
+ ,opmode(0, 0, 0, 1, iABC)		/* OP_ADDK */
+ ,opmode(0, 0, 0, 1, iABC)		/* OP_SUBK */
+ ,opmode(0, 0, 0, 1, iABC)		/* OP_MULK */
+ ,opmode(0, 0, 0, 1, iABC)		/* OP_MODK */
+ ,opmode(0, 0, 0, 1, iABC)		/* OP_POWK */
+ ,opmode(0, 0, 0, 1, iABC)		/* OP_DIVK */
+ ,opmode(0, 0, 0, 1, iABC)		/* OP_IDIVK */
  ,opmode(0, 0, 0, 1, iABC)		/* OP_BANDK */
  ,opmode(0, 0, 0, 1, iABC)		/* OP_BORK */
  ,opmode(0, 0, 0, 1, iABC)		/* OP_BXORK */
@@ -154,6 +75,7 @@ LUAI_DDEF const lu_byte luaP_opmodes[NUM_OPCODES] = {
  ,opmode(0, 0, 0, 1, iABC)		/* OP_LEN */
  ,opmode(0, 0, 0, 1, iABC)		/* OP_CONCAT */
  ,opmode(0, 0, 0, 0, iABC)		/* OP_CLOSE */
+ ,opmode(0, 0, 0, 0, iABC)		/* OP_TBC */
  ,opmode(0, 0, 0, 0, isJ)		/* OP_JMP */
  ,opmode(0, 0, 1, 0, iABC)		/* OP_EQ */
  ,opmode(0, 0, 1, 0, iABC)		/* OP_LT */
@@ -171,16 +93,15 @@ LUAI_DDEF const lu_byte luaP_opmodes[NUM_OPCODES] = {
  ,opmode(0, 1, 0, 0, iABC)		/* OP_RETURN */
  ,opmode(0, 0, 0, 0, iABC)		/* OP_RETURN0 */
  ,opmode(0, 0, 0, 0, iABC)		/* OP_RETURN1 */
- ,opmode(0, 0, 0, 1, iABx)		/* OP_FORLOOP1 */
- ,opmode(0, 0, 0, 1, iABx)		/* OP_FORPREP1 */
  ,opmode(0, 0, 0, 1, iABx)		/* OP_FORLOOP */
  ,opmode(0, 0, 0, 1, iABx)		/* OP_FORPREP */
+ ,opmode(0, 0, 0, 0, iABx)		/* OP_TFORPREP */
  ,opmode(0, 0, 0, 0, iABC)		/* OP_TFORCALL */
  ,opmode(0, 0, 0, 1, iABx)		/* OP_TFORLOOP */
  ,opmode(0, 1, 0, 0, iABC)		/* OP_SETLIST */
  ,opmode(0, 0, 0, 1, iABx)		/* OP_CLOSURE */
  ,opmode(1, 0, 0, 1, iABC)		/* OP_VARARG */
- ,opmode(0, 0, 0, 1, iABC)		/* OP_PREPVARARG */
+ ,opmode(0, 0, 0, 1, iABC)		/* OP_VARARGPREP */
  ,opmode(0, 0, 0, 0, iAx)		/* OP_EXTRAARG */
 };
 

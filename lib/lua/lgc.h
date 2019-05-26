@@ -1,5 +1,5 @@
 /*
-** $Id: lgc.h,v 2.103 2018/06/11 14:19:50 roberto Exp $
+** $Id: lgc.h $
 ** Garbage Collector
 ** See Copyright Notice in lua.h
 */
@@ -123,11 +123,11 @@
 #define LUAI_GENMINORMUL         20
 
 /* wait memory to double before starting new cycle */
-#define LUAI_GCPAUSE    200     /* 200% */
+#define LUAI_GCPAUSE    200
 
 /*
 ** some gc parameters are stored divided by 4 to allow a maximum value
-** larger than 1000 in a 'lu_byte'.
+** up to 1023 in a 'lu_byte'.
 */
 #define getgcparam(p)	((p) * 4)
 #define setgcparam(p,v)	((p) = (v) / 4)
@@ -137,6 +137,13 @@
 /* how much to allocate before next GC step (log2) */
 #define LUAI_GCSTEPSIZE 13      /* 8 KB */
 
+
+/*
+** Check whether the declared GC mode is generational. While in
+** generational mode, the collector can go temporarily to incremental
+** mode to improve performance. This is signaled by 'g->lastatomic != 0'.
+*/
+#define isdecGCmodegen(g)	(g->gckind == KGC_GEN || g->lastatomic != 0)
 
 /*
 ** Does one step of collection when debt becomes positive. 'pre'/'pos'
@@ -164,9 +171,6 @@
 	(isblack(p) && iswhite(o)) ? \
 	luaC_barrier_(L,obj2gco(p),obj2gco(o)) : cast_void(0))
 
-#define luaC_protobarrier(L,p,o) \
-	(isblack(p) ? luaC_protobarrier_(L,p) : cast_void(0))
-
 LUAI_FUNC void luaC_fix (lua_State *L, GCObject *o);
 LUAI_FUNC void luaC_freeallobjects (lua_State *L);
 LUAI_FUNC void luaC_step (lua_State *L);
@@ -175,7 +179,6 @@ LUAI_FUNC void luaC_fullgc (lua_State *L, int isemergency);
 LUAI_FUNC GCObject *luaC_newobj (lua_State *L, int tt, size_t sz);
 LUAI_FUNC void luaC_barrier_ (lua_State *L, GCObject *o, GCObject *v);
 LUAI_FUNC void luaC_barrierback_ (lua_State *L, GCObject *o);
-LUAI_FUNC void luaC_protobarrier_ (lua_State *L, Proto *p);
 LUAI_FUNC void luaC_checkfinalizer (lua_State *L, GCObject *o, Table *mt);
 LUAI_FUNC void luaC_changemode (lua_State *L, int newmode);
 

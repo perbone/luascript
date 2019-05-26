@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.29 - 2019-05-25
+
+### Changed
+
+- Update lua 5.4 source code from master
+
 ## 0.0.28 - 2019-05-22
 
 ### Added
