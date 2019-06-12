@@ -1,0 +1,8 @@
+/manual
+/testes
+all
+bugs
+ltests*
+lua.c
+makefile
+onelua.c
