@@ -83,7 +83,7 @@ std::string get_notification_name(const int constant_value) {
 	if (notifications.find(constant_value) != notifications.end())
 		return notifications[constant_value];
 	else
-		return "Unknown notification";
+		return "Unknown notification value [" + std::to_string(constant_value) + "]";
 }
 
 void print_debug(const String fmt, ...) {
