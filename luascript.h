@@ -198,7 +198,7 @@ public:
 	virtual Error open_in_external_editor(const Ref<Script> &p_script, int p_line, int p_col);
 	virtual bool overrides_external_editor();
 
-	virtual Error complete_code(const String &p_code, const String &p_base_path, Object *p_owner, List<String> *r_options, bool &r_force, String &r_call_hint);
+	virtual Error complete_code(const String &p_code, const String &p_path, Object *p_owner, List<ScriptCodeCompletionOption> *r_options, bool &r_force, String &r_call_hint);
 
 	virtual Error lookup_code(const String &p_code, const String &p_symbol, const String &p_base_path, Object *p_owner, LookupResult &r_result);
 

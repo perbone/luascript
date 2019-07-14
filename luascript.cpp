@@ -232,6 +232,11 @@ void LuaScript::get_script_signal_list(List<MethodInfo> *r_signals) const {
 bool LuaScript::get_property_default_value(const StringName &p_property, Variant &r_value) const { // TODO
 	print_debug("LuaScript::get_property_default_value( p_property = " + p_property + " )");
 
+#ifdef TOOLS_ENABLED
+
+	return false;
+#endif
+
 	return false;
 }
 
@@ -683,15 +688,14 @@ bool LuaScriptLanguage::overrides_external_editor() { // TODO
 	return false;
 }
 
-Error LuaScriptLanguage::complete_code(const String &p_code, const String &p_base_path, Object *p_owner, List<String> *r_options,
-		bool &r_force, String &r_call_hint) { // TODO
+Error LuaScriptLanguage::complete_code(const String &p_code, const String &p_path, Object *p_owner,
+		List<ScriptCodeCompletionOption> *r_options, bool &r_force, String &r_call_hint) { // TODO
 	print_debug("LuaScriptLanguage::complete_code");
 
 	return ERR_UNAVAILABLE;
 }
 
-Error LuaScriptLanguage::lookup_code(const String &p_code, const String &p_symbol, const String &p_base_path, Object *p_owner,
-		LookupResult &r_result) { // TODO
+Error LuaScriptLanguage::lookup_code(const String &p_code, const String &p_symbol, const String &p_base_path, Object *p_owner, LookupResult &r_result) { // TODO
 	print_debug("LuaScriptLanguage::lookup_code");
 
 	return ERR_UNAVAILABLE;

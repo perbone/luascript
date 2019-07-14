@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.32 - 2019-07-13
+
+### Fixed
+
+* Fix broken compilation for 3.2-master after API change
+
 ## 0.0.31 - 2019-06-12
 
 ### Changed
@@ -29,8 +35,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-* Fix broken compilation for 3.2-master after API change
 * Add const modifier to LuaScriptSyntaxHighlighter::get_name() method
+
+### Fixed
+
+* Fix broken compilation for 3.2-master after API change
 
 ## 0.0.27 - 2019-04-14
 
