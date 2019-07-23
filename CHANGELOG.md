@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.33 - 2019-07-23
+
+### Changed
+
+* Bump Godot API target to 3.2-master and later
+
 ## 0.0.32 - 2019-07-13
 
 ### Fixed
