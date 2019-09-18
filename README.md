@@ -34,6 +34,7 @@ Lua 5.4 language support for Godot Engine 3.2-master and later
   - Code uglifier and minifier
   - Compilation into binary bytecode
   - Compression or encryption
+- Export for all Godot's supported platforms
 
 ## How to Build
 

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.34 - 2019-09-18
+
+### Added
+
+* Add missing feature 'Export for all Godot's supported platforms'
+
 ## 0.0.33 - 2019-07-23
 
 ### Changed
