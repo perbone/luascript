@@ -154,12 +154,12 @@ class LuaScriptLanguage : public ScriptLanguage {
 	friend class LuaScriptInstance;
 
 	_FORCE_INLINE_ static LuaScriptLanguage *get_singleton() {
-		print_debug("LuaScriptLanguage::get_singleton");
+		print_debug("_LuaScriptLanguage::get_singleton");
 		return singleton;
 	}
 
 	_FORCE_INLINE_ static MutexLock &acquire() {
-		print_debug("LuaScriptLanguage::acquire");
+		print_debug("_LuaScriptLanguage::acquire");
 		return *(memnew(MutexLock(LuaScriptLanguage::singleton->mutex)));
 	}
 
