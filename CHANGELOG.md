@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.35 - 2019-10-10
+
+### Added
+
+* Add Lua icon
+
 ## 0.0.34 - 2019-09-18
 
 ### Added
