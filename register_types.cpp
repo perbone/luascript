@@ -19,7 +19,10 @@
 
 #include "register_types.h"
 
-#include "luascript.h"
+#include "lua_script.h"
+#include "lua_script_language.h"
+#include "lua_script_resource_formate_loader.h"
+#include "lua_script_resource_formate_saver.h"
 
 #ifdef TOOLS_ENABLED
 #include "editor/luascript_syntax_highlighter.h"

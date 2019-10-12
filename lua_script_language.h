@@ -19,132 +19,12 @@
 
 #pragma once
 
-#include "core/io/resource_loader.h"
-#include "core/io/resource_saver.h"
 #include "core/os/mutex.h"
 #include "core/script_language.h"
 
 #include "debug.h"
 #include "lua/lua.hpp"
-
-class LuaScript : public Script {
-
-	GDCLASS(LuaScript, Script)
-
-	friend class LuaScriptInstance;
-	friend class LuaScriptLanguage;
-
-private:
-	bool tool;
-	bool valid;
-
-	SelfList<LuaScript> self;
-
-	String source;
-
-	Set<Object *> instances;
-
-#ifdef TOOLS_ENABLED
-	bool source_changed_cache;
-	Set<PlaceHolderScriptInstance *> placeholders;
-#endif
-
-public:
-	LuaScript();
-	~LuaScript();
-
-	virtual bool can_instance() const;
-
-	virtual Ref<Script> get_base_script() const;
-
-	virtual StringName get_instance_base_type() const;
-	virtual ScriptInstance *instance_create(Object *p_this);
-	virtual bool instance_has(const Object *p_this) const;
-
-	virtual bool has_source_code() const;
-	virtual String get_source_code() const;
-	virtual void set_source_code(const String &p_code);
-	virtual Error reload(bool p_keep_state = false);
-
-	virtual bool has_method(const StringName &p_method) const;
-	virtual MethodInfo get_method_info(const StringName &p_method) const;
-
-	virtual bool is_tool() const;
-	virtual bool is_valid() const;
-
-	virtual ScriptLanguage *get_language() const;
-
-	virtual bool has_script_signal(const StringName &p_signal) const;
-	virtual void get_script_signal_list(List<MethodInfo> *r_signals) const;
-
-	virtual bool get_property_default_value(const StringName &p_property, Variant &r_value) const;
-
-	virtual void update_exports();
-
-	virtual void get_script_method_list(List<MethodInfo> *p_list) const;
-	virtual void get_script_property_list(List<PropertyInfo> *p_list) const;
-
-	virtual int get_member_line(const StringName &p_member) const;
-
-	virtual void get_constants(Map<StringName, Variant> *p_constants);
-	virtual void get_members(Set<StringName> *p_constants);
-
-	Error load_source_code(const String &p_path);
-
-	// Supports sorting based on inheritance; parent must came first // TODO
-	bool operator()(const Ref<LuaScript> &a, const Ref<LuaScript> &b) const { return true; }
-
-protected:
-	static void _bind_methods();
-
-	bool _set(const StringName &p_name, const Variant &p_property);
-	bool _get(const StringName &p_name, Variant &r_property) const;
-	void _get_property_list(List<PropertyInfo> *p_list) const;
-
-#ifdef TOOLS_ENABLED
-	virtual void _placeholder_erased(PlaceHolderScriptInstance *p_placeholder);
-#endif
-
-private:
-	Variant _new(const Variant **p_args, int p_argcount, Variant::CallError &r_error);
-};
-
-class LuaScriptInstance : public ScriptInstance {
-
-	friend class LuaScript;
-
-private:
-	Object *owner;
-	Ref<LuaScript> script;
-
-public:
-	LuaScriptInstance();
-	~LuaScriptInstance();
-
-	virtual bool set(const StringName &p_name, const Variant &p_value);
-	virtual bool get(const StringName &p_name, Variant &r_ret) const;
-	virtual void get_property_list(List<PropertyInfo> *p_properties) const;
-	virtual Variant::Type get_property_type(const StringName &p_name, bool *r_is_valid = NULL) const;
-
-	virtual Object *get_owner();
-
-	virtual void get_method_list(List<MethodInfo> *p_list) const;
-	virtual bool has_method(const StringName &p_method) const;
-	virtual Variant call(const StringName &p_method, const Variant **p_args, int p_argcount, Variant::CallError &r_error);
-	virtual void call_multilevel(const StringName &p_method, const Variant **p_args, int p_argcount);
-	virtual void call_multilevel_reversed(const StringName &p_method, const Variant **p_args, int p_argcount);
-	virtual void notification(int p_notification);
-
-	virtual void refcount_incremented();
-	virtual bool refcount_decremented();
-
-	virtual Ref<Script> get_script() const;
-
-	virtual MultiplayerAPI::RPCMode get_rpc_mode(const StringName &p_method) const;
-	virtual MultiplayerAPI::RPCMode get_rset_mode(const StringName &p_variable) const;
-
-	virtual ScriptLanguage *get_language();
-};
+#include "lua_script.h"
 
 class LuaScriptLanguage : public ScriptLanguage {
 
@@ -241,25 +121,4 @@ public:
 
 private:
 	String get_indentation() const;
-};
-
-class LuaScriptResourceFormatLoader : public ResourceFormatLoader {
-public:
-	LuaScriptResourceFormatLoader();
-	virtual ~LuaScriptResourceFormatLoader();
-
-	virtual Ref<Resource> load(const String &p_path, const String &p_original_path = "", Error *r_error = NULL);
-	virtual void get_recognized_extensions(List<String> *p_extensions) const;
-	virtual bool handles_type(const String &p_type) const;
-	virtual String get_resource_type(const String &p_path) const;
-};
-
-class LuaScriptResourceFormatSaver : public ResourceFormatSaver {
-public:
-	LuaScriptResourceFormatSaver();
-	virtual ~LuaScriptResourceFormatSaver();
-
-	virtual Error save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags = 0);
-	virtual void get_recognized_extensions(const Ref<Resource> &p_resource, List<String> *p_extensions) const;
-	virtual bool recognize(const Ref<Resource> &p_resource) const;
 };

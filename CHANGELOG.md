@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.36 - 2019-10-12
+
+### Changed
+
+* Refactor so each class shall have it's own header and implementation file
+
 ## 0.0.35 - 2019-10-10
 
 ### Added

@@ -19,12 +19,14 @@
 
 #pragma once
 
-#include "core/ustring.h"
+#include "core/io/resource_saver.h"
 
-const String EMPTY_STRING = "";
-const String SCRIPT_TYPE = "Script";
-const String LUA_NAME = "Lua";
-const String LUA_TYPE = "LuaScript";
-const String LUA_EXTENSION = "lua";
-const int LUA_PIL_IDENTATION_SIZE = 2;  // Following PiL indenting often uses two spaces
-const String LUA_PIL_IDENTATION = "  "; // Keep it in sync with LUA_PIL_IDENTATION_SIZE constant
+class LuaScriptResourceFormatSaver : public ResourceFormatSaver {
+public:
+	LuaScriptResourceFormatSaver();
+	virtual ~LuaScriptResourceFormatSaver();
+
+	virtual Error save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags = 0);
+	virtual void get_recognized_extensions(const Ref<Resource> &p_resource, List<String> *p_extensions) const;
+	virtual bool recognize(const Ref<Resource> &p_resource) const;
+};
