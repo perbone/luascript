@@ -17,6 +17,8 @@
  * limitations under the License
  */
 
+#include "core/os/os.h"
+
 #include "constants.h"
 #include "debug.h"
 #include "lua_script.h"

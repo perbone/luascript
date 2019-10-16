@@ -17,6 +17,7 @@
  * limitations under the License
  */
 
+#include "core/engine.h"
 #include "editor/editor_settings.h"
 
 #include "constants.h"
