@@ -47,7 +47,7 @@ private:
 
 public:
 	LuaScript();
-	~LuaScript();
+	virtual ~LuaScript();
 
 	virtual bool can_instance() const;
 
