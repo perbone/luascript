@@ -22,8 +22,8 @@
 #include "constants.h"
 #include "debug.h"
 #include "lua_script.h"
-#include "lua_script_language.h"
 #include "lua_script_instance.h"
+#include "lua_script_language.h"
 
 LuaScript::LuaScript() :
 		tool(false),
@@ -69,7 +69,7 @@ StringName LuaScript::get_instance_base_type() const { // TODO
 ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 	print_debug("LuaScript::instance_create( p_this = " + p_this->get_class_name() + " )");
 
-	ERR_FAIL_COND_V(!this->valid, nullptr);
+	ERR_FAIL_COND_V(!this->valid, nullptr)
 
 	if (!tool && !ScriptServer::is_scripting_enabled()) {
 #ifdef TOOLS_ENABLED
@@ -132,7 +132,7 @@ Error LuaScript::reload(bool p_keep_state) { // TODO
 	{
 		auto guard = LuaScriptLanguage::acquire();
 		bool has_instances = instances.size();
-		ERR_FAIL_COND_V(!p_keep_state && has_instances, ERR_ALREADY_IN_USE);
+		ERR_FAIL_COND_V(!p_keep_state && has_instances, ERR_ALREADY_IN_USE)
 	}
 
 	this->valid = false;
@@ -164,7 +164,7 @@ Error LuaScript::load_source_code(const String &p_path) {
 
 	FileAccess *file = FileAccess::open(p_path, FileAccess::READ, &error);
 	if (error) {
-		ERR_FAIL_COND_V(error, error);
+		ERR_FAIL_COND_V(error, error)
 	}
 
 	PoolVector<uint8_t> buffer;
@@ -179,15 +179,15 @@ Error LuaScript::load_source_code(const String &p_path) {
 	file->close();
 	memdelete(file);
 
-	ERR_FAIL_COND_V(r != len, ERR_CANT_OPEN);
+	ERR_FAIL_COND_V(r != len, ERR_CANT_OPEN)
 
 	w[len] = 0;
 
 	String source;
 
 	if (source.parse_utf8((const char *)w.ptr())) {
-		ERR_EXPLAIN("Script '" + p_path + "' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.");
-		ERR_FAIL_V(ERR_INVALID_DATA);
+		ERR_EXPLAIN("Script '" + p_path + "' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.")
+		ERR_FAIL_V(ERR_INVALID_DATA)
 	}
 
 	this->set_source_code(source);

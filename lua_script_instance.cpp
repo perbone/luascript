@@ -17,9 +17,9 @@
  * limitations under the License
  */
 
+#include "lua_script_instance.h"
 #include "constants.h"
 #include "debug.h"
-#include "lua_script_instance.h"
 #include "lua_script_language.h"
 
 LuaScriptInstance::LuaScriptInstance() {
@@ -81,7 +81,7 @@ Variant LuaScriptInstance::call(const StringName &p_method, const Variant **p_ar
 	print_debug("LuaScriptInstance::call( p_method = " + p_method + " )");
 
 	if (!script.is_valid())
-		ERR_FAIL_V(Variant());
+		ERR_FAIL_V(Variant())
 
 	// FIXME call this|base::method
 
