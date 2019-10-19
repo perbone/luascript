@@ -74,7 +74,7 @@
 ** higher part counts the number of non-yieldable calls in the stack.
 ** (They are together so that we can change both with one instruction.)
 **
-** Because calls to external C functions can use of unkown amount
+** Because calls to external C functions can use an unknown amount
 ** of space (e.g., functions using an auxiliary buffer), calls
 ** to these functions add more than one to the count (see CSTACKCF).
 **
@@ -185,9 +185,9 @@ typedef struct CallInfo {
   union {
     int funcidx;  /* called-function index */
     int nyield;  /* number of values yielded */
-    struct {  /* info about transfered values (for call/return hooks) */
-      unsigned short ftransfer;  /* offset of first value transfered */
-      unsigned short ntransfer;  /* number of values transfered */
+    struct {  /* info about transferred values (for call/return hooks) */
+      unsigned short ftransfer;  /* offset of first value transferred */
+      unsigned short ntransfer;  /* number of values transferred */
     } transferinfo;
   } u2;
   short nresults;  /* expected number of results from this function */
@@ -335,8 +335,7 @@ union GCUnion {
 #define gco2t(o)  check_exp((o)->tt == LUA_TTABLE, &((cast_u(o))->h))
 #define gco2p(o)  check_exp((o)->tt == LUA_TPROTO, &((cast_u(o))->p))
 #define gco2th(o)  check_exp((o)->tt == LUA_TTHREAD, &((cast_u(o))->th))
-#define gco2upv(o)  \
-	check_exp(novariant((o)->tt) == LUA_TUPVAL, &((cast_u(o))->upv))
+#define gco2upv(o)	check_exp((o)->tt == LUA_TUPVAL, &((cast_u(o))->upv))
 
 
 /*
@@ -356,6 +355,7 @@ LUAI_FUNC void luaE_freeCI (lua_State *L);
 LUAI_FUNC void luaE_shrinkCI (lua_State *L);
 LUAI_FUNC void luaE_enterCcall (lua_State *L);
 LUAI_FUNC void luaE_warning (lua_State *L, const char *msg, int tocont);
+LUAI_FUNC void luaE_warnerror (lua_State *L, const char *where);
 
 
 #define luaE_exitCcall(L)	((L)->nCcalls++)

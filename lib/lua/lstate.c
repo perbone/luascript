@@ -96,7 +96,7 @@ void luaE_setdebt (global_State *g, l_mem debt) {
 }
 
 
-LUA_API int lua_setCstacklimit (lua_State *L, unsigned int limit) {
+LUA_API int lua_setcstacklimit (lua_State *L, unsigned int limit) {
   global_State *g = G(L);
   int ccalls;
   luaE_freeCI(L);  /* release unused CIs */
@@ -286,7 +286,6 @@ static void preinit_thread (lua_State *L, global_State *g) {
   L->stacksize = 0;
   L->twups = L;  /* thread has no upvalues */
   L->errorJmp = NULL;
-  L->nCcalls = CSTACKTHREAD;
   L->hook = NULL;
   L->hookmask = 0;
   L->basehookcount = 0;
@@ -327,6 +326,7 @@ LUA_API lua_State *lua_newthread (lua_State *L) {
   setthvalue2s(L, L->top, L1);
   api_incr_top(L);
   preinit_thread(L1, g);
+  L1->nCcalls = getCcalls(L);
   L1->hookmask = L->hookmask;
   L1->basehookcount = L->basehookcount;
   L1->hook = L->hook;
@@ -388,7 +388,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   preinit_thread(L, g);
   g->allgc = obj2gco(L);  /* by now, only object is the main thread */
   L->next = NULL;
-  g->Cstacklimit = L->nCcalls = LUAI_MAXCSTACK;
+  g->Cstacklimit = L->nCcalls = LUAI_MAXCSTACK + CSTACKERR;
   g->frealloc = f;
   g->ud = ud;
   g->warnf = NULL;
@@ -442,4 +442,20 @@ void luaE_warning (lua_State *L, const char *msg, int tocont) {
     wf(G(L)->ud_warn, msg, tocont);
 }
 
+
+/*
+** Generate a warning from an error message
+*/
+void luaE_warnerror (lua_State *L, const char *where) {
+  TValue *errobj = s2v(L->top - 1);  /* error object */
+  const char *msg = (ttisstring(errobj))
+                  ? svalue(errobj)
+                  : "error object is not a string";
+  /* produce warning "error in %s (%s)" (where, msg) */
+  luaE_warning(L, "error in ", 1);
+  luaE_warning(L, where, 1);
+  luaE_warning(L, " (", 1);
+  luaE_warning(L, msg, 1);
+  luaE_warning(L, ")", 0);
+}
 
