@@ -55,12 +55,12 @@ void unregister_luascript_types() {
 
 	if (resource_saver) {
 		ResourceSaver::remove_resource_format_saver(resource_saver);
-		memdelete(resource_saver);
+		//memdelete(resource_saver); // it seems the remove method reclaims the given object memory
 	}
 
 	if (resource_loader) {
 		ResourceLoader::remove_resource_format_loader(resource_loader);
-		memdelete(resource_loader);
+		// memdelete(resource_loader); // it seems the remove method reclaims the given object memory
 	}
 
 	if (script_language) {
