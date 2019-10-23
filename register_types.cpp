@@ -37,14 +37,14 @@ void register_luascript_types() {
 
 	ClassDB::register_class<LuaScript>();
 
-	script_language = memnew(LuaScriptLanguage);
-	ScriptServer::register_language(script_language);
+	if (script_language = memnew(LuaScriptLanguage); script_language)
+		ScriptServer::register_language(script_language);
 
-	resource_loader = memnew(LuaScriptResourceFormatLoader);
-	ResourceLoader::add_resource_format_loader(resource_loader);
+	if (resource_loader = memnew(LuaScriptResourceFormatLoader); resource_loader)
+		ResourceLoader::add_resource_format_loader(resource_loader);
 
-	resource_saver = memnew(LuaScriptResourceFormatSaver);
-	ResourceSaver::add_resource_format_saver(resource_saver);
+	if (resource_saver = memnew(LuaScriptResourceFormatSaver); resource_saver)
+		ResourceSaver::add_resource_format_saver(resource_saver);
 
 #ifdef TOOLS_ENABLED
 	ScriptEditor::register_create_syntax_highlighter_function(LuaScriptSyntaxHighlighter::create);
@@ -53,12 +53,18 @@ void register_luascript_types() {
 
 void unregister_luascript_types() {
 
-	ScriptServer::unregister_language(script_language);
-
-	if (script_language)
-		memdelete(script_language);
-	if (resource_loader)
-		memdelete(resource_loader);
-	if (resource_saver)
+	if (resource_saver) {
+		ResourceSaver::remove_resource_format_saver(resource_saver);
 		memdelete(resource_saver);
+	}
+
+	if (resource_loader) {
+		ResourceLoader::remove_resource_format_loader(resource_loader);
+		memdelete(resource_loader);
+	}
+
+	if (script_language) {
+		ScriptServer::unregister_language(script_language);
+		memdelete(script_language);
+	}
 }
