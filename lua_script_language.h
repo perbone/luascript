@@ -33,6 +33,7 @@ class LuaScriptLanguage : public ScriptLanguage {
 	friend class LuaScript;
 	friend class LuaScriptInstance;
 
+private:
 	_FORCE_INLINE_ static LuaScriptLanguage *get_singleton() {
 		print_debug("_LuaScriptLanguage::get_singleton");
 		return singleton;
