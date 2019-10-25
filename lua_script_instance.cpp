@@ -22,9 +22,10 @@
 #include "debug.h"
 #include "lua_script_language.h"
 
-LuaScriptInstance::LuaScriptInstance() {
+LuaScriptInstance::LuaScriptInstance(Object *p_owner, Ref<LuaScript> p_script) :
+		owner(p_owner),
+		script(p_script) {
 	print_debug("LuaScriptInstance::constructor");
-
 } // TODO
 
 LuaScriptInstance::~LuaScriptInstance() {

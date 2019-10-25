@@ -82,9 +82,7 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 #endif
 	}
 
-	LuaScriptInstance *instance = memnew(LuaScriptInstance);
-	instance->owner = p_this;
-	instance->script = Ref<LuaScript>(this);
+	LuaScriptInstance *instance = memnew(LuaScriptInstance(p_this, Ref<LuaScript>(this)));
 
 	auto guard = LuaScriptLanguage::acquire();
 	this->instances.insert(p_this);

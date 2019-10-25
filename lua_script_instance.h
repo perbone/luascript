@@ -26,11 +26,13 @@ class LuaScriptInstance : public ScriptInstance {
 	friend class LuaScript;
 
 private:
+	LuaScriptInstance(Object *p_owner, Ref<LuaScript> p_script);
+
+private:
 	Object *owner;
 	Ref<LuaScript> script;
 
 public:
-	LuaScriptInstance();
 	virtual ~LuaScriptInstance();
 
 	virtual bool set(const StringName &p_name, const Variant &p_value);
