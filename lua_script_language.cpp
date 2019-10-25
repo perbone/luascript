@@ -475,7 +475,7 @@ String LuaScriptLanguage::get_indentation() const {
 		if (use_space_indentation) {
 			int indent_size = EDITOR_DEF("text_editor/indent/size", LUA_PIL_IDENTATION_SIZE);
 
-			String space_indent = "";
+			String space_indent = EMPTY_STRING;
 			for (int i = 0; i < indent_size; i++) {
 				space_indent += " ";
 			}
