@@ -12,6 +12,7 @@ Lua 5.4 language support for Godot Engine 3.2-master and later
 ## Features
 
 - Full Godot's gameplay API implementation (feature complete on par with GDScript)
+- Configurable API sandbox
 - Object Oriented Programming based on Lua's tables and metatables
 - Support for inheritance from Lua base class and file
 - Support for inheritance from native base class and file
