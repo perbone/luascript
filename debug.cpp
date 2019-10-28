@@ -17,13 +17,13 @@
  * limitations under the License
  */
 
+#ifdef DEBUG_ENABLED
+
 #include <cstdlib>
 #include <cstring>
 #include <map>
 
 #include "debug.h"
-
-#if defined(LUA_SCRIPT_DEBUG_ENABLED)
 
 std::map<int, std::string> notifications{
 	{ 0, "NOTIFICATION_POSTINITIALIZE" },

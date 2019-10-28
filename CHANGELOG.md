@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.39 - 2019-10-27
+
+### Changed
+
+* Debug build will only be compiled when scons target={debug|release_debug}
+
 ## 0.0.38 - 2019-10-18
 
 ### Changed

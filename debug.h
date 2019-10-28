@@ -19,9 +19,7 @@
 
 #pragma once
 
-#define LUA_SCRIPT_DEBUG_ENABLED
-
-#if defined(LUA_SCRIPT_DEBUG_ENABLED)
+#ifdef DEBUG_ENABLED
 
 #include <string>
 
