@@ -93,7 +93,7 @@ void print_debug(const String fmt, ...) {
 
 	wcstombs(fmtbuf, fmt.c_str(), fmt.size());
 
-	sprintf(tmpbuf, "%d %lu %2lu %2lu ",
+	sprintf(tmpbuf, "%d %llu %2llu %2llu ",
 			OS::get_singleton()->get_process_id(),
 			OS::get_singleton()->get_unix_time(),
 			Thread::get_main_id(),
