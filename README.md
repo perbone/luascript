@@ -44,7 +44,7 @@ Lua 5.4 language support for Godot Engine 3.2-master and later
 
 My development environment is based primarily on Linux and Mac so I don't know if it will work on Windows. Shouldn't be a problem though as I'm only making use of standard C++17 code and the available Godot C++ API. If you experience any problem when building on Windows please report an issue and I'll be glad to work on solving it.
 
-So first of all you have to have Godot successfully built in your system. That's out of scope of this simple how to.
+So first of all you have to have Godot successfully built in your system, which is beyond the scope of this simple how to.
 
 Now, assuming you can git clone from GitHub, just clone LuaScript into Godo's source code 'modules' folder and then, build Godot again adding to the command line the following options
 
