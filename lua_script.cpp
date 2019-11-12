@@ -184,8 +184,7 @@ Error LuaScript::load_source_code(const String &p_path) {
 	String source;
 
 	if (source.parse_utf8((const char *)w.ptr())) {
-		ERR_EXPLAIN("Script '" + p_path + "' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.")
-		ERR_FAIL_V(ERR_INVALID_DATA)
+		ERR_FAIL_V_MSG(ERR_INVALID_DATA, "Script '" + p_path + "' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.")
 	}
 
 	this->set_source_code(source);
