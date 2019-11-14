@@ -31,6 +31,7 @@ Lua 5.4 language support for Godot Engine 3.2-master and later
     - Format automatically when saving
   - Source code refactoring (currently not supported by Godot)
 - Lua language coding in external editor (possibly with the same capabilities as the built in editor)
+- Support for multiple Lua runtimes (PUC Rio Lua 5.4 and LuaJIT)
 - Debugging tools (possibly with all Godot's debugging capabilities)
 - Tool creation to extend the built in editor functionalities
 - Support for advanced package assembling
