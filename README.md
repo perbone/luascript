@@ -7,7 +7,7 @@ Lua 5.4 language support for Godot Engine 3.2-master and later
 > Current progress:
 >
 > - Currently I'm experimenting with ways to generate the Lua bindings for the Godot API.
-> - Currently I'm experimenting with parsers. The one I'm testing right is the PEGTL C++ library. With this in place it will be possible to start answering engine call backs, like for example, \_ready(), \_process() etc.
+> - Currently I'm experimenting with parsers. The one I'm testing right is the Antlr4 C++ library. With this in place it will be possible to start answering engine call backs, like for example, \_ready(), \_process() etc.
 
 ## Features
 
