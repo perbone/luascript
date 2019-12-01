@@ -114,6 +114,12 @@ void LuaScriptInstance::notification(int p_notification) {
 
 } // TODO
 
+String LuaScriptInstance::to_string(bool *r_valid) {
+	if (r_valid)
+		*r_valid = false;
+	return String();
+} // TODO
+
 void LuaScriptInstance::refcount_incremented() {
 	print_debug("LuaScriptInstance::refcount_incremented");
 

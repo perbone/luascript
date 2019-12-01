@@ -90,6 +90,19 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 	return instance;
 }
 
+PlaceHolderScriptInstance *LuaScript::placeholder_instance_create(Object *p_this) {
+	print_debug("LuaScript::placeholder_instance_create( p_this = " + p_this->get_class_name() + " )");
+
+#ifdef TOOLS_ENABLED
+	PlaceHolderScriptInstance *instance = memnew(PlaceHolderScriptInstance(LuaScriptLanguage::get_singleton(), Ref<Script>(this), p_this));
+	placeholders.insert(instance);
+	update_exports();
+	return instance;
+#else
+	return nullptr;
+#endif
+}
+
 bool LuaScript::instance_has(const Object *p_this) const { // TODO
 	print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + " )");
 
@@ -155,43 +168,6 @@ MethodInfo LuaScript::get_method_info(const StringName &p_method) const { // TOD
 	return MethodInfo();
 }
 
-Error LuaScript::load_source_code(const String &p_path) {
-	print_debug("LuaScript::load_source_code( p_path = " + p_path + " )");
-
-	Error error;
-
-	FileAccess *file = FileAccess::open(p_path, FileAccess::READ, &error);
-	if (error) {
-		ERR_FAIL_COND_V(error, error)
-	}
-
-	PoolVector<uint8_t> buffer;
-
-	const int len = static_cast<const int>(file->get_len());
-	buffer.resize(len + 1);
-
-	PoolVector<uint8_t>::Write w = buffer.write();
-
-	int r = file->get_buffer(w.ptr(), len);
-
-	file->close();
-	memdelete(file);
-
-	ERR_FAIL_COND_V(r != len, ERR_CANT_OPEN)
-
-	w[len] = 0;
-
-	String source;
-
-	if (source.parse_utf8((const char *)w.ptr())) {
-		ERR_FAIL_V_MSG(ERR_INVALID_DATA, "Script '" + p_path + "' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.")
-	}
-
-	this->set_source_code(source);
-
-	return OK;
-}
-
 bool LuaScript::is_tool() const { // TODO
 	print_debug("LuaScript::is_tool");
 
@@ -235,6 +211,10 @@ bool LuaScript::get_property_default_value(const StringName &p_property, Variant
 void LuaScript::update_exports() {
 	print_debug("LuaScript::update_exports");
 
+#ifdef TOOLS_ENABLED
+	// TODO
+#endif
+
 } // TODO
 
 void LuaScript::get_script_method_list(List<MethodInfo> *p_list) const {
@@ -262,6 +242,51 @@ void LuaScript::get_members(Set<StringName> *p_constants) {
 	print_debug("LuaScript::get_members");
 
 } // TODO
+
+#ifdef TOOLS_ENABLED
+bool LuaScript::is_placeholder_fallback_enabled() const {
+	print_debug("LuaScript::is_placeholder_fallback_enabled()");
+
+	return this->placeholder_fallback_enabled;
+} // TODO
+#endif
+
+Error LuaScript::load_source_code(const String &p_path) {
+	print_debug("LuaScript::load_source_code( p_path = " + p_path + " )");
+
+	Error error;
+
+	FileAccess *file = FileAccess::open(p_path, FileAccess::READ, &error);
+	if (error) {
+		ERR_FAIL_COND_V(error, error)
+	}
+
+	PoolVector<uint8_t> buffer;
+
+	const int len = static_cast<const int>(file->get_len());
+	buffer.resize(len + 1);
+
+	PoolVector<uint8_t>::Write w = buffer.write();
+
+	int r = file->get_buffer(w.ptr(), len);
+
+	file->close();
+	memdelete(file);
+
+	ERR_FAIL_COND_V(r != len, ERR_CANT_OPEN)
+
+	w[len] = 0;
+
+	String source;
+
+	if (source.parse_utf8((const char *)w.ptr())) {
+		ERR_FAIL_V_MSG(ERR_INVALID_DATA, "Script '" + p_path + "' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.")
+	}
+
+	this->set_source_code(source);
+
+	return OK;
+}
 
 void LuaScript::_bind_methods() {
 	print_debug("LuaScript::_bind_methods");

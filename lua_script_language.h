@@ -85,6 +85,8 @@ public:
 
 	virtual void auto_indent_code(String &p_code, int p_from_line, int p_to_line) const;
 	virtual void add_global_constant(const StringName &p_variable, const Variant &p_value);
+	virtual void add_named_global_constant(const StringName &p_name, const Variant &p_value);
+	virtual void remove_named_global_constant(const StringName &p_name);
 
 	virtual void thread_enter();
 	virtual void thread_exit();
@@ -117,8 +119,13 @@ public:
 
 	virtual void *alloc_instance_binding_data(Object *p_object);
 	virtual void free_instance_binding_data(void *p_data);
+	virtual void refcount_incremented_instance_binding(Object *p_object);
+	virtual bool refcount_decremented_instance_binding(Object *p_object);
 
 	virtual void frame();
+
+	virtual bool handles_global_class_type(const String &p_type) const;
+	virtual String get_global_class_name(const String &p_path, String *r_base_type = nullptr, String *r_icon_path = nullptr) const;
 
 private:
 	String get_indentation() const;

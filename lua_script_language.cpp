@@ -319,6 +319,16 @@ void LuaScriptLanguage::add_global_constant(const StringName &p_variable, const 
 	print_debug("LuaScriptLanguage::add_global_constant( p_variable = " + p_variable + ", p_value = " + p_value + " )");
 } // TODO
 
+void LuaScriptLanguage::add_named_global_constant(const StringName &p_name, const Variant &p_value) {
+	print_debug("LuaScriptLanguage::add_named_global_constant( p_name = " + p_name + ", p_value = " + p_value + " )");
+
+} // TODO
+
+void LuaScriptLanguage::remove_named_global_constant(const StringName &p_name) {
+	print_debug("LuaScriptLanguage::remove_named_global_constant( p_name = " + p_name + " )");
+
+} // TODO
+
 void LuaScriptLanguage::thread_enter() {
 	print_debug("LuaScriptLanguage::thread_enter");
 } // TODO
@@ -462,8 +472,31 @@ void LuaScriptLanguage::free_instance_binding_data(void *p_data) {
 	print_debug("LuaScriptLanguage::free_instance_binding_data");
 } // TODO
 
+void LuaScriptLanguage::refcount_incremented_instance_binding(Object *p_object) {
+	print_debug("LuaScriptLanguage::refcount_incremented_instance_binding( p_object = " + p_object->get_class_name() + " )");
+
+} // TODO
+
+bool LuaScriptLanguage::refcount_decremented_instance_binding(Object *p_object) {
+	print_debug("LuaScriptLanguage::refcount_decremented_instance_binding( p_object = " + p_object->get_class_name() + " )");
+
+	return true;
+} // TODO
+
 void LuaScriptLanguage::frame() {
 	//	print_debug("LuaScriptLanguage::frame");
+} // TODO
+
+bool LuaScriptLanguage::handles_global_class_type(const String &p_type) const {
+	print_debug("LuaScriptLanguage::handles_global_class_type( p_type = " + p_type + " )");
+
+	return false;
+} // TODO
+
+String LuaScriptLanguage::get_global_class_name(const String &p_path, String *r_base_type, String *r_icon_path) const {
+	print_debug("LuaScriptLanguage::get_global_class_name( p_path = " + p_path + ", r_base_type = " + *r_base_type + ", r_icon_path = " + *r_icon_path + " )");
+
+	return String();
 } // TODO
 
 String LuaScriptLanguage::get_indentation() const {

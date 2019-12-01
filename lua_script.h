@@ -42,6 +42,7 @@ private:
 
 #ifdef TOOLS_ENABLED
 	bool source_changed_cache;
+	bool placeholder_fallback_enabled;
 	Set<PlaceHolderScriptInstance *> placeholders;
 #endif
 
@@ -55,6 +56,7 @@ public:
 
 	virtual StringName get_instance_base_type() const;
 	virtual ScriptInstance *instance_create(Object *p_this);
+	virtual PlaceHolderScriptInstance *placeholder_instance_create(Object *p_this);
 	virtual bool instance_has(const Object *p_this) const;
 
 	virtual bool has_source_code() const;
@@ -76,7 +78,6 @@ public:
 	virtual bool get_property_default_value(const StringName &p_property, Variant &r_value) const;
 
 	virtual void update_exports();
-
 	virtual void get_script_method_list(List<MethodInfo> *p_list) const;
 	virtual void get_script_property_list(List<PropertyInfo> *p_list) const;
 
@@ -85,6 +86,11 @@ public:
 	virtual void get_constants(Map<StringName, Variant> *p_constants);
 	virtual void get_members(Set<StringName> *p_constants);
 
+#ifdef TOOLS_ENABLED
+	virtual bool is_placeholder_fallback_enabled() const;
+#endif
+
+public:
 	Error load_source_code(const String &p_path);
 
 	// Supports sorting based on inheritance; parent must came first // TODO
@@ -97,10 +103,10 @@ protected:
 	bool _get(const StringName &p_name, Variant &r_property) const;
 	void _get_property_list(List<PropertyInfo> *p_list) const;
 
+private:
 #ifdef TOOLS_ENABLED
 	virtual void _placeholder_erased(PlaceHolderScriptInstance *p_placeholder);
 #endif
 
-private:
 	Variant _new(const Variant **p_args, int p_argcount, Variant::CallError &r_error);
 };
