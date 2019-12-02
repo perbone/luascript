@@ -32,6 +32,11 @@ LuaScript::LuaScript() :
 
 	print_debug("LuaScript::constructor");
 
+#ifdef TOOLS_ENABLED
+	source_changed_cache = false;
+	placeholder_fallback_enabled = false;
+#endif
+
 #ifdef DEBUG_ENABLED
 	auto guard = LuaScriptLanguage::acquire();
 	LuaScriptLanguage::get_singleton()->script_list.add(&this->self);
@@ -245,7 +250,7 @@ void LuaScript::get_members(Set<StringName> *p_constants) {
 
 #ifdef TOOLS_ENABLED
 bool LuaScript::is_placeholder_fallback_enabled() const {
-	print_debug("LuaScript::is_placeholder_fallback_enabled()");
+	print_debug("LuaScript::is_placeholder_fallback_enabled");
 
 	return this->placeholder_fallback_enabled;
 } // TODO
@@ -311,7 +316,7 @@ void LuaScript::_get_property_list(List<PropertyInfo> *p_list) const { // TODO
 
 #ifdef TOOLS_ENABLED
 void LuaScript::_placeholder_erased(PlaceHolderScriptInstance *p_placeholder) {
-	print_debug("LuaScript::_placeholder_erased()");
+	print_debug("LuaScript::_placeholder_erased");
 
 	this->placeholders.erase(p_placeholder);
 }
