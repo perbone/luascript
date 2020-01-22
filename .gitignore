@@ -3,6 +3,7 @@
 *.class
 *.dll
 *.exe
+*.obj
 *.o
 *.so
 classes
