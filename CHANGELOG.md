@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 * Fix broken compilation for 3.2-stable after API change
 
+### Changed
+
+* Bump to lua 5.4-beta source code from master
+
 ## 0.0.41 - 2020-01-02
 
 ### Changed
