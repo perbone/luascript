@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 * Bump to lua 5.4-beta source code from master
+* Bump Godot API target to 3.2-stable/4.0-dev and later
 
 ## 0.0.41 - 2020-01-02
 
