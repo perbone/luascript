@@ -5,6 +5,9 @@ Import('env_modules')
 
 env_lua = env_modules.Clone()
 
+if env_lua['PLATFORM'] == 'posix':
+    env_lua.Append(CPPDEFINES='LUA_USE_POSIX')
+
 if not env.msvc:
     env_lua.Append(CFLAGS=['-O0', '-std=c99'])
 
