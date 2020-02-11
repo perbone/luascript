@@ -81,8 +81,9 @@ bool LuaScriptInstance::has_method(const StringName &p_method) const {
 Variant LuaScriptInstance::call(const StringName &p_method, const Variant **p_args, int p_argcount, Variant::CallError &r_error) {
 	print_debug("LuaScriptInstance::call( p_method = " + p_method + " )");
 
-	if (!script.is_valid())
-		ERR_FAIL_V(Variant())
+	if (!script.is_valid()) {
+		ERR_FAIL_V(Variant());
+	}
 
 	// FIXME call this|base::method
 

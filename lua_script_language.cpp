@@ -32,7 +32,7 @@ LuaScriptLanguage *LuaScriptLanguage::singleton = nullptr;
 LuaScriptLanguage::LuaScriptLanguage() {
 	print_debug("LuaScriptLanguage::constructor");
 
-	ERR_FAIL_COND(singleton)
+	ERR_FAIL_COND(singleton);
 	this->singleton = this;
 
 	this->mutex = Mutex::create();
