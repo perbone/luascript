@@ -1,6 +1,6 @@
 # LuaScript [![License](https://img.shields.io/:license-apache-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Lua 5.4 language support for Godot Engine 3.2-stable/4.0-dev and later
+Lua 5.4 language support for Godot Engine 3.2-stable (4.0-dev too unstable to work with for now)
 
 > WIP (heavily updated so you can expect constants changes - no commitment with feature freezing at this moment)
 >
