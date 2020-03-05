@@ -17,11 +17,11 @@
 
         3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0
         1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-iABC         C(8)     |      B(8)     |k|     A(8)      |   Op(7)     |
-iABx               Bx(17)               |     A(8)      |   Op(7)     |
-iAsBx             sBx (signed)(17)      |     A(8)      |   Op(7)     |
-iAx                           Ax(25)                    |   Op(7)     |
-isJ                          sJ(25)                     |   Op(7)     |
+iABC          C(8)     |      B(8)     |k|     A(8)      |   Op(7)     |
+iABx                Bx(17)               |     A(8)      |   Op(7)     |
+iAsBx              sBx (signed)(17)      |     A(8)      |   Op(7)     |
+iAx                           Ax(25)                     |   Op(7)     |
+isJ                           sJ(25)                     |   Op(7)     |
 
   A signed argument is represented in excess K: the represented value is
   the written unsigned value minus K, where K is half the maximum for the
@@ -202,7 +202,8 @@ OP_LOADI,/*	A sBx	R[A] := sBx					*/
 OP_LOADF,/*	A sBx	R[A] := (lua_Number)sBx				*/
 OP_LOADK,/*	A Bx	R[A] := K[Bx]					*/
 OP_LOADKX,/*	A 	R[A] := K[extra arg]				*/
-OP_LOADFALSE,/*	A B	R[A] := false; if (B) pc++			*/
+OP_LOADFALSE,/*	A  	R[A] := false					*/
+OP_LFALSESKIP,/*A 	R[A] := false; pc++				*/
 OP_LOADTRUE,/*	A	R[A] := true					*/
 OP_LOADNIL,/*	A B	R[A], R[A+1], ..., R[A+B] := nil		*/
 OP_GETUPVAL,/*	A B	R[A] := UpValue[B]				*/
