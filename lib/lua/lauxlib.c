@@ -284,7 +284,7 @@ LUALIB_API int luaL_fileresult (lua_State *L, int stat, const char *fname) {
 
 LUALIB_API int luaL_execresult (lua_State *L, int stat) {
   const char *what = "exit";  /* type of termination */
-  if (stat == -1)  /* error? */
+  if (stat != 0 && errno != 0)  /* error with an 'errno'? */
     return luaL_fileresult(L, 0, NULL);
   else {
     l_inspectstat(stat, what);  /* interpret result */
@@ -476,7 +476,7 @@ static void *resizebox (lua_State *L, int idx, size_t newsize) {
   UBox *box = (UBox *)lua_touserdata(L, idx);
   void *temp = allocf(ud, box->box, box->bsize, newsize);
   if (temp == NULL && newsize > 0)  /* allocation error? */
-    luaL_error(L, "not enough memory for buffer allocation");
+    luaL_error(L, "not enough memory");
   box->box = temp;
   box->bsize = newsize;
   return temp;
@@ -995,8 +995,10 @@ static void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize) {
 
 
 static int panic (lua_State *L) {
+  const char *msg = lua_tostring(L, -1);
+  if (msg == NULL) msg = "error object is not a string";
   lua_writestringerror("PANIC: unprotected error in call to Lua API (%s)\n",
-                        lua_tostring(L, -1));
+                        msg);
   return 0;  /* return to Lua to abort */
 }
 
