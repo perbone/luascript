@@ -26,5 +26,5 @@ const String SCRIPT_TYPE = "Script";
 const String LUA_NAME = "Lua";
 const String LUA_TYPE = "LuaScript";
 const String LUA_EXTENSION = "lua";
-const int LUA_PIL_IDENTATION_SIZE = 2;  // Following PiL indenting often uses two spaces
+const int LUA_PIL_IDENTATION_SIZE = 2; // Following PiL indenting often uses two spaces
 const String LUA_PIL_IDENTATION = "  "; // Keep it in sync with LUA_PIL_IDENTATION_SIZE constant

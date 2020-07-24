@@ -37,14 +37,16 @@ Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resourc
 
 	Ref<LuaScript> script = p_resource;
 
-	if (script.is_null()) return ERR_INVALID_PARAMETER;
+	if (script.is_null())
+		return ERR_INVALID_PARAMETER;
 
 	String source = script->get_source_code();
 
 	Error error;
 	FileAccess *file = FileAccess::open(p_path, FileAccess::WRITE, &error);
 
-	if (error != OK) return error;
+	if (error != OK)
+		return error;
 
 	file->store_string(source);
 	if (file->get_error() != OK && file->get_error() != ERR_FILE_EOF) {

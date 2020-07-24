@@ -29,7 +29,6 @@ LuaScript::LuaScript() :
 		tool(false),
 		valid(false),
 		self(this) {
-
 	print_debug("LuaScript::constructor");
 
 #ifdef TOOLS_ENABLED

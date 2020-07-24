@@ -24,7 +24,6 @@
 #include "debug.h"
 
 class LuaScript : public Script {
-
 	GDCLASS(LuaScript, Script)
 
 	friend class LuaScriptInstance;

@@ -383,7 +383,7 @@ void LuaScriptLanguage::reload_all_scripts() {
 	print_debug("LuaScriptLanguage::reload_all_scripts");
 
 #ifdef DEBUG_ENABLED
-	List<Ref<LuaScript> > scripts;
+	List<Ref<LuaScript>> scripts;
 
 	{
 		auto guard = LuaScriptLanguage::acquire();
@@ -399,7 +399,7 @@ void LuaScriptLanguage::reload_all_scripts() {
 
 	scripts.sort(); // update in inheritance dependency order, parent must be reload first
 
-	for (List<Ref<LuaScript> >::Element *E = scripts.front(); E; E = E->next()) {
+	for (List<Ref<LuaScript>>::Element *E = scripts.front(); E; E = E->next()) {
 		E->get()->load_source_code(E->get()->get_path());
 		E->get()->reload(true);
 	}
@@ -420,7 +420,7 @@ void LuaScriptLanguage::get_public_functions(List<MethodInfo> *p_functions) cons
 	print_debug("LuaScriptLanguage::get_public_functions");
 } // TODO
 
-void LuaScriptLanguage::get_public_constants(List<Pair<String, Variant> > *p_constants) const {
+void LuaScriptLanguage::get_public_constants(List<Pair<String, Variant>> *p_constants) const {
 	print_debug("LuaScriptLanguage::get_public_constants");
 } // TODO
 

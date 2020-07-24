@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.0.50 - 2020-07-24
 
+### Changed
+
+* Update clang-format to be in sync with Godot's oficial
+
 ### Removed
 
 * Remove lib pegtl

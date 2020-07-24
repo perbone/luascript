@@ -22,7 +22,6 @@
 #include "lua_script.h"
 
 class LuaScriptInstance : public ScriptInstance {
-
 	friend class LuaScript;
 
 private:

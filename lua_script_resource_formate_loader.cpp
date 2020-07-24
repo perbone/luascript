@@ -17,10 +17,10 @@
  * limitations under the License
  */
 
+#include "lua_script_resource_formate_loader.h"
 #include "constants.h"
 #include "debug.h"
 #include "lua_script.h"
-#include "lua_script_resource_formate_loader.h"
 
 LuaScriptResourceFormatLoader::LuaScriptResourceFormatLoader() {
 	print_debug("LuaScriptResourceFormatLoader::constructor");
@@ -36,7 +36,8 @@ Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const St
 	LuaScript *script = memnew(LuaScript);
 
 	if (!script) {
-		if (r_error) *r_error = ERR_OUT_OF_MEMORY;
+		if (r_error)
+			*r_error = ERR_OUT_OF_MEMORY;
 		return nullptr;
 	}
 
@@ -45,7 +46,8 @@ Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const St
 	Error error = script->load_source_code(p_original_path);
 
 	if (error != OK) {
-		if (r_error) *r_error = error;
+		if (r_error)
+			*r_error = error;
 		memdelete(script);
 		return nullptr;
 	}
@@ -53,7 +55,8 @@ Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const St
 	error = script->reload();
 
 	if (error != OK) {
-		if (r_error) *r_error = error;
+		if (r_error)
+			*r_error = error;
 		memdelete(script);
 		return nullptr;
 	}

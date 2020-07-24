@@ -34,7 +34,6 @@ LuaScriptResourceFormatLoader *resource_loader = nullptr;
 LuaScriptResourceFormatSaver *resource_saver = nullptr;
 
 void register_luascript_types() {
-
 	ClassDB::register_class<LuaScript>();
 
 	if (script_language = memnew(LuaScriptLanguage); script_language)
@@ -52,7 +51,6 @@ void register_luascript_types() {
 }
 
 void unregister_luascript_types() {
-
 	if (resource_saver) {
 		ResourceSaver::remove_resource_format_saver(resource_saver);
 		//memdelete(resource_saver); // it seems the remove method reclaims the given object memory

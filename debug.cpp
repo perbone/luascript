@@ -21,8 +21,8 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <vector>
 #include <map>
+#include <vector>
 
 #include "debug.h"
 
@@ -89,9 +89,9 @@ std::string get_notification_name(const int constant_value) {
 }
 
 void print_debug(const String fmt, ...) {
-    char tmpbuf[256], finalbuf[512];
-    std::vector<char> fmtbuffer(fmt.size());
-    char* fmtbuf = fmtbuffer.data();
+	char tmpbuf[256], finalbuf[512];
+	std::vector<char> fmtbuffer(fmt.size());
+	char *fmtbuf = fmtbuffer.data();
 
 	wcstombs(fmtbuf, fmt.c_str(), fmt.size());
 
