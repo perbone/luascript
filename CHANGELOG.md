@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.0.50 - 2020-07-24
 
+### Removed
+
+* Remove lib pegtl
+
 ### Fixed
 
 * Fix Lua 5.4 minor bugs (source code from Lua's master - unreleased)

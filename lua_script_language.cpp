@@ -23,9 +23,6 @@
 #include "constants.h"
 #include "debug.h"
 #include "lua_script_language.h"
-#include "pegtl/lua_grammar.h"
-
-namespace pegtl = tao::TAO_PEGTL_NAMESPACE;
 
 LuaScriptLanguage *LuaScriptLanguage::singleton = nullptr;
 
@@ -210,22 +207,7 @@ bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int 
 	const std::string code(p_script.ascii().get_data());
 	const std::string source_name(p_path.ascii().get_data());
 
-	pegtl::string_input<> in(code, source_name);
-
-	try {
-
-		return pegtl::parse<pegtl::lua::grammar>(in);
-
-	} catch (const pegtl::parse_error &e) {
-		print_debug("LuaScriptLanguage::validate; Error parsing script: %s", e.what());
-
-		const auto pos = e.positions.front();
-
-		r_line_error = pos.line;
-		r_col_error = pos.byte_in_line; // FIXME currently ignoring TAB size
-
-		return false;
-	}
+	return true;
 } // TODO
 
 String LuaScriptLanguage::validate_path(const String &p_path) const { // TODO
