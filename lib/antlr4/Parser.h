@@ -226,8 +226,8 @@ namespace antlr4 {
     virtual tree::pattern::ParseTreePattern compileParseTreePattern(const std::string &pattern, int patternRuleIndex,
                                                                     Lexer *lexer);
 
-    virtual Ref<ANTLRErrorStrategy> getErrorHandler();
-    virtual void setErrorHandler(Ref<ANTLRErrorStrategy> const& handler);
+    virtual __Ref<ANTLRErrorStrategy> getErrorHandler();
+    virtual void setErrorHandler(__Ref<ANTLRErrorStrategy> const& handler);
 
     virtual IntStream* getInputStream() override;
     void setInputStream(IntStream *input) override;
@@ -409,7 +409,7 @@ namespace antlr4 {
 
     /// The error handling strategy for the parser. The default is DefaultErrorStrategy.
     /// See also getErrorHandler.
-    Ref<ANTLRErrorStrategy> _errHandler;
+    __Ref<ANTLRErrorStrategy> _errHandler;
 
     /// <summary>
     /// The input stream.

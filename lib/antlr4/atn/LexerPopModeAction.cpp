@@ -12,8 +12,8 @@ using namespace antlr4;
 using namespace antlr4::atn;
 using namespace antlr4::misc;
 
-const Ref<LexerPopModeAction> LexerPopModeAction::getInstance() {
-  static Ref<LexerPopModeAction> instance(new LexerPopModeAction());
+const __Ref<LexerPopModeAction> LexerPopModeAction::getInstance() {
+  static __Ref<LexerPopModeAction> instance(new LexerPopModeAction());
   return instance;
 }
 

@@ -147,7 +147,7 @@ void ParserInterpreter::addDecisionOverride(int decision, int tokenIndex, int fo
   _overrideDecisionAlt = forcedAlt;
 }
 
-Ref<InterpreterRuleContext> ParserInterpreter::getOverrideDecisionRoot() const {
+__Ref<InterpreterRuleContext> ParserInterpreter::getOverrideDecisionRoot() const {
   return _overrideDecisionRoot;
 }
 

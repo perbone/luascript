@@ -8,6 +8,8 @@
 #include "LuaParser.h"
 
 
+namespace luaparser {
+
 /**
  * This interface defines an abstract listener for a parse tree produced by LuaParser.
  */
@@ -128,3 +130,4 @@ public:
 
 };
 
+}  // namespace luaparser

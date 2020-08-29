@@ -68,7 +68,7 @@ namespace tree {
      *
      *  @since 4.5.1
      */
-    static ParseTree* findNodeSuchThat(ParseTree *t, Ref<misc::Predicate> const& pred);
+    static ParseTree* findNodeSuchThat(ParseTree *t, __Ref<misc::Predicate> const& pred);
 
   private:
     Trees();

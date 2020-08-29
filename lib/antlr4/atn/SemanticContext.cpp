@@ -66,7 +66,7 @@ bool SemanticContext::PrecedencePredicate::eval(Recognizer *parser, RuleContext 
   return parser->precpred(parserCallStack, precedence);
 }
 
-Ref<SemanticContext> SemanticContext::PrecedencePredicate::evalPrecedence(Recognizer *parser,
+__Ref<SemanticContext> SemanticContext::PrecedencePredicate::evalPrecedence(Recognizer *parser,
   RuleContext *parserCallStack) {
   if (parser->precpred(parserCallStack, precedence)) {
     return SemanticContext::NONE;
@@ -103,7 +103,7 @@ std::string SemanticContext::PrecedencePredicate::toString() const {
 
 //------------------ AND -----------------------------------------------------------------------------------------------
 
-SemanticContext::AND::AND(Ref<SemanticContext> const& a, Ref<SemanticContext> const& b) {
+SemanticContext::AND::AND(__Ref<SemanticContext> const& a, __Ref<SemanticContext> const& b) {
   Set operands;
 
   if (is<AND>(a)) {
@@ -122,11 +122,11 @@ SemanticContext::AND::AND(Ref<SemanticContext> const& a, Ref<SemanticContext> co
     operands.insert(b);
   }
 
-  std::vector<Ref<PrecedencePredicate>> precedencePredicates = filterPrecedencePredicates(operands);
+  std::vector<__Ref<PrecedencePredicate>> precedencePredicates = filterPrecedencePredicates(operands);
 
   if (!precedencePredicates.empty()) {
     // interested in the transition with the lowest precedence
-    auto predicate = [](Ref<PrecedencePredicate> const& a, Ref<PrecedencePredicate> const& b) {
+    auto predicate = [](__Ref<PrecedencePredicate> const& a, __Ref<PrecedencePredicate> const& b) {
       return a->precedence < b->precedence;
     };
 
@@ -137,7 +137,7 @@ SemanticContext::AND::AND(Ref<SemanticContext> const& a, Ref<SemanticContext> co
   std::copy(operands.begin(), operands.end(), std::back_inserter(opnds));
 }
 
-std::vector<Ref<SemanticContext>> SemanticContext::AND::getOperands() const {
+std::vector<__Ref<SemanticContext>> SemanticContext::AND::getOperands() const {
   return opnds;
 }
 
@@ -165,11 +165,11 @@ bool SemanticContext::AND::eval(Recognizer *parser, RuleContext *parserCallStack
   return true;
 }
 
-Ref<SemanticContext> SemanticContext::AND::evalPrecedence(Recognizer *parser, RuleContext *parserCallStack) {
+__Ref<SemanticContext> SemanticContext::AND::evalPrecedence(Recognizer *parser, RuleContext *parserCallStack) {
   bool differs = false;
-  std::vector<Ref<SemanticContext>> operands;
+  std::vector<__Ref<SemanticContext>> operands;
   for (auto context : opnds) {
-    Ref<SemanticContext> evaluated = context->evalPrecedence(parser, parserCallStack);
+    __Ref<SemanticContext> evaluated = context->evalPrecedence(parser, parserCallStack);
     differs |= (evaluated != context);
     if (evaluated == nullptr) {
       // The AND context is false if any element is false.
@@ -189,7 +189,7 @@ Ref<SemanticContext> SemanticContext::AND::evalPrecedence(Recognizer *parser, Ru
     return NONE;
   }
 
-  Ref<SemanticContext> result = operands[0];
+  __Ref<SemanticContext> result = operands[0];
   for (size_t i = 1; i < operands.size(); ++i) {
     result = SemanticContext::And(result, operands[i]);
   }
@@ -207,7 +207,7 @@ std::string SemanticContext::AND::toString() const {
 
 //------------------ OR ------------------------------------------------------------------------------------------------
 
-SemanticContext::OR::OR(Ref<SemanticContext> const& a, Ref<SemanticContext> const& b) {
+SemanticContext::OR::OR(__Ref<SemanticContext> const& a, __Ref<SemanticContext> const& b) {
   Set operands;
 
   if (is<OR>(a)) {
@@ -226,10 +226,10 @@ SemanticContext::OR::OR(Ref<SemanticContext> const& a, Ref<SemanticContext> cons
     operands.insert(b);
   }
 
-  std::vector<Ref<PrecedencePredicate>> precedencePredicates = filterPrecedencePredicates(operands);
+  std::vector<__Ref<PrecedencePredicate>> precedencePredicates = filterPrecedencePredicates(operands);
   if (!precedencePredicates.empty()) {
     // interested in the transition with the highest precedence
-    auto predicate = [](Ref<PrecedencePredicate> const& a, Ref<PrecedencePredicate> const& b) {
+    auto predicate = [](__Ref<PrecedencePredicate> const& a, __Ref<PrecedencePredicate> const& b) {
       return a->precedence < b->precedence;
     };
     auto reduced = std::max_element(precedencePredicates.begin(), precedencePredicates.end(), predicate);
@@ -239,7 +239,7 @@ SemanticContext::OR::OR(Ref<SemanticContext> const& a, Ref<SemanticContext> cons
   std::copy(operands.begin(), operands.end(), std::back_inserter(opnds));
 }
 
-std::vector<Ref<SemanticContext>> SemanticContext::OR::getOperands() const {
+std::vector<__Ref<SemanticContext>> SemanticContext::OR::getOperands() const {
   return opnds;
 }
 
@@ -267,11 +267,11 @@ bool SemanticContext::OR::eval(Recognizer *parser, RuleContext *parserCallStack)
   return false;
 }
 
-Ref<SemanticContext> SemanticContext::OR::evalPrecedence(Recognizer *parser, RuleContext *parserCallStack) {
+__Ref<SemanticContext> SemanticContext::OR::evalPrecedence(Recognizer *parser, RuleContext *parserCallStack) {
   bool differs = false;
-  std::vector<Ref<SemanticContext>> operands;
+  std::vector<__Ref<SemanticContext>> operands;
   for (auto context : opnds) {
-    Ref<SemanticContext> evaluated = context->evalPrecedence(parser, parserCallStack);
+    __Ref<SemanticContext> evaluated = context->evalPrecedence(parser, parserCallStack);
     differs |= (evaluated != context);
     if (evaluated == NONE) {
       // The OR context is true if any element is true.
@@ -291,7 +291,7 @@ Ref<SemanticContext> SemanticContext::OR::evalPrecedence(Recognizer *parser, Rul
     return nullptr;
   }
 
-  Ref<SemanticContext> result = operands[0];
+  __Ref<SemanticContext> result = operands[0];
   for (size_t i = 1; i < operands.size(); ++i) {
     result = SemanticContext::Or(result, operands[i]);
   }
@@ -309,7 +309,7 @@ std::string SemanticContext::OR::toString() const {
 
 //------------------ SemanticContext -----------------------------------------------------------------------------------
 
-const Ref<SemanticContext> SemanticContext::NONE = std::make_shared<Predicate>(INVALID_INDEX, INVALID_INDEX, false);
+const __Ref<SemanticContext> SemanticContext::NONE = std::make_shared<Predicate>(INVALID_INDEX, INVALID_INDEX, false);
 
 SemanticContext::~SemanticContext() {
 }
@@ -318,11 +318,11 @@ bool SemanticContext::operator != (const SemanticContext &other) const {
   return !(*this == other);
 }
 
-Ref<SemanticContext> SemanticContext::evalPrecedence(Recognizer * /*parser*/, RuleContext * /*parserCallStack*/) {
+__Ref<SemanticContext> SemanticContext::evalPrecedence(Recognizer * /*parser*/, RuleContext * /*parserCallStack*/) {
   return shared_from_this();
 }
 
-Ref<SemanticContext> SemanticContext::And(Ref<SemanticContext> const& a, Ref<SemanticContext> const& b) {
+__Ref<SemanticContext> SemanticContext::And(__Ref<SemanticContext> const& a, __Ref<SemanticContext> const& b) {
   if (!a || a == NONE) {
     return b;
   }
@@ -331,7 +331,7 @@ Ref<SemanticContext> SemanticContext::And(Ref<SemanticContext> const& a, Ref<Sem
     return a;
   }
 
-  Ref<AND> result = std::make_shared<AND>(a, b);
+  __Ref<AND> result = std::make_shared<AND>(a, b);
   if (result->opnds.size() == 1) {
     return result->opnds[0];
   }
@@ -339,7 +339,7 @@ Ref<SemanticContext> SemanticContext::And(Ref<SemanticContext> const& a, Ref<Sem
   return result;
 }
 
-Ref<SemanticContext> SemanticContext::Or(Ref<SemanticContext> const& a, Ref<SemanticContext> const& b) {
+__Ref<SemanticContext> SemanticContext::Or(__Ref<SemanticContext> const& a, __Ref<SemanticContext> const& b) {
   if (!a) {
     return b;
   }
@@ -351,7 +351,7 @@ Ref<SemanticContext> SemanticContext::Or(Ref<SemanticContext> const& a, Ref<Sema
     return NONE;
   }
 
-  Ref<OR> result = std::make_shared<OR>(a, b);
+  __Ref<OR> result = std::make_shared<OR>(a, b);
   if (result->opnds.size() == 1) {
     return result->opnds[0];
   }
@@ -359,8 +359,8 @@ Ref<SemanticContext> SemanticContext::Or(Ref<SemanticContext> const& a, Ref<Sema
   return result;
 }
 
-std::vector<Ref<SemanticContext::PrecedencePredicate>> SemanticContext::filterPrecedencePredicates(const Set &collection) {
-  std::vector<Ref<SemanticContext::PrecedencePredicate>> result;
+std::vector<__Ref<SemanticContext::PrecedencePredicate>> SemanticContext::filterPrecedencePredicates(const Set &collection) {
+  std::vector<__Ref<SemanticContext::PrecedencePredicate>> result;
   for (auto context : collection) {
     if (antlrcpp::is<PrecedencePredicate>(context)) {
       result.push_back(std::dynamic_pointer_cast<PrecedencePredicate>(context));

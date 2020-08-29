@@ -8,6 +8,7 @@
 
 
 using namespace antlrcpp;
+using namespace luaparser;
 using namespace antlr4;
 
 LuaParser::LuaParser(TokenStream *input) : Parser(input) {

@@ -39,10 +39,10 @@ namespace dfa {
   public:
     class PredPrediction {
     public:
-      Ref<atn::SemanticContext> pred; // never null; at least SemanticContext.NONE
+      __Ref<atn::SemanticContext> pred; // never null; at least SemanticContext.NONE
       int alt;
 
-      PredPrediction(const Ref<atn::SemanticContext> &pred, int alt);
+      PredPrediction(const __Ref<atn::SemanticContext> &pred, int alt);
       virtual ~PredPrediction();
 
       virtual std::string toString();
@@ -68,7 +68,7 @@ namespace dfa {
     /// <seealso cref="#requiresFullContext"/>.
     size_t prediction;
 
-    Ref<atn::LexerActionExecutor> lexerActionExecutor;
+    __Ref<atn::LexerActionExecutor> lexerActionExecutor;
 
     /// <summary>
     /// Indicates that this state was created during SLL prediction that

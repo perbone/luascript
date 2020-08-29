@@ -21,7 +21,7 @@
 
 #include "LuaBaseListener.h"
 
-class Parser : public LuaBaseListener {
+class Parser : public luaparser::LuaBaseListener {
 
 public:
 	Parser();

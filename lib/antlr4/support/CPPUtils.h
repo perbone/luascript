@@ -42,7 +42,7 @@ namespace antlrcpp {
   }
 
   template <typename T1, typename T2>
-  inline bool is(Ref<T2> const& obj) { // For shared pointers.
+  inline bool is(__Ref<T2> const& obj) { // For shared pointers.
     return dynamic_cast<T1 *>(obj.get()) != nullptr;
   }
 

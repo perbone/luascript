@@ -16,7 +16,7 @@ namespace atn {
   class ANTLR4CPP_PUBLIC ATNSimulator {
   public:
     /// Must distinguish between missing edge and edge we know leads nowhere.
-    static const Ref<dfa::DFAState> ERROR;
+    static const __Ref<dfa::DFAState> ERROR;
     const ATN &atn;
 
     ATNSimulator(const ATN &atn, PredictionContextCache &sharedContextCache);
@@ -37,7 +37,7 @@ namespace atn {
      */
     virtual void clearDFA();
     virtual PredictionContextCache& getSharedContextCache();
-    virtual Ref<PredictionContext> getCachedContext(Ref<PredictionContext> const& context);
+    virtual __Ref<PredictionContext> getCachedContext(__Ref<PredictionContext> const& context);
 
     /// @deprecated Use <seealso cref="ATNDeserializer#deserialize"/> instead.
     static ATN deserialize(const std::vector<uint16_t> &data);

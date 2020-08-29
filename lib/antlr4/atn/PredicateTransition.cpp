@@ -22,7 +22,7 @@ bool PredicateTransition::matches(size_t /*symbol*/, size_t /*minVocabSymbol*/, 
   return false;
 }
 
-Ref<SemanticContext::Predicate> PredicateTransition::getPredicate() const {
+__Ref<SemanticContext::Predicate> PredicateTransition::getPredicate() const {
   return std::make_shared<SemanticContext::Predicate>(ruleIndex, predIndex, isCtxDependent);
 }
 

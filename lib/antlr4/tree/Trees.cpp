@@ -223,7 +223,7 @@ ParserRuleContext* Trees::getRootOfSubtreeEnclosingRegion(ParseTree *t, size_t s
   return nullptr;
 }
 
-ParseTree * Trees::findNodeSuchThat(ParseTree *t, Ref<Predicate> const& pred) {
+ParseTree * Trees::findNodeSuchThat(ParseTree *t, __Ref<Predicate> const& pred) {
   if (pred->test(t)) {
     return t;
   }

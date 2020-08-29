@@ -15,7 +15,7 @@ using namespace antlr4;
 using namespace antlr4::dfa;
 using namespace antlr4::atn;
 
-const Ref<DFAState> ATNSimulator::ERROR = std::make_shared<DFAState>(INT32_MAX);
+const __Ref<DFAState> ATNSimulator::ERROR = std::make_shared<DFAState>(INT32_MAX);
 antlrcpp::SingleWriteMultipleReadLock ATNSimulator::_stateLock;
 antlrcpp::SingleWriteMultipleReadLock ATNSimulator::_edgeLock;
 
@@ -34,9 +34,9 @@ PredictionContextCache& ATNSimulator::getSharedContextCache() {
   return _sharedContextCache;
 }
 
-Ref<PredictionContext> ATNSimulator::getCachedContext(Ref<PredictionContext> const& context) {
+__Ref<PredictionContext> ATNSimulator::getCachedContext(__Ref<PredictionContext> const& context) {
   // This function must only be called with an active state lock, as we are going to change a shared structure.
-  std::map<Ref<PredictionContext>, Ref<PredictionContext>> visited;
+  std::map<__Ref<PredictionContext>, __Ref<PredictionContext>> visited;
   return PredictionContext::getCachedContext(context, _sharedContextCache, visited);
 }
 

@@ -23,7 +23,7 @@ bool PrecedencePredicateTransition::matches(size_t /*symbol*/, size_t /*minVocab
   return false;
 }
 
-Ref<SemanticContext::PrecedencePredicate> PrecedencePredicateTransition::getPredicate() const {
+__Ref<SemanticContext::PrecedencePredicate> PrecedencePredicateTransition::getPredicate() const {
   return std::make_shared<SemanticContext::PrecedencePredicate>(precedence);
 }
 
