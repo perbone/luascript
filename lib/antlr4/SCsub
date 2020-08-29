@@ -3,12 +3,12 @@
 Import('env')
 Import('env_modules')
 
-env_antlr = env_modules.Clone()
+env_cloned = env_modules.Clone()
 
 lib_include_path = '.'
 
-env_antlr.Append(CPPPATH=lib_include_path)
+env_cloned.Append(CPPPATH=lib_include_path)
 
-env_antlr.add_source_files(env.modules_sources,'*.cpp')
+env_cloned.add_source_files(env.modules_sources,'*.cpp')
 
 Export('env')
