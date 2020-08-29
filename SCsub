@@ -12,11 +12,15 @@ else:
 
 SConscript('lib/lua/SCsub')
 SConscript('lib/antlr4/SCsub')
-SConscript('parser/SCsub')
+# SConscript('parser/SCsub')
 
 if env['tools']:
     SConscript('editor/SCsub')
 
+env_cloned.Append(CPPPATH = ['lib/antlr4'])
+
 env_cloned.add_source_files(env.modules_sources,'*.cpp')
+
+env_cloned.add_source_files(env.modules_sources,'parser/*.cpp')
 
 Export('env')
