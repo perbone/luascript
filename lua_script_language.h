@@ -20,10 +20,7 @@
 #pragma once
 
 #include "core/os/mutex.h"
-#include "core/script_language.h"
 
-#include "debug.h"
-#include "lua/lua.hpp"
 #include "lua_script.h"
 
 class LuaScriptLanguage : public ScriptLanguage {
@@ -46,8 +43,6 @@ private:
 private:
 	Mutex *mutex;
 	SelfList<LuaScript>::List script_list;
-
-	lua_State *L;
 
 public:
 	LuaScriptLanguage();

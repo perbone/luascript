@@ -17,6 +17,8 @@
  * limitations under the License
  */
 
+#include <string>
+
 #include "core/engine.h"
 #include "editor/editor_settings.h"
 
@@ -43,20 +45,11 @@ LuaScriptLanguage::~LuaScriptLanguage() {
 	if (this->singleton == this)
 		this->singleton = nullptr;
 
-	// In case the method finish() has not been called
-	if (this->L) {
-		lua_close(L);
-		this->L = nullptr;
-	}
 } // TODO
 
 void LuaScriptLanguage::init() {
 	print_debug("LuaScriptLanguage::init");
 
-	this->L = luaL_newstate();
-	if (this->L) {
-		luaL_openlibs(this->L);
-	}
 } // TODO
 
 String LuaScriptLanguage::get_name() const {
@@ -86,10 +79,6 @@ Error LuaScriptLanguage::execute_file(const String &p_path) { // TODO
 void LuaScriptLanguage::finish() {
 	print_debug("LuaScriptLanguage::finish");
 
-	if (this->L) {
-		lua_close(L);
-		this->L = nullptr;
-	}
 } // TODO
 
 void LuaScriptLanguage::get_reserved_words(List<String> *p_words) const {
