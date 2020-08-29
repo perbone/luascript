@@ -17,6 +17,7 @@ env_luascript.Append(CPPPATH=lib_include_path)
 env_luascript.add_source_files(env.modules_sources,'*.cpp')
 
 SConscript('lib/lua/SCsub')
+SConscript('lib/antlr4/SCsub')
 
 if env['tools']:
 	env_luascript.add_source_files(env.modules_sources, './editor/*.cpp')
