@@ -1,0 +1,12 @@
+#!/usr/bin/env python
+
+Import('env')
+# Import('env_modules')
+
+env_cloned = env.Clone()
+
+env_cloned.Append(CPPPATH = ['/home/perbone/Work/luascript/lib/antlr4'])
+
+env_cloned.add_source_files(env.modules_sources,'*.cpp')
+
+Export('env')
