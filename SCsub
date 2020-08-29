@@ -10,7 +10,7 @@ lib_include_path = './lib'
 if not env.msvc:
     env_luascript.Append(CXXFLAGS=['-O0', '-std=c++17'])
 else:
-    env.Append(CXXFLAGS=['/std:c++17'])
+    env_luascript.Append(CXXFLAGS=['/std:c++17'])
 
 env_luascript.Append(CPPPATH=lib_include_path)
 
