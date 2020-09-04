@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.53 - 2020-08-29
+
+### Added
+
+* Add compilation for Antlr4
+* Add scons build for editor
+
+### Fixed
+
+* Fix env misconfiguration
+* Fix file permissions
+* Fix code style format
+* Fix name conflict with Godot core Ref<> type
+
+### Changed
+
+* Update clang-format to be in sync with Godot's oficial
+* Update .editorconfig to be in sync with Godot's oficial
+
+## Removed
+
+* Remove direct lua lib calls
+
 ## 0.0.52 - 2020-08-18
 
 ### Fixed
