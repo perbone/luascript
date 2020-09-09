@@ -3,24 +3,20 @@
 Import('env')
 Import('env_modules')
 
-env_cloned = env_modules.Clone()
+env_luascript = env_modules.Clone()
 
 if not env.msvc:
-    env_cloned.Append(CXXFLAGS=['-O0', '-std=c++17'])
+    env_luascript.Append(CXXFLAGS=['-O0', '-std=c++17'])
 else:
-    env_cloned.Append(CXXFLAGS=['/std:c++17'])
+    env_luascript['CCFLAGS'].remove('/std:c++14')
+    env_luascript.Append(CXXFLAGS=['/std:c++17'])
+
+Export('env_luascript')
 
 SConscript('lib/lua/SCsub')
 SConscript('lib/antlr4/SCsub')
-# SConscript('parser/SCsub')
-
+SConscript('parser/SCsub')
 if env['tools']:
     SConscript('editor/SCsub')
 
-env_cloned.Append(CPPPATH = ['lib/antlr4'])
-
-env_cloned.add_source_files(env.modules_sources,'*.cpp')
-
-env_cloned.add_source_files(env.modules_sources,'parser/*.cpp')
-
-Export('env')
+env_luascript.add_source_files(env.modules_sources,'*.cpp')

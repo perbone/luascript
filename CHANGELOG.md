@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.54 - 2020-09-08
+
+### Fixed
+
+* Fix scons build system files (was broken on windows due use of C++17)
+
 ## 0.0.53 - 2020-08-29
 
 ### Added

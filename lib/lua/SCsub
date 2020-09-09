@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-Import('env')
-Import('env_modules')
+Import('env_luascript')
 
-env_lua = env_modules.Clone()
+env_lua = env_luascript.Clone()
 
 if env_lua['PLATFORM'] == 'posix':
     env_lua.Append(CPPDEFINES='LUA_USE_POSIX')
@@ -12,5 +11,3 @@ if not env.msvc:
     env_lua.Append(CFLAGS=['-O0', '-std=c99'])
 
 env_lua.add_source_files(env.modules_sources,'*.c')
-
-Export('env')
