@@ -8,7 +8,7 @@ env_luascript = env_modules.Clone()
 if not env.msvc:
     CXXFLAGS='-std=c++17'
 else:
-    CXXFLAGS='-std=c++17'
+    CXXFLAGS='/std:c++17'
 
 env_luascript['CXXFLAGS'] = [CXXFLAGS]
 
