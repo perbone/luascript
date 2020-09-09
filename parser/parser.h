@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "ast/tree_walker.h"
+
 class Parser {
 
 public:
@@ -26,4 +28,5 @@ public:
 	~Parser();
 
 private:
+	TreeWalker treeWalker;
 };

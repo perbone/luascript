@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.55 - 2020-09-09
+
+### Added
+
+* Add initial wip AST package
+
 ## 0.0.54 - 2020-09-08
 
 ### Fixed

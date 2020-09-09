@@ -17,11 +17,15 @@
  * limitations under the License
  */
 
-#include "parser.h"
+#pragma once
 
-#include "ast/antlr_tree_walker.h"
+#include "tree_walker.h"
 
-Parser::Parser() :
-		treeWalker(AntlrTreeWalker{}) {}
+#include "../generated/LuaBaseListener.h"
 
-Parser::~Parser() {}
+class AntlrTreeWalker : public TreeWalker, luaparser::LuaBaseListener {
+
+public:
+	AntlrTreeWalker();
+	~AntlrTreeWalker();
+};

@@ -17,11 +17,10 @@
  * limitations under the License
  */
 
-#include "parser.h"
+#pragma once
 
-#include "ast/antlr_tree_walker.h"
+class TreeWalker {
 
-Parser::Parser() :
-		treeWalker(AntlrTreeWalker{}) {}
-
-Parser::~Parser() {}
+public:
+	virtual ~TreeWalker();
+};

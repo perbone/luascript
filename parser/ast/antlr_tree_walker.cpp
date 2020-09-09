@@ -17,11 +17,8 @@
  * limitations under the License
  */
 
-#include "parser.h"
+#include "antlr_tree_walker.h"
 
-#include "ast/antlr_tree_walker.h"
+AntlrTreeWalker::AntlrTreeWalker() {}
 
-Parser::Parser() :
-		treeWalker(AntlrTreeWalker{}) {}
-
-Parser::~Parser() {}
+AntlrTreeWalker::~AntlrTreeWalker() {}
