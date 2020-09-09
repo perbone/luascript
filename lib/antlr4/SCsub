@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-Import("env")
+Import('env')
 Import('env_luascript')
 
 env_antlr4 = env_luascript.Clone()
