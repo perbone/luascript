@@ -5,5 +5,7 @@ Import('env_luascript')
 
 env_parser = env_luascript.Clone()
 
+env_parser.Append(CPPPATH = ['#modules/luascript/lib/antlr4'])
+
 env_parser.add_source_files(env.modules_sources,'generated/*.cpp')
 env_parser.add_source_files(env.modules_sources,'*.cpp')

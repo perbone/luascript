@@ -19,9 +19,7 @@
 
 #pragma once
 
-#include "generated/LuaBaseListener.h"
-
-class Parser : public luaparser::LuaBaseListener {
+class Parser {
 
 public:
 	Parser();

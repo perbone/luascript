@@ -12,8 +12,6 @@ else:
 
 env_luascript['CXXFLAGS'] = [CXXFLAGS]
 
-env_luascript.Append(CPPPATH = ['#modules/luascript/lib/antlr4'])
-
 Export('env_luascript')
 
 SConscript('lib/lua/SCsub')
