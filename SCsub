@@ -6,11 +6,11 @@ Import('env_modules')
 env_luascript = env_modules.Clone()
 
 if not env.msvc:
-    env_luascript['CXXFLAGS'].remove('-std=gnu++14')
-    env_luascript.Append(CXXFLAGS=['-std=c++17'])
+    CXXFLAGS='-std=c++17'
 else:
-    env_luascript['CXXFLAGS'].remove('/std:c++14')
-    env_luascript.Append(CXXFLAGS=['/std:c++17'])
+    CXXFLAGS='-std=c++17'
+
+env_luascript['CXXFLAGS'] = [CXXFLAGS]
 
 Export('env_luascript')
 
