@@ -22,6 +22,7 @@
 #include "core/os/mutex.h"
 
 #include "lua_script.h"
+#include "parser/parser.h"
 
 class LuaScriptLanguage : public ScriptLanguage {
 	static LuaScriptLanguage *singleton;
