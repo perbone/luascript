@@ -110,7 +110,7 @@ void print_debug(const String fmt, ...) {
 
 	va_end(ap);
 
-	print_line(finalbuf);
+	print_verbose(finalbuf);
 }
 
 #endif
