@@ -6,3 +6,4 @@ ltests*
 lua.c
 makefile
 onelua.c
+README.md
