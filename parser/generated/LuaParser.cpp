@@ -67,14 +67,18 @@ LuaParser::ChunkContext* LuaParser::chunk() {
   ChunkContext *_localctx = _tracker.createInstance<ChunkContext>(_ctx, getState());
   enterRule(_localctx, 0, LuaParser::RuleChunk);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(74);
+    setState(70);
     block();
-    setState(75);
+    setState(71);
     match(LuaParser::EOF);
    
   }
@@ -127,12 +131,16 @@ LuaParser::BlockContext* LuaParser::block() {
   enterRule(_localctx, 2, LuaParser::RuleBlock);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(80);
+    setState(76);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
@@ -146,21 +154,21 @@ LuaParser::BlockContext* LuaParser::block() {
       | (1ULL << LuaParser::T__13)
       | (1ULL << LuaParser::T__16)
       | (1ULL << LuaParser::T__17)
-      | (1ULL << LuaParser::T__21)
-      | (1ULL << LuaParser::T__28)
+      | (1ULL << LuaParser::T__19)
+      | (1ULL << LuaParser::T__26)
       | (1ULL << LuaParser::NAME))) != 0)) {
-      setState(77);
+      setState(73);
       stat();
-      setState(82);
+      setState(78);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(84);
+    setState(80);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
-    if (_la == LuaParser::T__20) {
-      setState(83);
+    if (_la == LuaParser::T__18) {
+      setState(79);
       retstat();
     }
    
@@ -180,448 +188,589 @@ LuaParser::StatContext::StatContext(ParserRuleContext *parent, size_t invokingSt
   : ParserRuleContext(parent, invokingState) {
 }
 
-LuaParser::VarlistContext* LuaParser::StatContext::varlist() {
-  return getRuleContext<LuaParser::VarlistContext>(0);
-}
-
-LuaParser::ExplistContext* LuaParser::StatContext::explist() {
-  return getRuleContext<LuaParser::ExplistContext>(0);
-}
-
-LuaParser::FunctioncallContext* LuaParser::StatContext::functioncall() {
-  return getRuleContext<LuaParser::FunctioncallContext>(0);
-}
-
-LuaParser::LabelContext* LuaParser::StatContext::label() {
-  return getRuleContext<LuaParser::LabelContext>(0);
-}
-
-tree::TerminalNode* LuaParser::StatContext::NAME() {
-  return getToken(LuaParser::NAME, 0);
-}
-
-std::vector<LuaParser::BlockContext *> LuaParser::StatContext::block() {
-  return getRuleContexts<LuaParser::BlockContext>();
-}
-
-LuaParser::BlockContext* LuaParser::StatContext::block(size_t i) {
-  return getRuleContext<LuaParser::BlockContext>(i);
-}
-
-std::vector<LuaParser::ExpContext *> LuaParser::StatContext::exp() {
-  return getRuleContexts<LuaParser::ExpContext>();
-}
-
-LuaParser::ExpContext* LuaParser::StatContext::exp(size_t i) {
-  return getRuleContext<LuaParser::ExpContext>(i);
-}
-
-LuaParser::NamelistContext* LuaParser::StatContext::namelist() {
-  return getRuleContext<LuaParser::NamelistContext>(0);
-}
-
-LuaParser::FuncnameContext* LuaParser::StatContext::funcname() {
-  return getRuleContext<LuaParser::FuncnameContext>(0);
-}
-
-LuaParser::FuncbodyContext* LuaParser::StatContext::funcbody() {
-  return getRuleContext<LuaParser::FuncbodyContext>(0);
-}
-
-LuaParser::AttnamelistContext* LuaParser::StatContext::attnamelist() {
-  return getRuleContext<LuaParser::AttnamelistContext>(0);
-}
-
 
 size_t LuaParser::StatContext::getRuleIndex() const {
   return LuaParser::RuleStat;
 }
 
-void LuaParser::StatContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<LuaListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterStat(this);
+void LuaParser::StatContext::copyFrom(StatContext *ctx) {
+  ParserRuleContext::copyFrom(ctx);
 }
 
-void LuaParser::StatContext::exitRule(tree::ParseTreeListener *listener) {
+//----------------- StatEmptySemicolonContext ------------------------------------------------------------------
+
+LuaParser::StatEmptySemicolonContext::StatEmptySemicolonContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatEmptySemicolonContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<LuaListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitStat(this);
+    parserListener->enterStatEmptySemicolon(this);
+}
+void LuaParser::StatEmptySemicolonContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatEmptySemicolon(this);
+}
+//----------------- StatNumericForContext ------------------------------------------------------------------
+
+tree::TerminalNode* LuaParser::StatNumericForContext::NAME() {
+  return getToken(LuaParser::NAME, 0);
 }
 
+std::vector<LuaParser::ExpContext *> LuaParser::StatNumericForContext::exp() {
+  return getRuleContexts<LuaParser::ExpContext>();
+}
+
+LuaParser::ExpContext* LuaParser::StatNumericForContext::exp(size_t i) {
+  return getRuleContext<LuaParser::ExpContext>(i);
+}
+
+LuaParser::BlockContext* LuaParser::StatNumericForContext::block() {
+  return getRuleContext<LuaParser::BlockContext>(0);
+}
+
+LuaParser::StatNumericForContext::StatNumericForContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatNumericForContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatNumericFor(this);
+}
+void LuaParser::StatNumericForContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatNumericFor(this);
+}
+//----------------- StatLabelContext ------------------------------------------------------------------
+
+LuaParser::LabelContext* LuaParser::StatLabelContext::label() {
+  return getRuleContext<LuaParser::LabelContext>(0);
+}
+
+LuaParser::StatLabelContext::StatLabelContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatLabelContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatLabel(this);
+}
+void LuaParser::StatLabelContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatLabel(this);
+}
+//----------------- StatFunctionCallContext ------------------------------------------------------------------
+
+LuaParser::FunctioncallContext* LuaParser::StatFunctionCallContext::functioncall() {
+  return getRuleContext<LuaParser::FunctioncallContext>(0);
+}
+
+LuaParser::StatFunctionCallContext::StatFunctionCallContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatFunctionCallContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatFunctionCall(this);
+}
+void LuaParser::StatFunctionCallContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatFunctionCall(this);
+}
+//----------------- StatIfThenElseContext ------------------------------------------------------------------
+
+std::vector<LuaParser::ExpContext *> LuaParser::StatIfThenElseContext::exp() {
+  return getRuleContexts<LuaParser::ExpContext>();
+}
+
+LuaParser::ExpContext* LuaParser::StatIfThenElseContext::exp(size_t i) {
+  return getRuleContext<LuaParser::ExpContext>(i);
+}
+
+std::vector<LuaParser::BlockContext *> LuaParser::StatIfThenElseContext::block() {
+  return getRuleContexts<LuaParser::BlockContext>();
+}
+
+LuaParser::BlockContext* LuaParser::StatIfThenElseContext::block(size_t i) {
+  return getRuleContext<LuaParser::BlockContext>(i);
+}
+
+LuaParser::StatIfThenElseContext::StatIfThenElseContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatIfThenElseContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatIfThenElse(this);
+}
+void LuaParser::StatIfThenElseContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatIfThenElse(this);
+}
+//----------------- StatLocalFunctionContext ------------------------------------------------------------------
+
+tree::TerminalNode* LuaParser::StatLocalFunctionContext::NAME() {
+  return getToken(LuaParser::NAME, 0);
+}
+
+LuaParser::FuncbodyContext* LuaParser::StatLocalFunctionContext::funcbody() {
+  return getRuleContext<LuaParser::FuncbodyContext>(0);
+}
+
+LuaParser::StatLocalFunctionContext::StatLocalFunctionContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatLocalFunctionContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatLocalFunction(this);
+}
+void LuaParser::StatLocalFunctionContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatLocalFunction(this);
+}
+//----------------- StatGotoContext ------------------------------------------------------------------
+
+tree::TerminalNode* LuaParser::StatGotoContext::NAME() {
+  return getToken(LuaParser::NAME, 0);
+}
+
+LuaParser::StatGotoContext::StatGotoContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatGotoContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatGoto(this);
+}
+void LuaParser::StatGotoContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatGoto(this);
+}
+//----------------- StatRepeatContext ------------------------------------------------------------------
+
+LuaParser::BlockContext* LuaParser::StatRepeatContext::block() {
+  return getRuleContext<LuaParser::BlockContext>(0);
+}
+
+LuaParser::ExpContext* LuaParser::StatRepeatContext::exp() {
+  return getRuleContext<LuaParser::ExpContext>(0);
+}
+
+LuaParser::StatRepeatContext::StatRepeatContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatRepeatContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatRepeat(this);
+}
+void LuaParser::StatRepeatContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatRepeat(this);
+}
+//----------------- StatLocalNameListContext ------------------------------------------------------------------
+
+LuaParser::NamelistContext* LuaParser::StatLocalNameListContext::namelist() {
+  return getRuleContext<LuaParser::NamelistContext>(0);
+}
+
+LuaParser::ExplistContext* LuaParser::StatLocalNameListContext::explist() {
+  return getRuleContext<LuaParser::ExplistContext>(0);
+}
+
+LuaParser::StatLocalNameListContext::StatLocalNameListContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatLocalNameListContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatLocalNameList(this);
+}
+void LuaParser::StatLocalNameListContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatLocalNameList(this);
+}
+//----------------- StatGenericForContext ------------------------------------------------------------------
+
+LuaParser::NamelistContext* LuaParser::StatGenericForContext::namelist() {
+  return getRuleContext<LuaParser::NamelistContext>(0);
+}
+
+LuaParser::ExplistContext* LuaParser::StatGenericForContext::explist() {
+  return getRuleContext<LuaParser::ExplistContext>(0);
+}
+
+LuaParser::BlockContext* LuaParser::StatGenericForContext::block() {
+  return getRuleContext<LuaParser::BlockContext>(0);
+}
+
+LuaParser::StatGenericForContext::StatGenericForContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatGenericForContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatGenericFor(this);
+}
+void LuaParser::StatGenericForContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatGenericFor(this);
+}
+//----------------- StatDoContext ------------------------------------------------------------------
+
+LuaParser::BlockContext* LuaParser::StatDoContext::block() {
+  return getRuleContext<LuaParser::BlockContext>(0);
+}
+
+LuaParser::StatDoContext::StatDoContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatDoContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatDo(this);
+}
+void LuaParser::StatDoContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatDo(this);
+}
+//----------------- StatAssignmentContext ------------------------------------------------------------------
+
+LuaParser::VarlistContext* LuaParser::StatAssignmentContext::varlist() {
+  return getRuleContext<LuaParser::VarlistContext>(0);
+}
+
+LuaParser::ExplistContext* LuaParser::StatAssignmentContext::explist() {
+  return getRuleContext<LuaParser::ExplistContext>(0);
+}
+
+LuaParser::StatAssignmentContext::StatAssignmentContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatAssignmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatAssignment(this);
+}
+void LuaParser::StatAssignmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatAssignment(this);
+}
+//----------------- StatBreakContext ------------------------------------------------------------------
+
+LuaParser::StatBreakContext::StatBreakContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatBreakContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatBreak(this);
+}
+void LuaParser::StatBreakContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatBreak(this);
+}
+//----------------- StatFunctionContext ------------------------------------------------------------------
+
+LuaParser::FuncnameContext* LuaParser::StatFunctionContext::funcname() {
+  return getRuleContext<LuaParser::FuncnameContext>(0);
+}
+
+LuaParser::FuncbodyContext* LuaParser::StatFunctionContext::funcbody() {
+  return getRuleContext<LuaParser::FuncbodyContext>(0);
+}
+
+LuaParser::StatFunctionContext::StatFunctionContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatFunctionContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatFunction(this);
+}
+void LuaParser::StatFunctionContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatFunction(this);
+}
+//----------------- StatWhileContext ------------------------------------------------------------------
+
+LuaParser::ExpContext* LuaParser::StatWhileContext::exp() {
+  return getRuleContext<LuaParser::ExpContext>(0);
+}
+
+LuaParser::BlockContext* LuaParser::StatWhileContext::block() {
+  return getRuleContext<LuaParser::BlockContext>(0);
+}
+
+LuaParser::StatWhileContext::StatWhileContext(StatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatWhileContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatWhile(this);
+}
+void LuaParser::StatWhileContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatWhile(this);
+}
 LuaParser::StatContext* LuaParser::stat() {
   StatContext *_localctx = _tracker.createInstance<StatContext>(_ctx, getState());
   enterRule(_localctx, 4, LuaParser::RuleStat);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
-    setState(167);
+    setState(163);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 6, _ctx)) {
     case 1: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatEmptySemicolonContext>(_localctx));
       enterOuterAlt(_localctx, 1);
-      setState(86);
+      setState(82);
       match(LuaParser::T__0);
       break;
     }
 
     case 2: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatAssignmentContext>(_localctx));
       enterOuterAlt(_localctx, 2);
-      setState(87);
+      setState(83);
       varlist();
-      setState(88);
+      setState(84);
       match(LuaParser::T__1);
-      setState(89);
+      setState(85);
       explist();
       break;
     }
 
     case 3: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatFunctionCallContext>(_localctx));
       enterOuterAlt(_localctx, 3);
-      setState(91);
+      setState(87);
       functioncall();
       break;
     }
 
     case 4: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatLabelContext>(_localctx));
       enterOuterAlt(_localctx, 4);
-      setState(92);
+      setState(88);
       label();
       break;
     }
 
     case 5: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatBreakContext>(_localctx));
       enterOuterAlt(_localctx, 5);
-      setState(93);
+      setState(89);
       match(LuaParser::T__2);
       break;
     }
 
     case 6: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatGotoContext>(_localctx));
       enterOuterAlt(_localctx, 6);
-      setState(94);
+      setState(90);
       match(LuaParser::T__3);
-      setState(95);
+      setState(91);
       match(LuaParser::NAME);
       break;
     }
 
     case 7: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatDoContext>(_localctx));
       enterOuterAlt(_localctx, 7);
-      setState(96);
+      setState(92);
       match(LuaParser::T__4);
-      setState(97);
+      setState(93);
       block();
-      setState(98);
+      setState(94);
       match(LuaParser::T__5);
       break;
     }
 
     case 8: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatWhileContext>(_localctx));
       enterOuterAlt(_localctx, 8);
-      setState(100);
+      setState(96);
       match(LuaParser::T__6);
-      setState(101);
+      setState(97);
       exp(0);
-      setState(102);
+      setState(98);
       match(LuaParser::T__4);
-      setState(103);
+      setState(99);
       block();
-      setState(104);
+      setState(100);
       match(LuaParser::T__5);
       break;
     }
 
     case 9: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatRepeatContext>(_localctx));
       enterOuterAlt(_localctx, 9);
-      setState(106);
+      setState(102);
       match(LuaParser::T__7);
-      setState(107);
+      setState(103);
       block();
-      setState(108);
+      setState(104);
       match(LuaParser::T__8);
-      setState(109);
+      setState(105);
       exp(0);
       break;
     }
 
     case 10: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatIfThenElseContext>(_localctx));
       enterOuterAlt(_localctx, 10);
-      setState(111);
+      setState(107);
       match(LuaParser::T__9);
-      setState(112);
+      setState(108);
       exp(0);
-      setState(113);
+      setState(109);
       match(LuaParser::T__10);
-      setState(114);
+      setState(110);
       block();
-      setState(122);
+      setState(118);
       _errHandler->sync(this);
       _la = _input->LA(1);
       while (_la == LuaParser::T__11) {
-        setState(115);
+        setState(111);
         match(LuaParser::T__11);
-        setState(116);
+        setState(112);
         exp(0);
-        setState(117);
+        setState(113);
         match(LuaParser::T__10);
-        setState(118);
+        setState(114);
         block();
-        setState(124);
+        setState(120);
         _errHandler->sync(this);
         _la = _input->LA(1);
       }
-      setState(127);
+      setState(123);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
       if (_la == LuaParser::T__12) {
-        setState(125);
+        setState(121);
         match(LuaParser::T__12);
-        setState(126);
+        setState(122);
         block();
       }
-      setState(129);
+      setState(125);
       match(LuaParser::T__5);
       break;
     }
 
     case 11: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatNumericForContext>(_localctx));
       enterOuterAlt(_localctx, 11);
-      setState(131);
+      setState(127);
       match(LuaParser::T__13);
-      setState(132);
+      setState(128);
       match(LuaParser::NAME);
-      setState(133);
+      setState(129);
       match(LuaParser::T__1);
-      setState(134);
+      setState(130);
+      exp(0);
+      setState(131);
+      match(LuaParser::T__14);
+      setState(132);
       exp(0);
       setState(135);
-      match(LuaParser::T__14);
-      setState(136);
-      exp(0);
-      setState(139);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
       if (_la == LuaParser::T__14) {
-        setState(137);
+        setState(133);
         match(LuaParser::T__14);
-        setState(138);
+        setState(134);
         exp(0);
       }
-      setState(141);
+      setState(137);
       match(LuaParser::T__4);
-      setState(142);
+      setState(138);
       block();
-      setState(143);
+      setState(139);
       match(LuaParser::T__5);
       break;
     }
 
     case 12: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatGenericForContext>(_localctx));
       enterOuterAlt(_localctx, 12);
-      setState(145);
+      setState(141);
       match(LuaParser::T__13);
-      setState(146);
+      setState(142);
       namelist();
-      setState(147);
+      setState(143);
       match(LuaParser::T__15);
-      setState(148);
+      setState(144);
       explist();
-      setState(149);
+      setState(145);
       match(LuaParser::T__4);
-      setState(150);
+      setState(146);
       block();
-      setState(151);
+      setState(147);
       match(LuaParser::T__5);
       break;
     }
 
     case 13: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatFunctionContext>(_localctx));
       enterOuterAlt(_localctx, 13);
-      setState(153);
+      setState(149);
       match(LuaParser::T__16);
-      setState(154);
+      setState(150);
       funcname();
-      setState(155);
+      setState(151);
       funcbody();
       break;
     }
 
     case 14: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatLocalFunctionContext>(_localctx));
       enterOuterAlt(_localctx, 14);
-      setState(157);
+      setState(153);
       match(LuaParser::T__17);
-      setState(158);
+      setState(154);
       match(LuaParser::T__16);
-      setState(159);
+      setState(155);
       match(LuaParser::NAME);
-      setState(160);
+      setState(156);
       funcbody();
       break;
     }
 
     case 15: {
+      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatLocalNameListContext>(_localctx));
       enterOuterAlt(_localctx, 15);
-      setState(161);
+      setState(157);
       match(LuaParser::T__17);
-      setState(162);
-      attnamelist();
-      setState(165);
+      setState(158);
+      namelist();
+      setState(161);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
       if (_la == LuaParser::T__1) {
-        setState(163);
+        setState(159);
         match(LuaParser::T__1);
-        setState(164);
+        setState(160);
         explist();
       }
       break;
     }
 
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- AttnamelistContext ------------------------------------------------------------------
-
-LuaParser::AttnamelistContext::AttnamelistContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-std::vector<tree::TerminalNode *> LuaParser::AttnamelistContext::NAME() {
-  return getTokens(LuaParser::NAME);
-}
-
-tree::TerminalNode* LuaParser::AttnamelistContext::NAME(size_t i) {
-  return getToken(LuaParser::NAME, i);
-}
-
-std::vector<LuaParser::AttribContext *> LuaParser::AttnamelistContext::attrib() {
-  return getRuleContexts<LuaParser::AttribContext>();
-}
-
-LuaParser::AttribContext* LuaParser::AttnamelistContext::attrib(size_t i) {
-  return getRuleContext<LuaParser::AttribContext>(i);
-}
-
-
-size_t LuaParser::AttnamelistContext::getRuleIndex() const {
-  return LuaParser::RuleAttnamelist;
-}
-
-void LuaParser::AttnamelistContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<LuaListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterAttnamelist(this);
-}
-
-void LuaParser::AttnamelistContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<LuaListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitAttnamelist(this);
-}
-
-LuaParser::AttnamelistContext* LuaParser::attnamelist() {
-  AttnamelistContext *_localctx = _tracker.createInstance<AttnamelistContext>(_ctx, getState());
-  enterRule(_localctx, 6, LuaParser::RuleAttnamelist);
-  size_t _la = 0;
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(169);
-    match(LuaParser::NAME);
-    setState(170);
-    attrib();
-    setState(176);
-    _errHandler->sync(this);
-    _la = _input->LA(1);
-    while (_la == LuaParser::T__14) {
-      setState(171);
-      match(LuaParser::T__14);
-      setState(172);
-      match(LuaParser::NAME);
-      setState(173);
-      attrib();
-      setState(178);
-      _errHandler->sync(this);
-      _la = _input->LA(1);
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- AttribContext ------------------------------------------------------------------
-
-LuaParser::AttribContext::AttribContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* LuaParser::AttribContext::NAME() {
-  return getToken(LuaParser::NAME, 0);
-}
-
-
-size_t LuaParser::AttribContext::getRuleIndex() const {
-  return LuaParser::RuleAttrib;
-}
-
-void LuaParser::AttribContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<LuaListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterAttrib(this);
-}
-
-void LuaParser::AttribContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<LuaListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitAttrib(this);
-}
-
-LuaParser::AttribContext* LuaParser::attrib() {
-  AttribContext *_localctx = _tracker.createInstance<AttribContext>(_ctx, getState());
-  enterRule(_localctx, 8, LuaParser::RuleAttrib);
-  size_t _la = 0;
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(182);
-    _errHandler->sync(this);
-
-    _la = _input->LA(1);
-    if (_la == LuaParser::T__18) {
-      setState(179);
-      match(LuaParser::T__18);
-      setState(180);
-      match(LuaParser::NAME);
-      setState(181);
-      match(LuaParser::T__19);
+    default:
+      break;
     }
    
   }
@@ -640,51 +789,62 @@ LuaParser::RetstatContext::RetstatContext(ParserRuleContext *parent, size_t invo
   : ParserRuleContext(parent, invokingState) {
 }
 
-LuaParser::ExplistContext* LuaParser::RetstatContext::explist() {
-  return getRuleContext<LuaParser::ExplistContext>(0);
-}
-
 
 size_t LuaParser::RetstatContext::getRuleIndex() const {
   return LuaParser::RuleRetstat;
 }
 
-void LuaParser::RetstatContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<LuaListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterRetstat(this);
+void LuaParser::RetstatContext::copyFrom(RetstatContext *ctx) {
+  ParserRuleContext::copyFrom(ctx);
 }
 
-void LuaParser::RetstatContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<LuaListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitRetstat(this);
+//----------------- StatReturnContext ------------------------------------------------------------------
+
+LuaParser::ExplistContext* LuaParser::StatReturnContext::explist() {
+  return getRuleContext<LuaParser::ExplistContext>(0);
 }
 
+LuaParser::StatReturnContext::StatReturnContext(RetstatContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::StatReturnContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStatReturn(this);
+}
+void LuaParser::StatReturnContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStatReturn(this);
+}
 LuaParser::RetstatContext* LuaParser::retstat() {
   RetstatContext *_localctx = _tracker.createInstance<RetstatContext>(_ctx, getState());
-  enterRule(_localctx, 10, LuaParser::RuleRetstat);
+  enterRule(_localctx, 6, LuaParser::RuleRetstat);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
+    _localctx = dynamic_cast<RetstatContext *>(_tracker.createInstance<LuaParser::StatReturnContext>(_localctx));
     enterOuterAlt(_localctx, 1);
-    setState(184);
-    match(LuaParser::T__20);
-    setState(186);
+    setState(165);
+    match(LuaParser::T__18);
+    setState(167);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & ((1ULL << LuaParser::T__16)
+      | (1ULL << LuaParser::T__22)
+      | (1ULL << LuaParser::T__23)
       | (1ULL << LuaParser::T__24)
       | (1ULL << LuaParser::T__25)
       | (1ULL << LuaParser::T__26)
-      | (1ULL << LuaParser::T__27)
-      | (1ULL << LuaParser::T__28)
-      | (1ULL << LuaParser::T__32)
+      | (1ULL << LuaParser::T__30)
       | (1ULL << LuaParser::T__42)
       | (1ULL << LuaParser::T__49)
       | (1ULL << LuaParser::T__52)
@@ -697,15 +857,15 @@ LuaParser::RetstatContext* LuaParser::retstat() {
       | (1ULL << LuaParser::HEX)
       | (1ULL << LuaParser::FLOAT)
       | (1ULL << LuaParser::HEX_FLOAT))) != 0)) {
-      setState(185);
+      setState(166);
       explist();
     }
-    setState(189);
+    setState(170);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == LuaParser::T__0) {
-      setState(188);
+      setState(169);
       match(LuaParser::T__0);
     }
    
@@ -748,19 +908,23 @@ void LuaParser::LabelContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::LabelContext* LuaParser::label() {
   LabelContext *_localctx = _tracker.createInstance<LabelContext>(_ctx, getState());
-  enterRule(_localctx, 12, LuaParser::RuleLabel);
+  enterRule(_localctx, 8, LuaParser::RuleLabel);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(191);
-    match(LuaParser::T__21);
-    setState(192);
+    setState(172);
+    match(LuaParser::T__19);
+    setState(173);
     match(LuaParser::NAME);
-    setState(193);
-    match(LuaParser::T__21);
+    setState(174);
+    match(LuaParser::T__19);
    
   }
   catch (RecognitionException &e) {
@@ -805,36 +969,40 @@ void LuaParser::FuncnameContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::FuncnameContext* LuaParser::funcname() {
   FuncnameContext *_localctx = _tracker.createInstance<FuncnameContext>(_ctx, getState());
-  enterRule(_localctx, 14, LuaParser::RuleFuncname);
+  enterRule(_localctx, 10, LuaParser::RuleFuncname);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(195);
+    setState(176);
     match(LuaParser::NAME);
-    setState(200);
+    setState(181);
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while (_la == LuaParser::T__22) {
-      setState(196);
-      match(LuaParser::T__22);
-      setState(197);
+    while (_la == LuaParser::T__20) {
+      setState(177);
+      match(LuaParser::T__20);
+      setState(178);
       match(LuaParser::NAME);
-      setState(202);
+      setState(183);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(205);
+    setState(186);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
-    if (_la == LuaParser::T__23) {
-      setState(203);
-      match(LuaParser::T__23);
-      setState(204);
+    if (_la == LuaParser::T__21) {
+      setState(184);
+      match(LuaParser::T__21);
+      setState(185);
       match(LuaParser::NAME);
     }
    
@@ -881,25 +1049,29 @@ void LuaParser::VarlistContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::VarlistContext* LuaParser::varlist() {
   VarlistContext *_localctx = _tracker.createInstance<VarlistContext>(_ctx, getState());
-  enterRule(_localctx, 16, LuaParser::RuleVarlist);
+  enterRule(_localctx, 12, LuaParser::RuleVarlist);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(207);
+    setState(188);
     var();
-    setState(212);
+    setState(193);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while (_la == LuaParser::T__14) {
-      setState(208);
+      setState(189);
       match(LuaParser::T__14);
-      setState(209);
+      setState(190);
       var();
-      setState(214);
+      setState(195);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
@@ -947,29 +1119,33 @@ void LuaParser::NamelistContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::NamelistContext* LuaParser::namelist() {
   NamelistContext *_localctx = _tracker.createInstance<NamelistContext>(_ctx, getState());
-  enterRule(_localctx, 18, LuaParser::RuleNamelist);
+  enterRule(_localctx, 14, LuaParser::RuleNamelist);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(215);
+    setState(196);
     match(LuaParser::NAME);
-    setState(220);
+    setState(201);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 14, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
-        setState(216);
+        setState(197);
         match(LuaParser::T__14);
-        setState(217);
+        setState(198);
         match(LuaParser::NAME); 
       }
-      setState(222);
+      setState(203);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 14, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx);
     }
    
   }
@@ -1015,25 +1191,29 @@ void LuaParser::ExplistContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::ExplistContext* LuaParser::explist() {
   ExplistContext *_localctx = _tracker.createInstance<ExplistContext>(_ctx, getState());
-  enterRule(_localctx, 20, LuaParser::RuleExplist);
+  enterRule(_localctx, 16, LuaParser::RuleExplist);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(223);
+    setState(204);
     exp(0);
-    setState(228);
+    setState(209);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while (_la == LuaParser::T__14) {
-      setState(224);
+      setState(205);
       match(LuaParser::T__14);
-      setState(225);
+      setState(206);
       exp(0);
-      setState(230);
+      setState(211);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
@@ -1054,87 +1234,391 @@ LuaParser::ExpContext::ExpContext(ParserRuleContext *parent, size_t invokingStat
   : ParserRuleContext(parent, invokingState) {
 }
 
-LuaParser::NumberContext* LuaParser::ExpContext::number() {
-  return getRuleContext<LuaParser::NumberContext>(0);
-}
-
-LuaParser::StringContext* LuaParser::ExpContext::string() {
-  return getRuleContext<LuaParser::StringContext>(0);
-}
-
-LuaParser::FunctiondefContext* LuaParser::ExpContext::functiondef() {
-  return getRuleContext<LuaParser::FunctiondefContext>(0);
-}
-
-LuaParser::PrefixexpContext* LuaParser::ExpContext::prefixexp() {
-  return getRuleContext<LuaParser::PrefixexpContext>(0);
-}
-
-LuaParser::TableconstructorContext* LuaParser::ExpContext::tableconstructor() {
-  return getRuleContext<LuaParser::TableconstructorContext>(0);
-}
-
-LuaParser::OperatorUnaryContext* LuaParser::ExpContext::operatorUnary() {
-  return getRuleContext<LuaParser::OperatorUnaryContext>(0);
-}
-
-std::vector<LuaParser::ExpContext *> LuaParser::ExpContext::exp() {
-  return getRuleContexts<LuaParser::ExpContext>();
-}
-
-LuaParser::ExpContext* LuaParser::ExpContext::exp(size_t i) {
-  return getRuleContext<LuaParser::ExpContext>(i);
-}
-
-LuaParser::OperatorPowerContext* LuaParser::ExpContext::operatorPower() {
-  return getRuleContext<LuaParser::OperatorPowerContext>(0);
-}
-
-LuaParser::OperatorMulDivModContext* LuaParser::ExpContext::operatorMulDivMod() {
-  return getRuleContext<LuaParser::OperatorMulDivModContext>(0);
-}
-
-LuaParser::OperatorAddSubContext* LuaParser::ExpContext::operatorAddSub() {
-  return getRuleContext<LuaParser::OperatorAddSubContext>(0);
-}
-
-LuaParser::OperatorStrcatContext* LuaParser::ExpContext::operatorStrcat() {
-  return getRuleContext<LuaParser::OperatorStrcatContext>(0);
-}
-
-LuaParser::OperatorComparisonContext* LuaParser::ExpContext::operatorComparison() {
-  return getRuleContext<LuaParser::OperatorComparisonContext>(0);
-}
-
-LuaParser::OperatorAndContext* LuaParser::ExpContext::operatorAnd() {
-  return getRuleContext<LuaParser::OperatorAndContext>(0);
-}
-
-LuaParser::OperatorOrContext* LuaParser::ExpContext::operatorOr() {
-  return getRuleContext<LuaParser::OperatorOrContext>(0);
-}
-
-LuaParser::OperatorBitwiseContext* LuaParser::ExpContext::operatorBitwise() {
-  return getRuleContext<LuaParser::OperatorBitwiseContext>(0);
-}
-
 
 size_t LuaParser::ExpContext::getRuleIndex() const {
   return LuaParser::RuleExp;
 }
 
-void LuaParser::ExpContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<LuaListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterExp(this);
+void LuaParser::ExpContext::copyFrom(ExpContext *ctx) {
+  ParserRuleContext::copyFrom(ctx);
 }
 
-void LuaParser::ExpContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<LuaListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitExp(this);
+//----------------- ExpOperatorBitwiseContext ------------------------------------------------------------------
+
+std::vector<LuaParser::ExpContext *> LuaParser::ExpOperatorBitwiseContext::exp() {
+  return getRuleContexts<LuaParser::ExpContext>();
 }
 
+LuaParser::ExpContext* LuaParser::ExpOperatorBitwiseContext::exp(size_t i) {
+  return getRuleContext<LuaParser::ExpContext>(i);
+}
+
+LuaParser::OperatorBitwiseContext* LuaParser::ExpOperatorBitwiseContext::operatorBitwise() {
+  return getRuleContext<LuaParser::OperatorBitwiseContext>(0);
+}
+
+LuaParser::ExpOperatorBitwiseContext::ExpOperatorBitwiseContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpOperatorBitwiseContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpOperatorBitwise(this);
+}
+void LuaParser::ExpOperatorBitwiseContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpOperatorBitwise(this);
+}
+//----------------- ExpFalseContext ------------------------------------------------------------------
+
+LuaParser::ExpFalseContext::ExpFalseContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpFalseContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpFalse(this);
+}
+void LuaParser::ExpFalseContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpFalse(this);
+}
+//----------------- ExpVarargContext ------------------------------------------------------------------
+
+LuaParser::ExpVarargContext::ExpVarargContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpVarargContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpVararg(this);
+}
+void LuaParser::ExpVarargContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpVararg(this);
+}
+//----------------- ExpTableConstructorContext ------------------------------------------------------------------
+
+LuaParser::TableconstructorContext* LuaParser::ExpTableConstructorContext::tableconstructor() {
+  return getRuleContext<LuaParser::TableconstructorContext>(0);
+}
+
+LuaParser::ExpTableConstructorContext::ExpTableConstructorContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpTableConstructorContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpTableConstructor(this);
+}
+void LuaParser::ExpTableConstructorContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpTableConstructor(this);
+}
+//----------------- ExpPrefixExpContext ------------------------------------------------------------------
+
+LuaParser::PrefixexpContext* LuaParser::ExpPrefixExpContext::prefixexp() {
+  return getRuleContext<LuaParser::PrefixexpContext>(0);
+}
+
+LuaParser::ExpPrefixExpContext::ExpPrefixExpContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpPrefixExpContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpPrefixExp(this);
+}
+void LuaParser::ExpPrefixExpContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpPrefixExp(this);
+}
+//----------------- ExpTrueContext ------------------------------------------------------------------
+
+LuaParser::ExpTrueContext::ExpTrueContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpTrueContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpTrue(this);
+}
+void LuaParser::ExpTrueContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpTrue(this);
+}
+//----------------- ExpNumberContext ------------------------------------------------------------------
+
+LuaParser::NumberContext* LuaParser::ExpNumberContext::number() {
+  return getRuleContext<LuaParser::NumberContext>(0);
+}
+
+LuaParser::ExpNumberContext::ExpNumberContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpNumberContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpNumber(this);
+}
+void LuaParser::ExpNumberContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpNumber(this);
+}
+//----------------- ExpOperatorUnaryContext ------------------------------------------------------------------
+
+LuaParser::OperatorUnaryContext* LuaParser::ExpOperatorUnaryContext::operatorUnary() {
+  return getRuleContext<LuaParser::OperatorUnaryContext>(0);
+}
+
+LuaParser::ExpContext* LuaParser::ExpOperatorUnaryContext::exp() {
+  return getRuleContext<LuaParser::ExpContext>(0);
+}
+
+LuaParser::ExpOperatorUnaryContext::ExpOperatorUnaryContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpOperatorUnaryContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpOperatorUnary(this);
+}
+void LuaParser::ExpOperatorUnaryContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpOperatorUnary(this);
+}
+//----------------- ExpOperatorAndContext ------------------------------------------------------------------
+
+std::vector<LuaParser::ExpContext *> LuaParser::ExpOperatorAndContext::exp() {
+  return getRuleContexts<LuaParser::ExpContext>();
+}
+
+LuaParser::ExpContext* LuaParser::ExpOperatorAndContext::exp(size_t i) {
+  return getRuleContext<LuaParser::ExpContext>(i);
+}
+
+LuaParser::OperatorAndContext* LuaParser::ExpOperatorAndContext::operatorAnd() {
+  return getRuleContext<LuaParser::OperatorAndContext>(0);
+}
+
+LuaParser::ExpOperatorAndContext::ExpOperatorAndContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpOperatorAndContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpOperatorAnd(this);
+}
+void LuaParser::ExpOperatorAndContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpOperatorAnd(this);
+}
+//----------------- ExpOperatorPowerContext ------------------------------------------------------------------
+
+std::vector<LuaParser::ExpContext *> LuaParser::ExpOperatorPowerContext::exp() {
+  return getRuleContexts<LuaParser::ExpContext>();
+}
+
+LuaParser::ExpContext* LuaParser::ExpOperatorPowerContext::exp(size_t i) {
+  return getRuleContext<LuaParser::ExpContext>(i);
+}
+
+LuaParser::OperatorPowerContext* LuaParser::ExpOperatorPowerContext::operatorPower() {
+  return getRuleContext<LuaParser::OperatorPowerContext>(0);
+}
+
+LuaParser::ExpOperatorPowerContext::ExpOperatorPowerContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpOperatorPowerContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpOperatorPower(this);
+}
+void LuaParser::ExpOperatorPowerContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpOperatorPower(this);
+}
+//----------------- ExpOperatorAddSubContext ------------------------------------------------------------------
+
+std::vector<LuaParser::ExpContext *> LuaParser::ExpOperatorAddSubContext::exp() {
+  return getRuleContexts<LuaParser::ExpContext>();
+}
+
+LuaParser::ExpContext* LuaParser::ExpOperatorAddSubContext::exp(size_t i) {
+  return getRuleContext<LuaParser::ExpContext>(i);
+}
+
+LuaParser::OperatorAddSubContext* LuaParser::ExpOperatorAddSubContext::operatorAddSub() {
+  return getRuleContext<LuaParser::OperatorAddSubContext>(0);
+}
+
+LuaParser::ExpOperatorAddSubContext::ExpOperatorAddSubContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpOperatorAddSubContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpOperatorAddSub(this);
+}
+void LuaParser::ExpOperatorAddSubContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpOperatorAddSub(this);
+}
+//----------------- ExpOperatorStrcatContext ------------------------------------------------------------------
+
+std::vector<LuaParser::ExpContext *> LuaParser::ExpOperatorStrcatContext::exp() {
+  return getRuleContexts<LuaParser::ExpContext>();
+}
+
+LuaParser::ExpContext* LuaParser::ExpOperatorStrcatContext::exp(size_t i) {
+  return getRuleContext<LuaParser::ExpContext>(i);
+}
+
+LuaParser::OperatorStrcatContext* LuaParser::ExpOperatorStrcatContext::operatorStrcat() {
+  return getRuleContext<LuaParser::OperatorStrcatContext>(0);
+}
+
+LuaParser::ExpOperatorStrcatContext::ExpOperatorStrcatContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpOperatorStrcatContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpOperatorStrcat(this);
+}
+void LuaParser::ExpOperatorStrcatContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpOperatorStrcat(this);
+}
+//----------------- ExpOperatorComparisonContext ------------------------------------------------------------------
+
+std::vector<LuaParser::ExpContext *> LuaParser::ExpOperatorComparisonContext::exp() {
+  return getRuleContexts<LuaParser::ExpContext>();
+}
+
+LuaParser::ExpContext* LuaParser::ExpOperatorComparisonContext::exp(size_t i) {
+  return getRuleContext<LuaParser::ExpContext>(i);
+}
+
+LuaParser::OperatorComparisonContext* LuaParser::ExpOperatorComparisonContext::operatorComparison() {
+  return getRuleContext<LuaParser::OperatorComparisonContext>(0);
+}
+
+LuaParser::ExpOperatorComparisonContext::ExpOperatorComparisonContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpOperatorComparisonContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpOperatorComparison(this);
+}
+void LuaParser::ExpOperatorComparisonContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpOperatorComparison(this);
+}
+//----------------- ExpNilContext ------------------------------------------------------------------
+
+LuaParser::ExpNilContext::ExpNilContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpNilContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpNil(this);
+}
+void LuaParser::ExpNilContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpNil(this);
+}
+//----------------- ExpOperatorOrContext ------------------------------------------------------------------
+
+std::vector<LuaParser::ExpContext *> LuaParser::ExpOperatorOrContext::exp() {
+  return getRuleContexts<LuaParser::ExpContext>();
+}
+
+LuaParser::ExpContext* LuaParser::ExpOperatorOrContext::exp(size_t i) {
+  return getRuleContext<LuaParser::ExpContext>(i);
+}
+
+LuaParser::OperatorOrContext* LuaParser::ExpOperatorOrContext::operatorOr() {
+  return getRuleContext<LuaParser::OperatorOrContext>(0);
+}
+
+LuaParser::ExpOperatorOrContext::ExpOperatorOrContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpOperatorOrContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpOperatorOr(this);
+}
+void LuaParser::ExpOperatorOrContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpOperatorOr(this);
+}
+//----------------- ExpStringContext ------------------------------------------------------------------
+
+LuaParser::StringContext* LuaParser::ExpStringContext::string() {
+  return getRuleContext<LuaParser::StringContext>(0);
+}
+
+LuaParser::ExpStringContext::ExpStringContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpStringContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpString(this);
+}
+void LuaParser::ExpStringContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpString(this);
+}
+//----------------- ExpOperatorMulDivModContext ------------------------------------------------------------------
+
+std::vector<LuaParser::ExpContext *> LuaParser::ExpOperatorMulDivModContext::exp() {
+  return getRuleContexts<LuaParser::ExpContext>();
+}
+
+LuaParser::ExpContext* LuaParser::ExpOperatorMulDivModContext::exp(size_t i) {
+  return getRuleContext<LuaParser::ExpContext>(i);
+}
+
+LuaParser::OperatorMulDivModContext* LuaParser::ExpOperatorMulDivModContext::operatorMulDivMod() {
+  return getRuleContext<LuaParser::OperatorMulDivModContext>(0);
+}
+
+LuaParser::ExpOperatorMulDivModContext::ExpOperatorMulDivModContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpOperatorMulDivModContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpOperatorMulDivMod(this);
+}
+void LuaParser::ExpOperatorMulDivModContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpOperatorMulDivMod(this);
+}
+//----------------- ExpFunctionDefContext ------------------------------------------------------------------
+
+LuaParser::FunctiondefContext* LuaParser::ExpFunctionDefContext::functiondef() {
+  return getRuleContext<LuaParser::FunctiondefContext>(0);
+}
+
+LuaParser::ExpFunctionDefContext::ExpFunctionDefContext(ExpContext *ctx) { copyFrom(ctx); }
+
+void LuaParser::ExpFunctionDefContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterExpFunctionDef(this);
+}
+void LuaParser::ExpFunctionDefContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<LuaListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitExpFunctionDef(this);
+}
 
 LuaParser::ExpContext* LuaParser::exp() {
    return exp(0);
@@ -1146,35 +1630,49 @@ LuaParser::ExpContext* LuaParser::exp(int precedence) {
   LuaParser::ExpContext *_localctx = _tracker.createInstance<ExpContext>(_ctx, parentState);
   LuaParser::ExpContext *previousContext = _localctx;
   (void)previousContext; // Silence compiler, in case the context is not used by generated code.
-  size_t startState = 22;
-  enterRecursionRule(_localctx, 22, LuaParser::RuleExp, precedence);
+  size_t startState = 18;
+  enterRecursionRule(_localctx, 18, LuaParser::RuleExp, precedence);
 
     
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     unrollRecursionContexts(parentContext);
   });
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(244);
+    setState(225);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
+      case LuaParser::T__22: {
+        _localctx = _tracker.createInstance<ExpNilContext>(_localctx);
+        _ctx = _localctx;
+        previousContext = _localctx;
+
+        setState(213);
+        match(LuaParser::T__22);
+        break;
+      }
+
+      case LuaParser::T__23: {
+        _localctx = _tracker.createInstance<ExpFalseContext>(_localctx);
+        _ctx = _localctx;
+        previousContext = _localctx;
+        setState(214);
+        match(LuaParser::T__23);
+        break;
+      }
+
       case LuaParser::T__24: {
-        setState(232);
+        _localctx = _tracker.createInstance<ExpTrueContext>(_localctx);
+        _ctx = _localctx;
+        previousContext = _localctx;
+        setState(215);
         match(LuaParser::T__24);
-        break;
-      }
-
-      case LuaParser::T__25: {
-        setState(233);
-        match(LuaParser::T__25);
-        break;
-      }
-
-      case LuaParser::T__26: {
-        setState(234);
-        match(LuaParser::T__26);
         break;
       }
 
@@ -1182,7 +1680,10 @@ LuaParser::ExpContext* LuaParser::exp(int precedence) {
       case LuaParser::HEX:
       case LuaParser::FLOAT:
       case LuaParser::HEX_FLOAT: {
-        setState(235);
+        _localctx = _tracker.createInstance<ExpNumberContext>(_localctx);
+        _ctx = _localctx;
+        previousContext = _localctx;
+        setState(216);
         number();
         break;
       }
@@ -1190,32 +1691,47 @@ LuaParser::ExpContext* LuaParser::exp(int precedence) {
       case LuaParser::NORMALSTRING:
       case LuaParser::CHARSTRING:
       case LuaParser::LONGSTRING: {
-        setState(236);
+        _localctx = _tracker.createInstance<ExpStringContext>(_localctx);
+        _ctx = _localctx;
+        previousContext = _localctx;
+        setState(217);
         string();
         break;
       }
 
-      case LuaParser::T__27: {
-        setState(237);
-        match(LuaParser::T__27);
+      case LuaParser::T__25: {
+        _localctx = _tracker.createInstance<ExpVarargContext>(_localctx);
+        _ctx = _localctx;
+        previousContext = _localctx;
+        setState(218);
+        match(LuaParser::T__25);
         break;
       }
 
       case LuaParser::T__16: {
-        setState(238);
+        _localctx = _tracker.createInstance<ExpFunctionDefContext>(_localctx);
+        _ctx = _localctx;
+        previousContext = _localctx;
+        setState(219);
         functiondef();
         break;
       }
 
-      case LuaParser::T__28:
+      case LuaParser::T__26:
       case LuaParser::NAME: {
-        setState(239);
+        _localctx = _tracker.createInstance<ExpPrefixExpContext>(_localctx);
+        _ctx = _localctx;
+        previousContext = _localctx;
+        setState(220);
         prefixexp();
         break;
       }
 
-      case LuaParser::T__32: {
-        setState(240);
+      case LuaParser::T__30: {
+        _localctx = _tracker.createInstance<ExpTableConstructorContext>(_localctx);
+        _ctx = _localctx;
+        previousContext = _localctx;
+        setState(221);
         tableconstructor();
         break;
       }
@@ -1224,9 +1740,12 @@ LuaParser::ExpContext* LuaParser::exp(int precedence) {
       case LuaParser::T__49:
       case LuaParser::T__52:
       case LuaParser::T__53: {
-        setState(241);
+        _localctx = _tracker.createInstance<ExpOperatorUnaryContext>(_localctx);
+        _ctx = _localctx;
+        previousContext = _localctx;
+        setState(222);
         operatorUnary();
-        setState(242);
+        setState(223);
         exp(8);
         break;
       }
@@ -1235,126 +1754,136 @@ LuaParser::ExpContext* LuaParser::exp(int precedence) {
       throw NoViableAltException(this);
     }
     _ctx->stop = _input->LT(-1);
-    setState(280);
+    setState(261);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 16, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(278);
+        setState(259);
         _errHandler->sync(this);
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 17, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 15, _ctx)) {
         case 1: {
-          _localctx = _tracker.createInstance<ExpContext>(parentContext, parentState);
-          pushNewRecursionContext(_localctx, startState, RuleExp);
-          setState(246);
+          auto newContext = _tracker.createInstance<ExpOperatorPowerContext>(_tracker.createInstance<ExpContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExp);
+          setState(227);
 
           if (!(precpred(_ctx, 9))) throw FailedPredicateException(this, "precpred(_ctx, 9)");
-          setState(247);
+          setState(228);
           operatorPower();
-          setState(248);
+          setState(229);
           exp(9);
           break;
         }
 
         case 2: {
-          _localctx = _tracker.createInstance<ExpContext>(parentContext, parentState);
-          pushNewRecursionContext(_localctx, startState, RuleExp);
-          setState(250);
+          auto newContext = _tracker.createInstance<ExpOperatorMulDivModContext>(_tracker.createInstance<ExpContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExp);
+          setState(231);
 
           if (!(precpred(_ctx, 7))) throw FailedPredicateException(this, "precpred(_ctx, 7)");
-          setState(251);
+          setState(232);
           operatorMulDivMod();
-          setState(252);
+          setState(233);
           exp(8);
           break;
         }
 
         case 3: {
-          _localctx = _tracker.createInstance<ExpContext>(parentContext, parentState);
-          pushNewRecursionContext(_localctx, startState, RuleExp);
-          setState(254);
+          auto newContext = _tracker.createInstance<ExpOperatorAddSubContext>(_tracker.createInstance<ExpContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExp);
+          setState(235);
 
           if (!(precpred(_ctx, 6))) throw FailedPredicateException(this, "precpred(_ctx, 6)");
-          setState(255);
+          setState(236);
           operatorAddSub();
-          setState(256);
+          setState(237);
           exp(7);
           break;
         }
 
         case 4: {
-          _localctx = _tracker.createInstance<ExpContext>(parentContext, parentState);
-          pushNewRecursionContext(_localctx, startState, RuleExp);
-          setState(258);
+          auto newContext = _tracker.createInstance<ExpOperatorStrcatContext>(_tracker.createInstance<ExpContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExp);
+          setState(239);
 
           if (!(precpred(_ctx, 5))) throw FailedPredicateException(this, "precpred(_ctx, 5)");
-          setState(259);
+          setState(240);
           operatorStrcat();
-          setState(260);
+          setState(241);
           exp(5);
           break;
         }
 
         case 5: {
-          _localctx = _tracker.createInstance<ExpContext>(parentContext, parentState);
-          pushNewRecursionContext(_localctx, startState, RuleExp);
-          setState(262);
+          auto newContext = _tracker.createInstance<ExpOperatorComparisonContext>(_tracker.createInstance<ExpContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExp);
+          setState(243);
 
           if (!(precpred(_ctx, 4))) throw FailedPredicateException(this, "precpred(_ctx, 4)");
-          setState(263);
+          setState(244);
           operatorComparison();
-          setState(264);
+          setState(245);
           exp(5);
           break;
         }
 
         case 6: {
-          _localctx = _tracker.createInstance<ExpContext>(parentContext, parentState);
-          pushNewRecursionContext(_localctx, startState, RuleExp);
-          setState(266);
+          auto newContext = _tracker.createInstance<ExpOperatorAndContext>(_tracker.createInstance<ExpContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExp);
+          setState(247);
 
           if (!(precpred(_ctx, 3))) throw FailedPredicateException(this, "precpred(_ctx, 3)");
-          setState(267);
+          setState(248);
           operatorAnd();
-          setState(268);
+          setState(249);
           exp(4);
           break;
         }
 
         case 7: {
-          _localctx = _tracker.createInstance<ExpContext>(parentContext, parentState);
-          pushNewRecursionContext(_localctx, startState, RuleExp);
-          setState(270);
+          auto newContext = _tracker.createInstance<ExpOperatorOrContext>(_tracker.createInstance<ExpContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExp);
+          setState(251);
 
           if (!(precpred(_ctx, 2))) throw FailedPredicateException(this, "precpred(_ctx, 2)");
-          setState(271);
+          setState(252);
           operatorOr();
-          setState(272);
+          setState(253);
           exp(3);
           break;
         }
 
         case 8: {
-          _localctx = _tracker.createInstance<ExpContext>(parentContext, parentState);
-          pushNewRecursionContext(_localctx, startState, RuleExp);
-          setState(274);
+          auto newContext = _tracker.createInstance<ExpOperatorBitwiseContext>(_tracker.createInstance<ExpContext>(parentContext, parentState));
+          _localctx = newContext;
+          pushNewRecursionContext(newContext, startState, RuleExp);
+          setState(255);
 
           if (!(precpred(_ctx, 1))) throw FailedPredicateException(this, "precpred(_ctx, 1)");
-          setState(275);
+          setState(256);
           operatorBitwise();
-          setState(276);
+          setState(257);
           exp(2);
           break;
         }
 
+        default:
+          break;
         } 
       }
-      setState(282);
+      setState(263);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 16, _ctx);
     }
   }
   catch (RecognitionException &e) {
@@ -1402,27 +1931,31 @@ void LuaParser::PrefixexpContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::PrefixexpContext* LuaParser::prefixexp() {
   PrefixexpContext *_localctx = _tracker.createInstance<PrefixexpContext>(_ctx, getState());
-  enterRule(_localctx, 24, LuaParser::RulePrefixexp);
+  enterRule(_localctx, 20, LuaParser::RulePrefixexp);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(283);
+    setState(264);
     varOrExp();
-    setState(287);
+    setState(268);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 19, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 17, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
-        setState(284);
+        setState(265);
         nameAndArgs(); 
       }
-      setState(289);
+      setState(270);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 19, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 17, _ctx);
     }
    
   }
@@ -1472,23 +2005,27 @@ void LuaParser::FunctioncallContext::exitRule(tree::ParseTreeListener *listener)
 
 LuaParser::FunctioncallContext* LuaParser::functioncall() {
   FunctioncallContext *_localctx = _tracker.createInstance<FunctioncallContext>(_ctx, getState());
-  enterRule(_localctx, 26, LuaParser::RuleFunctioncall);
+  enterRule(_localctx, 22, LuaParser::RuleFunctioncall);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(290);
+    setState(271);
     varOrExp();
-    setState(292); 
+    setState(273); 
     _errHandler->sync(this);
     alt = 1;
     do {
       switch (alt) {
         case 1: {
-              setState(291);
+              setState(272);
               nameAndArgs();
               break;
             }
@@ -1496,9 +2033,9 @@ LuaParser::FunctioncallContext* LuaParser::functioncall() {
       default:
         throw NoViableAltException(this);
       }
-      setState(294); 
+      setState(275); 
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 20, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx);
     } while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER);
    
   }
@@ -1544,33 +2081,39 @@ void LuaParser::VarOrExpContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::VarOrExpContext* LuaParser::varOrExp() {
   VarOrExpContext *_localctx = _tracker.createInstance<VarOrExpContext>(_ctx, getState());
-  enterRule(_localctx, 28, LuaParser::RuleVarOrExp);
+  enterRule(_localctx, 24, LuaParser::RuleVarOrExp);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
-    setState(301);
+    setState(282);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 19, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(296);
+      setState(277);
       var();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(297);
-      match(LuaParser::T__28);
-      setState(298);
+      setState(278);
+      match(LuaParser::T__26);
+      setState(279);
       exp(0);
-      setState(299);
-      match(LuaParser::T__29);
+      setState(280);
+      match(LuaParser::T__27);
       break;
     }
 
+    default:
+      break;
     }
    
   }
@@ -1624,31 +2167,35 @@ void LuaParser::VarContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::VarContext* LuaParser::var() {
   VarContext *_localctx = _tracker.createInstance<VarContext>(_ctx, getState());
-  enterRule(_localctx, 30, LuaParser::RuleVar);
+  enterRule(_localctx, 26, LuaParser::RuleVar);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(309);
+    setState(290);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case LuaParser::NAME: {
-        setState(303);
+        setState(284);
         match(LuaParser::NAME);
         break;
       }
 
-      case LuaParser::T__28: {
-        setState(304);
-        match(LuaParser::T__28);
-        setState(305);
+      case LuaParser::T__26: {
+        setState(285);
+        match(LuaParser::T__26);
+        setState(286);
         exp(0);
-        setState(306);
-        match(LuaParser::T__29);
-        setState(307);
+        setState(287);
+        match(LuaParser::T__27);
+        setState(288);
         varSuffix();
         break;
       }
@@ -1656,17 +2203,17 @@ LuaParser::VarContext* LuaParser::var() {
     default:
       throw NoViableAltException(this);
     }
-    setState(314);
+    setState(295);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 23, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
-        setState(311);
+        setState(292);
         varSuffix(); 
       }
-      setState(316);
+      setState(297);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 23, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx);
     }
    
   }
@@ -1720,47 +2267,51 @@ void LuaParser::VarSuffixContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::VarSuffixContext* LuaParser::varSuffix() {
   VarSuffixContext *_localctx = _tracker.createInstance<VarSuffixContext>(_ctx, getState());
-  enterRule(_localctx, 32, LuaParser::RuleVarSuffix);
+  enterRule(_localctx, 28, LuaParser::RuleVarSuffix);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(320);
+    setState(301);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << LuaParser::T__23)
-      | (1ULL << LuaParser::T__28)
-      | (1ULL << LuaParser::T__32)
+      ((1ULL << _la) & ((1ULL << LuaParser::T__21)
+      | (1ULL << LuaParser::T__26)
+      | (1ULL << LuaParser::T__30)
       | (1ULL << LuaParser::NORMALSTRING)
       | (1ULL << LuaParser::CHARSTRING)
       | (1ULL << LuaParser::LONGSTRING))) != 0)) {
-      setState(317);
+      setState(298);
       nameAndArgs();
-      setState(322);
+      setState(303);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(329);
+    setState(310);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case LuaParser::T__30: {
-        setState(323);
-        match(LuaParser::T__30);
-        setState(324);
+      case LuaParser::T__28: {
+        setState(304);
+        match(LuaParser::T__28);
+        setState(305);
         exp(0);
-        setState(325);
-        match(LuaParser::T__31);
+        setState(306);
+        match(LuaParser::T__29);
         break;
       }
 
-      case LuaParser::T__22: {
-        setState(327);
-        match(LuaParser::T__22);
-        setState(328);
+      case LuaParser::T__20: {
+        setState(308);
+        match(LuaParser::T__20);
+        setState(309);
         match(LuaParser::NAME);
         break;
       }
@@ -1812,25 +2363,29 @@ void LuaParser::NameAndArgsContext::exitRule(tree::ParseTreeListener *listener) 
 
 LuaParser::NameAndArgsContext* LuaParser::nameAndArgs() {
   NameAndArgsContext *_localctx = _tracker.createInstance<NameAndArgsContext>(_ctx, getState());
-  enterRule(_localctx, 34, LuaParser::RuleNameAndArgs);
+  enterRule(_localctx, 30, LuaParser::RuleNameAndArgs);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(333);
+    setState(314);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
-    if (_la == LuaParser::T__23) {
-      setState(331);
-      match(LuaParser::T__23);
-      setState(332);
+    if (_la == LuaParser::T__21) {
+      setState(312);
+      match(LuaParser::T__21);
+      setState(313);
       match(LuaParser::NAME);
     }
-    setState(335);
+    setState(316);
     args();
    
   }
@@ -1880,32 +2435,36 @@ void LuaParser::ArgsContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::ArgsContext* LuaParser::args() {
   ArgsContext *_localctx = _tracker.createInstance<ArgsContext>(_ctx, getState());
-  enterRule(_localctx, 36, LuaParser::RuleArgs);
+  enterRule(_localctx, 32, LuaParser::RuleArgs);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
-    setState(344);
+    setState(325);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case LuaParser::T__28: {
+      case LuaParser::T__26: {
         enterOuterAlt(_localctx, 1);
-        setState(337);
-        match(LuaParser::T__28);
-        setState(339);
+        setState(318);
+        match(LuaParser::T__26);
+        setState(320);
         _errHandler->sync(this);
 
         _la = _input->LA(1);
         if ((((_la & ~ 0x3fULL) == 0) &&
           ((1ULL << _la) & ((1ULL << LuaParser::T__16)
+          | (1ULL << LuaParser::T__22)
+          | (1ULL << LuaParser::T__23)
           | (1ULL << LuaParser::T__24)
           | (1ULL << LuaParser::T__25)
           | (1ULL << LuaParser::T__26)
-          | (1ULL << LuaParser::T__27)
-          | (1ULL << LuaParser::T__28)
-          | (1ULL << LuaParser::T__32)
+          | (1ULL << LuaParser::T__30)
           | (1ULL << LuaParser::T__42)
           | (1ULL << LuaParser::T__49)
           | (1ULL << LuaParser::T__52)
@@ -1918,17 +2477,17 @@ LuaParser::ArgsContext* LuaParser::args() {
           | (1ULL << LuaParser::HEX)
           | (1ULL << LuaParser::FLOAT)
           | (1ULL << LuaParser::HEX_FLOAT))) != 0)) {
-          setState(338);
+          setState(319);
           explist();
         }
-        setState(341);
-        match(LuaParser::T__29);
+        setState(322);
+        match(LuaParser::T__27);
         break;
       }
 
-      case LuaParser::T__32: {
+      case LuaParser::T__30: {
         enterOuterAlt(_localctx, 2);
-        setState(342);
+        setState(323);
         tableconstructor();
         break;
       }
@@ -1937,7 +2496,7 @@ LuaParser::ArgsContext* LuaParser::args() {
       case LuaParser::CHARSTRING:
       case LuaParser::LONGSTRING: {
         enterOuterAlt(_localctx, 3);
-        setState(343);
+        setState(324);
         string();
         break;
       }
@@ -1985,16 +2544,20 @@ void LuaParser::FunctiondefContext::exitRule(tree::ParseTreeListener *listener) 
 
 LuaParser::FunctiondefContext* LuaParser::functiondef() {
   FunctiondefContext *_localctx = _tracker.createInstance<FunctiondefContext>(_ctx, getState());
-  enterRule(_localctx, 38, LuaParser::RuleFunctiondef);
+  enterRule(_localctx, 34, LuaParser::RuleFunctiondef);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(346);
+    setState(327);
     match(LuaParser::T__16);
-    setState(347);
+    setState(328);
     funcbody();
    
   }
@@ -2040,31 +2603,35 @@ void LuaParser::FuncbodyContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::FuncbodyContext* LuaParser::funcbody() {
   FuncbodyContext *_localctx = _tracker.createInstance<FuncbodyContext>(_ctx, getState());
-  enterRule(_localctx, 40, LuaParser::RuleFuncbody);
+  enterRule(_localctx, 36, LuaParser::RuleFuncbody);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(349);
-    match(LuaParser::T__28);
-    setState(351);
+    setState(330);
+    match(LuaParser::T__26);
+    setState(332);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
-    if (_la == LuaParser::T__27
+    if (_la == LuaParser::T__25
 
     || _la == LuaParser::NAME) {
-      setState(350);
+      setState(331);
       parlist();
     }
-    setState(353);
-    match(LuaParser::T__29);
-    setState(354);
+    setState(334);
+    match(LuaParser::T__27);
+    setState(335);
     block();
-    setState(355);
+    setState(336);
     match(LuaParser::T__5);
    
   }
@@ -2106,37 +2673,41 @@ void LuaParser::ParlistContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::ParlistContext* LuaParser::parlist() {
   ParlistContext *_localctx = _tracker.createInstance<ParlistContext>(_ctx, getState());
-  enterRule(_localctx, 42, LuaParser::RuleParlist);
+  enterRule(_localctx, 38, LuaParser::RuleParlist);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
-    setState(363);
+    setState(344);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case LuaParser::NAME: {
         enterOuterAlt(_localctx, 1);
-        setState(357);
+        setState(338);
         namelist();
-        setState(360);
+        setState(341);
         _errHandler->sync(this);
 
         _la = _input->LA(1);
         if (_la == LuaParser::T__14) {
-          setState(358);
+          setState(339);
           match(LuaParser::T__14);
-          setState(359);
-          match(LuaParser::T__27);
+          setState(340);
+          match(LuaParser::T__25);
         }
         break;
       }
 
-      case LuaParser::T__27: {
+      case LuaParser::T__25: {
         enterOuterAlt(_localctx, 2);
-        setState(362);
-        match(LuaParser::T__27);
+        setState(343);
+        match(LuaParser::T__25);
         break;
       }
 
@@ -2183,29 +2754,33 @@ void LuaParser::TableconstructorContext::exitRule(tree::ParseTreeListener *liste
 
 LuaParser::TableconstructorContext* LuaParser::tableconstructor() {
   TableconstructorContext *_localctx = _tracker.createInstance<TableconstructorContext>(_ctx, getState());
-  enterRule(_localctx, 44, LuaParser::RuleTableconstructor);
+  enterRule(_localctx, 40, LuaParser::RuleTableconstructor);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(365);
-    match(LuaParser::T__32);
-    setState(367);
+    setState(346);
+    match(LuaParser::T__30);
+    setState(348);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & ((1ULL << LuaParser::T__16)
+      | (1ULL << LuaParser::T__22)
+      | (1ULL << LuaParser::T__23)
       | (1ULL << LuaParser::T__24)
       | (1ULL << LuaParser::T__25)
       | (1ULL << LuaParser::T__26)
-      | (1ULL << LuaParser::T__27)
       | (1ULL << LuaParser::T__28)
       | (1ULL << LuaParser::T__30)
-      | (1ULL << LuaParser::T__32)
       | (1ULL << LuaParser::T__42)
       | (1ULL << LuaParser::T__49)
       | (1ULL << LuaParser::T__52)
@@ -2218,11 +2793,11 @@ LuaParser::TableconstructorContext* LuaParser::tableconstructor() {
       | (1ULL << LuaParser::HEX)
       | (1ULL << LuaParser::FLOAT)
       | (1ULL << LuaParser::HEX_FLOAT))) != 0)) {
-      setState(366);
+      setState(347);
       fieldlist();
     }
-    setState(369);
-    match(LuaParser::T__33);
+    setState(350);
+    match(LuaParser::T__31);
    
   }
   catch (RecognitionException &e) {
@@ -2275,39 +2850,43 @@ void LuaParser::FieldlistContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::FieldlistContext* LuaParser::fieldlist() {
   FieldlistContext *_localctx = _tracker.createInstance<FieldlistContext>(_ctx, getState());
-  enterRule(_localctx, 46, LuaParser::RuleFieldlist);
+  enterRule(_localctx, 42, LuaParser::RuleFieldlist);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(371);
+    setState(352);
     field();
-    setState(377);
+    setState(358);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 33, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 31, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
-        setState(372);
+        setState(353);
         fieldsep();
-        setState(373);
+        setState(354);
         field(); 
       }
-      setState(379);
+      setState(360);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 33, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 31, _ctx);
     }
-    setState(381);
+    setState(362);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == LuaParser::T__0
 
     || _la == LuaParser::T__14) {
-      setState(380);
+      setState(361);
       fieldsep();
     }
    
@@ -2358,48 +2937,54 @@ void LuaParser::FieldContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::FieldContext* LuaParser::field() {
   FieldContext *_localctx = _tracker.createInstance<FieldContext>(_ctx, getState());
-  enterRule(_localctx, 48, LuaParser::RuleField);
+  enterRule(_localctx, 44, LuaParser::RuleField);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
-    setState(393);
+    setState(374);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 35, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 33, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(383);
-      match(LuaParser::T__30);
-      setState(384);
+      setState(364);
+      match(LuaParser::T__28);
+      setState(365);
       exp(0);
-      setState(385);
-      match(LuaParser::T__31);
-      setState(386);
+      setState(366);
+      match(LuaParser::T__29);
+      setState(367);
       match(LuaParser::T__1);
-      setState(387);
+      setState(368);
       exp(0);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(389);
+      setState(370);
       match(LuaParser::NAME);
-      setState(390);
+      setState(371);
       match(LuaParser::T__1);
-      setState(391);
+      setState(372);
       exp(0);
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(392);
+      setState(373);
       exp(0);
       break;
     }
 
+    default:
+      break;
     }
    
   }
@@ -2437,15 +3022,19 @@ void LuaParser::FieldsepContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::FieldsepContext* LuaParser::fieldsep() {
   FieldsepContext *_localctx = _tracker.createInstance<FieldsepContext>(_ctx, getState());
-  enterRule(_localctx, 50, LuaParser::RuleFieldsep);
+  enterRule(_localctx, 46, LuaParser::RuleFieldsep);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(395);
+    setState(376);
     _la = _input->LA(1);
     if (!(_la == LuaParser::T__0
 
@@ -2492,15 +3081,19 @@ void LuaParser::OperatorOrContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::OperatorOrContext* LuaParser::operatorOr() {
   OperatorOrContext *_localctx = _tracker.createInstance<OperatorOrContext>(_ctx, getState());
-  enterRule(_localctx, 52, LuaParser::RuleOperatorOr);
+  enterRule(_localctx, 48, LuaParser::RuleOperatorOr);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(397);
-    match(LuaParser::T__34);
+    setState(378);
+    match(LuaParser::T__32);
    
   }
   catch (RecognitionException &e) {
@@ -2537,15 +3130,19 @@ void LuaParser::OperatorAndContext::exitRule(tree::ParseTreeListener *listener) 
 
 LuaParser::OperatorAndContext* LuaParser::operatorAnd() {
   OperatorAndContext *_localctx = _tracker.createInstance<OperatorAndContext>(_ctx, getState());
-  enterRule(_localctx, 54, LuaParser::RuleOperatorAnd);
+  enterRule(_localctx, 50, LuaParser::RuleOperatorAnd);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(399);
-    match(LuaParser::T__35);
+    setState(380);
+    match(LuaParser::T__33);
    
   }
   catch (RecognitionException &e) {
@@ -2582,19 +3179,23 @@ void LuaParser::OperatorComparisonContext::exitRule(tree::ParseTreeListener *lis
 
 LuaParser::OperatorComparisonContext* LuaParser::operatorComparison() {
   OperatorComparisonContext *_localctx = _tracker.createInstance<OperatorComparisonContext>(_ctx, getState());
-  enterRule(_localctx, 56, LuaParser::RuleOperatorComparison);
+  enterRule(_localctx, 52, LuaParser::RuleOperatorComparison);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(401);
+    setState(382);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << LuaParser::T__18)
-      | (1ULL << LuaParser::T__19)
+      ((1ULL << _la) & ((1ULL << LuaParser::T__34)
+      | (1ULL << LuaParser::T__35)
       | (1ULL << LuaParser::T__36)
       | (1ULL << LuaParser::T__37)
       | (1ULL << LuaParser::T__38)
@@ -2641,14 +3242,18 @@ void LuaParser::OperatorStrcatContext::exitRule(tree::ParseTreeListener *listene
 
 LuaParser::OperatorStrcatContext* LuaParser::operatorStrcat() {
   OperatorStrcatContext *_localctx = _tracker.createInstance<OperatorStrcatContext>(_ctx, getState());
-  enterRule(_localctx, 58, LuaParser::RuleOperatorStrcat);
+  enterRule(_localctx, 54, LuaParser::RuleOperatorStrcat);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(403);
+    setState(384);
     match(LuaParser::T__40);
    
   }
@@ -2686,15 +3291,19 @@ void LuaParser::OperatorAddSubContext::exitRule(tree::ParseTreeListener *listene
 
 LuaParser::OperatorAddSubContext* LuaParser::operatorAddSub() {
   OperatorAddSubContext *_localctx = _tracker.createInstance<OperatorAddSubContext>(_ctx, getState());
-  enterRule(_localctx, 60, LuaParser::RuleOperatorAddSub);
+  enterRule(_localctx, 56, LuaParser::RuleOperatorAddSub);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(405);
+    setState(386);
     _la = _input->LA(1);
     if (!(_la == LuaParser::T__41
 
@@ -2741,15 +3350,19 @@ void LuaParser::OperatorMulDivModContext::exitRule(tree::ParseTreeListener *list
 
 LuaParser::OperatorMulDivModContext* LuaParser::operatorMulDivMod() {
   OperatorMulDivModContext *_localctx = _tracker.createInstance<OperatorMulDivModContext>(_ctx, getState());
-  enterRule(_localctx, 62, LuaParser::RuleOperatorMulDivMod);
+  enterRule(_localctx, 58, LuaParser::RuleOperatorMulDivMod);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(407);
+    setState(388);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & ((1ULL << LuaParser::T__43)
@@ -2798,15 +3411,19 @@ void LuaParser::OperatorBitwiseContext::exitRule(tree::ParseTreeListener *listen
 
 LuaParser::OperatorBitwiseContext* LuaParser::operatorBitwise() {
   OperatorBitwiseContext *_localctx = _tracker.createInstance<OperatorBitwiseContext>(_ctx, getState());
-  enterRule(_localctx, 64, LuaParser::RuleOperatorBitwise);
+  enterRule(_localctx, 60, LuaParser::RuleOperatorBitwise);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(409);
+    setState(390);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & ((1ULL << LuaParser::T__47)
@@ -2856,15 +3473,19 @@ void LuaParser::OperatorUnaryContext::exitRule(tree::ParseTreeListener *listener
 
 LuaParser::OperatorUnaryContext* LuaParser::operatorUnary() {
   OperatorUnaryContext *_localctx = _tracker.createInstance<OperatorUnaryContext>(_ctx, getState());
-  enterRule(_localctx, 66, LuaParser::RuleOperatorUnary);
+  enterRule(_localctx, 62, LuaParser::RuleOperatorUnary);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(411);
+    setState(392);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & ((1ULL << LuaParser::T__42)
@@ -2913,14 +3534,18 @@ void LuaParser::OperatorPowerContext::exitRule(tree::ParseTreeListener *listener
 
 LuaParser::OperatorPowerContext* LuaParser::operatorPower() {
   OperatorPowerContext *_localctx = _tracker.createInstance<OperatorPowerContext>(_ctx, getState());
-  enterRule(_localctx, 68, LuaParser::RuleOperatorPower);
+  enterRule(_localctx, 64, LuaParser::RuleOperatorPower);
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(413);
+    setState(394);
     match(LuaParser::T__54);
    
   }
@@ -2974,15 +3599,19 @@ void LuaParser::NumberContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::NumberContext* LuaParser::number() {
   NumberContext *_localctx = _tracker.createInstance<NumberContext>(_ctx, getState());
-  enterRule(_localctx, 70, LuaParser::RuleNumber);
+  enterRule(_localctx, 66, LuaParser::RuleNumber);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(415);
+    setState(396);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & ((1ULL << LuaParser::INT)
@@ -3043,15 +3672,19 @@ void LuaParser::StringContext::exitRule(tree::ParseTreeListener *listener) {
 
 LuaParser::StringContext* LuaParser::string() {
   StringContext *_localctx = _tracker.createInstance<StringContext>(_ctx, getState());
-  enterRule(_localctx, 72, LuaParser::RuleString);
+  enterRule(_localctx, 68, LuaParser::RuleString);
   size_t _la = 0;
 
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
   auto onExit = finally([=] {
+#endif
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(417);
+    setState(398);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & ((1ULL << LuaParser::NORMALSTRING)
@@ -3076,7 +3709,7 @@ LuaParser::StringContext* LuaParser::string() {
 
 bool LuaParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicateIndex) {
   switch (ruleIndex) {
-    case 11: return expSempred(dynamic_cast<ExpContext *>(context), predicateIndex);
+    case 9: return expSempred(dynamic_cast<ExpContext *>(context), predicateIndex);
 
   default:
     break;
@@ -3110,23 +3743,22 @@ atn::ATN LuaParser::_atn;
 std::vector<uint16_t> LuaParser::_serializedATN;
 
 std::vector<std::string> LuaParser::_ruleNames = {
-  "chunk", "block", "stat", "attnamelist", "attrib", "retstat", "label", 
-  "funcname", "varlist", "namelist", "explist", "exp", "prefixexp", "functioncall", 
-  "varOrExp", "var", "varSuffix", "nameAndArgs", "args", "functiondef", 
-  "funcbody", "parlist", "tableconstructor", "fieldlist", "field", "fieldsep", 
-  "operatorOr", "operatorAnd", "operatorComparison", "operatorStrcat", "operatorAddSub", 
-  "operatorMulDivMod", "operatorBitwise", "operatorUnary", "operatorPower", 
-  "number", "string"
+  "chunk", "block", "stat", "retstat", "label", "funcname", "varlist", "namelist", 
+  "explist", "exp", "prefixexp", "functioncall", "varOrExp", "var", "varSuffix", 
+  "nameAndArgs", "args", "functiondef", "funcbody", "parlist", "tableconstructor", 
+  "fieldlist", "field", "fieldsep", "operatorOr", "operatorAnd", "operatorComparison", 
+  "operatorStrcat", "operatorAddSub", "operatorMulDivMod", "operatorBitwise", 
+  "operatorUnary", "operatorPower", "number", "string"
 };
 
 std::vector<std::string> LuaParser::_literalNames = {
   "", "';'", "'='", "'break'", "'goto'", "'do'", "'end'", "'while'", "'repeat'", 
   "'until'", "'if'", "'then'", "'elseif'", "'else'", "'for'", "','", "'in'", 
-  "'function'", "'local'", "'<'", "'>'", "'return'", "'::'", "'.'", "':'", 
-  "'nil'", "'false'", "'true'", "'...'", "'('", "')'", "'['", "']'", "'{'", 
-  "'}'", "'or'", "'and'", "'<='", "'>='", "'~='", "'=='", "'..'", "'+'", 
-  "'-'", "'*'", "'/'", "'%'", "'//'", "'&'", "'|'", "'~'", "'<<'", "'>>'", 
-  "'not'", "'#'", "'^'"
+  "'function'", "'local'", "'return'", "'::'", "'.'", "':'", "'nil'", "'false'", 
+  "'true'", "'...'", "'('", "')'", "'['", "']'", "'{'", "'}'", "'or'", "'and'", 
+  "'<'", "'>'", "'<='", "'>='", "'~='", "'=='", "'..'", "'+'", "'-'", "'*'", 
+  "'/'", "'%'", "'//'", "'&'", "'|'", "'~'", "'<<'", "'>>'", "'not'", "'#'", 
+  "'^'"
 };
 
 std::vector<std::string> LuaParser::_symbolicNames = {
@@ -3157,7 +3789,7 @@ LuaParser::Initializer::Initializer() {
 
   _serializedATN = {
     0x3, 0x608b, 0xa72a, 0x8133, 0xb9ed, 0x417c, 0x3be7, 0x7786, 0x5964, 
-    0x3, 0x45, 0x1a6, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 
+    0x3, 0x45, 0x193, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 
     0x9, 0x4, 0x4, 0x5, 0x9, 0x5, 0x4, 0x6, 0x9, 0x6, 0x4, 0x7, 0x9, 0x7, 
     0x4, 0x8, 0x9, 0x8, 0x4, 0x9, 0x9, 0x9, 0x4, 0xa, 0x9, 0xa, 0x4, 0xb, 
     0x9, 0xb, 0x4, 0xc, 0x9, 0xc, 0x4, 0xd, 0x9, 0xd, 0x4, 0xe, 0x9, 0xe, 
@@ -3167,285 +3799,272 @@ LuaParser::Initializer::Initializer() {
     0x18, 0x4, 0x19, 0x9, 0x19, 0x4, 0x1a, 0x9, 0x1a, 0x4, 0x1b, 0x9, 0x1b, 
     0x4, 0x1c, 0x9, 0x1c, 0x4, 0x1d, 0x9, 0x1d, 0x4, 0x1e, 0x9, 0x1e, 0x4, 
     0x1f, 0x9, 0x1f, 0x4, 0x20, 0x9, 0x20, 0x4, 0x21, 0x9, 0x21, 0x4, 0x22, 
-    0x9, 0x22, 0x4, 0x23, 0x9, 0x23, 0x4, 0x24, 0x9, 0x24, 0x4, 0x25, 0x9, 
-    0x25, 0x4, 0x26, 0x9, 0x26, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x3, 
-    0x7, 0x3, 0x51, 0xa, 0x3, 0xc, 0x3, 0xe, 0x3, 0x54, 0xb, 0x3, 0x3, 0x3, 
-    0x5, 0x3, 0x57, 0xa, 0x3, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x7, 0x4, 0x7b, 0xa, 0x4, 0xc, 0x4, 0xe, 0x4, 0x7e, 0xb, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x5, 0x4, 0x82, 0xa, 0x4, 0x3, 0x4, 0x3, 0x4, 
+    0x9, 0x22, 0x4, 0x23, 0x9, 0x23, 0x4, 0x24, 0x9, 0x24, 0x3, 0x2, 0x3, 
+    0x2, 0x3, 0x2, 0x3, 0x3, 0x7, 0x3, 0x4d, 0xa, 0x3, 0xc, 0x3, 0xe, 0x3, 
+    0x50, 0xb, 0x3, 0x3, 0x3, 0x5, 0x3, 0x53, 0xa, 0x3, 0x3, 0x4, 0x3, 0x4, 
     0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
-    0x3, 0x4, 0x5, 0x4, 0x8e, 0xa, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
+    0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
+    0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
+    0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
+    0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x7, 0x4, 0x77, 0xa, 0x4, 0xc, 
+    0x4, 0xe, 0x4, 0x7a, 0xb, 0x4, 0x3, 0x4, 0x3, 0x4, 0x5, 0x4, 0x7e, 0xa, 
     0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x5, 
-    0x4, 0xa8, 0xa, 0x4, 0x5, 0x4, 0xaa, 0xa, 0x4, 0x3, 0x5, 0x3, 0x5, 0x3, 
-    0x5, 0x3, 0x5, 0x3, 0x5, 0x7, 0x5, 0xb1, 0xa, 0x5, 0xc, 0x5, 0xe, 0x5, 
-    0xb4, 0xb, 0x5, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x5, 0x6, 0xb9, 0xa, 0x6, 
-    0x3, 0x7, 0x3, 0x7, 0x5, 0x7, 0xbd, 0xa, 0x7, 0x3, 0x7, 0x5, 0x7, 0xc0, 
-    0xa, 0x7, 0x3, 0x8, 0x3, 0x8, 0x3, 0x8, 0x3, 0x8, 0x3, 0x9, 0x3, 0x9, 
-    0x3, 0x9, 0x7, 0x9, 0xc9, 0xa, 0x9, 0xc, 0x9, 0xe, 0x9, 0xcc, 0xb, 0x9, 
-    0x3, 0x9, 0x3, 0x9, 0x5, 0x9, 0xd0, 0xa, 0x9, 0x3, 0xa, 0x3, 0xa, 0x3, 
-    0xa, 0x7, 0xa, 0xd5, 0xa, 0xa, 0xc, 0xa, 0xe, 0xa, 0xd8, 0xb, 0xa, 0x3, 
-    0xb, 0x3, 0xb, 0x3, 0xb, 0x7, 0xb, 0xdd, 0xa, 0xb, 0xc, 0xb, 0xe, 0xb, 
-    0xe0, 0xb, 0xb, 0x3, 0xc, 0x3, 0xc, 0x3, 0xc, 0x7, 0xc, 0xe5, 0xa, 0xc, 
-    0xc, 0xc, 0xe, 0xc, 0xe8, 0xb, 0xc, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 
-    0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 
-    0xd, 0x3, 0xd, 0x3, 0xd, 0x5, 0xd, 0xf7, 0xa, 0xd, 0x3, 0xd, 0x3, 0xd, 
-    0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 
-    0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 
-    0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 
-    0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 
-    0x3, 0xd, 0x3, 0xd, 0x7, 0xd, 0x119, 0xa, 0xd, 0xc, 0xd, 0xe, 0xd, 0x11c, 
-    0xb, 0xd, 0x3, 0xe, 0x3, 0xe, 0x7, 0xe, 0x120, 0xa, 0xe, 0xc, 0xe, 0xe, 
-    0xe, 0x123, 0xb, 0xe, 0x3, 0xf, 0x3, 0xf, 0x6, 0xf, 0x127, 0xa, 0xf, 
-    0xd, 0xf, 0xe, 0xf, 0x128, 0x3, 0x10, 0x3, 0x10, 0x3, 0x10, 0x3, 0x10, 
-    0x3, 0x10, 0x5, 0x10, 0x130, 0xa, 0x10, 0x3, 0x11, 0x3, 0x11, 0x3, 0x11, 
-    0x3, 0x11, 0x3, 0x11, 0x3, 0x11, 0x5, 0x11, 0x138, 0xa, 0x11, 0x3, 0x11, 
-    0x7, 0x11, 0x13b, 0xa, 0x11, 0xc, 0x11, 0xe, 0x11, 0x13e, 0xb, 0x11, 
-    0x3, 0x12, 0x7, 0x12, 0x141, 0xa, 0x12, 0xc, 0x12, 0xe, 0x12, 0x144, 
-    0xb, 0x12, 0x3, 0x12, 0x3, 0x12, 0x3, 0x12, 0x3, 0x12, 0x3, 0x12, 0x3, 
-    0x12, 0x5, 0x12, 0x14c, 0xa, 0x12, 0x3, 0x13, 0x3, 0x13, 0x5, 0x13, 
-    0x150, 0xa, 0x13, 0x3, 0x13, 0x3, 0x13, 0x3, 0x14, 0x3, 0x14, 0x5, 0x14, 
-    0x156, 0xa, 0x14, 0x3, 0x14, 0x3, 0x14, 0x3, 0x14, 0x5, 0x14, 0x15b, 
-    0xa, 0x14, 0x3, 0x15, 0x3, 0x15, 0x3, 0x15, 0x3, 0x16, 0x3, 0x16, 0x5, 
-    0x16, 0x162, 0xa, 0x16, 0x3, 0x16, 0x3, 0x16, 0x3, 0x16, 0x3, 0x16, 
-    0x3, 0x17, 0x3, 0x17, 0x3, 0x17, 0x5, 0x17, 0x16b, 0xa, 0x17, 0x3, 0x17, 
-    0x5, 0x17, 0x16e, 0xa, 0x17, 0x3, 0x18, 0x3, 0x18, 0x5, 0x18, 0x172, 
-    0xa, 0x18, 0x3, 0x18, 0x3, 0x18, 0x3, 0x19, 0x3, 0x19, 0x3, 0x19, 0x3, 
-    0x19, 0x7, 0x19, 0x17a, 0xa, 0x19, 0xc, 0x19, 0xe, 0x19, 0x17d, 0xb, 
-    0x19, 0x3, 0x19, 0x5, 0x19, 0x180, 0xa, 0x19, 0x3, 0x1a, 0x3, 0x1a, 
-    0x3, 0x1a, 0x3, 0x1a, 0x3, 0x1a, 0x3, 0x1a, 0x3, 0x1a, 0x3, 0x1a, 0x3, 
-    0x1a, 0x3, 0x1a, 0x5, 0x1a, 0x18c, 0xa, 0x1a, 0x3, 0x1b, 0x3, 0x1b, 
-    0x3, 0x1c, 0x3, 0x1c, 0x3, 0x1d, 0x3, 0x1d, 0x3, 0x1e, 0x3, 0x1e, 0x3, 
-    0x1f, 0x3, 0x1f, 0x3, 0x20, 0x3, 0x20, 0x3, 0x21, 0x3, 0x21, 0x3, 0x22, 
-    0x3, 0x22, 0x3, 0x23, 0x3, 0x23, 0x3, 0x24, 0x3, 0x24, 0x3, 0x25, 0x3, 
-    0x25, 0x3, 0x26, 0x3, 0x26, 0x3, 0x26, 0x2, 0x3, 0x18, 0x27, 0x2, 0x4, 
-    0x6, 0x8, 0xa, 0xc, 0xe, 0x10, 0x12, 0x14, 0x16, 0x18, 0x1a, 0x1c, 0x1e, 
-    0x20, 0x22, 0x24, 0x26, 0x28, 0x2a, 0x2c, 0x2e, 0x30, 0x32, 0x34, 0x36, 
-    0x38, 0x3a, 0x3c, 0x3e, 0x40, 0x42, 0x44, 0x46, 0x48, 0x4a, 0x2, 0xa, 
-    0x4, 0x2, 0x3, 0x3, 0x11, 0x11, 0x4, 0x2, 0x15, 0x16, 0x27, 0x2a, 0x3, 
-    0x2, 0x2c, 0x2d, 0x3, 0x2, 0x2e, 0x31, 0x3, 0x2, 0x32, 0x36, 0x5, 0x2, 
-    0x2d, 0x2d, 0x34, 0x34, 0x37, 0x38, 0x3, 0x2, 0x3e, 0x41, 0x3, 0x2, 
-    0x3b, 0x3d, 0x2, 0x1c1, 0x2, 0x4c, 0x3, 0x2, 0x2, 0x2, 0x4, 0x52, 0x3, 
-    0x2, 0x2, 0x2, 0x6, 0xa9, 0x3, 0x2, 0x2, 0x2, 0x8, 0xab, 0x3, 0x2, 0x2, 
-    0x2, 0xa, 0xb8, 0x3, 0x2, 0x2, 0x2, 0xc, 0xba, 0x3, 0x2, 0x2, 0x2, 0xe, 
-    0xc1, 0x3, 0x2, 0x2, 0x2, 0x10, 0xc5, 0x3, 0x2, 0x2, 0x2, 0x12, 0xd1, 
-    0x3, 0x2, 0x2, 0x2, 0x14, 0xd9, 0x3, 0x2, 0x2, 0x2, 0x16, 0xe1, 0x3, 
-    0x2, 0x2, 0x2, 0x18, 0xf6, 0x3, 0x2, 0x2, 0x2, 0x1a, 0x11d, 0x3, 0x2, 
-    0x2, 0x2, 0x1c, 0x124, 0x3, 0x2, 0x2, 0x2, 0x1e, 0x12f, 0x3, 0x2, 0x2, 
-    0x2, 0x20, 0x137, 0x3, 0x2, 0x2, 0x2, 0x22, 0x142, 0x3, 0x2, 0x2, 0x2, 
-    0x24, 0x14f, 0x3, 0x2, 0x2, 0x2, 0x26, 0x15a, 0x3, 0x2, 0x2, 0x2, 0x28, 
-    0x15c, 0x3, 0x2, 0x2, 0x2, 0x2a, 0x15f, 0x3, 0x2, 0x2, 0x2, 0x2c, 0x16d, 
-    0x3, 0x2, 0x2, 0x2, 0x2e, 0x16f, 0x3, 0x2, 0x2, 0x2, 0x30, 0x175, 0x3, 
-    0x2, 0x2, 0x2, 0x32, 0x18b, 0x3, 0x2, 0x2, 0x2, 0x34, 0x18d, 0x3, 0x2, 
-    0x2, 0x2, 0x36, 0x18f, 0x3, 0x2, 0x2, 0x2, 0x38, 0x191, 0x3, 0x2, 0x2, 
-    0x2, 0x3a, 0x193, 0x3, 0x2, 0x2, 0x2, 0x3c, 0x195, 0x3, 0x2, 0x2, 0x2, 
-    0x3e, 0x197, 0x3, 0x2, 0x2, 0x2, 0x40, 0x199, 0x3, 0x2, 0x2, 0x2, 0x42, 
-    0x19b, 0x3, 0x2, 0x2, 0x2, 0x44, 0x19d, 0x3, 0x2, 0x2, 0x2, 0x46, 0x19f, 
-    0x3, 0x2, 0x2, 0x2, 0x48, 0x1a1, 0x3, 0x2, 0x2, 0x2, 0x4a, 0x1a3, 0x3, 
-    0x2, 0x2, 0x2, 0x4c, 0x4d, 0x5, 0x4, 0x3, 0x2, 0x4d, 0x4e, 0x7, 0x2, 
-    0x2, 0x3, 0x4e, 0x3, 0x3, 0x2, 0x2, 0x2, 0x4f, 0x51, 0x5, 0x6, 0x4, 
-    0x2, 0x50, 0x4f, 0x3, 0x2, 0x2, 0x2, 0x51, 0x54, 0x3, 0x2, 0x2, 0x2, 
-    0x52, 0x50, 0x3, 0x2, 0x2, 0x2, 0x52, 0x53, 0x3, 0x2, 0x2, 0x2, 0x53, 
-    0x56, 0x3, 0x2, 0x2, 0x2, 0x54, 0x52, 0x3, 0x2, 0x2, 0x2, 0x55, 0x57, 
-    0x5, 0xc, 0x7, 0x2, 0x56, 0x55, 0x3, 0x2, 0x2, 0x2, 0x56, 0x57, 0x3, 
-    0x2, 0x2, 0x2, 0x57, 0x5, 0x3, 0x2, 0x2, 0x2, 0x58, 0xaa, 0x7, 0x3, 
-    0x2, 0x2, 0x59, 0x5a, 0x5, 0x12, 0xa, 0x2, 0x5a, 0x5b, 0x7, 0x4, 0x2, 
-    0x2, 0x5b, 0x5c, 0x5, 0x16, 0xc, 0x2, 0x5c, 0xaa, 0x3, 0x2, 0x2, 0x2, 
-    0x5d, 0xaa, 0x5, 0x1c, 0xf, 0x2, 0x5e, 0xaa, 0x5, 0xe, 0x8, 0x2, 0x5f, 
-    0xaa, 0x7, 0x5, 0x2, 0x2, 0x60, 0x61, 0x7, 0x6, 0x2, 0x2, 0x61, 0xaa, 
-    0x7, 0x3a, 0x2, 0x2, 0x62, 0x63, 0x7, 0x7, 0x2, 0x2, 0x63, 0x64, 0x5, 
-    0x4, 0x3, 0x2, 0x64, 0x65, 0x7, 0x8, 0x2, 0x2, 0x65, 0xaa, 0x3, 0x2, 
-    0x2, 0x2, 0x66, 0x67, 0x7, 0x9, 0x2, 0x2, 0x67, 0x68, 0x5, 0x18, 0xd, 
-    0x2, 0x68, 0x69, 0x7, 0x7, 0x2, 0x2, 0x69, 0x6a, 0x5, 0x4, 0x3, 0x2, 
-    0x6a, 0x6b, 0x7, 0x8, 0x2, 0x2, 0x6b, 0xaa, 0x3, 0x2, 0x2, 0x2, 0x6c, 
-    0x6d, 0x7, 0xa, 0x2, 0x2, 0x6d, 0x6e, 0x5, 0x4, 0x3, 0x2, 0x6e, 0x6f, 
-    0x7, 0xb, 0x2, 0x2, 0x6f, 0x70, 0x5, 0x18, 0xd, 0x2, 0x70, 0xaa, 0x3, 
-    0x2, 0x2, 0x2, 0x71, 0x72, 0x7, 0xc, 0x2, 0x2, 0x72, 0x73, 0x5, 0x18, 
-    0xd, 0x2, 0x73, 0x74, 0x7, 0xd, 0x2, 0x2, 0x74, 0x7c, 0x5, 0x4, 0x3, 
-    0x2, 0x75, 0x76, 0x7, 0xe, 0x2, 0x2, 0x76, 0x77, 0x5, 0x18, 0xd, 0x2, 
-    0x77, 0x78, 0x7, 0xd, 0x2, 0x2, 0x78, 0x79, 0x5, 0x4, 0x3, 0x2, 0x79, 
-    0x7b, 0x3, 0x2, 0x2, 0x2, 0x7a, 0x75, 0x3, 0x2, 0x2, 0x2, 0x7b, 0x7e, 
-    0x3, 0x2, 0x2, 0x2, 0x7c, 0x7a, 0x3, 0x2, 0x2, 0x2, 0x7c, 0x7d, 0x3, 
-    0x2, 0x2, 0x2, 0x7d, 0x81, 0x3, 0x2, 0x2, 0x2, 0x7e, 0x7c, 0x3, 0x2, 
-    0x2, 0x2, 0x7f, 0x80, 0x7, 0xf, 0x2, 0x2, 0x80, 0x82, 0x5, 0x4, 0x3, 
-    0x2, 0x81, 0x7f, 0x3, 0x2, 0x2, 0x2, 0x81, 0x82, 0x3, 0x2, 0x2, 0x2, 
-    0x82, 0x83, 0x3, 0x2, 0x2, 0x2, 0x83, 0x84, 0x7, 0x8, 0x2, 0x2, 0x84, 
-    0xaa, 0x3, 0x2, 0x2, 0x2, 0x85, 0x86, 0x7, 0x10, 0x2, 0x2, 0x86, 0x87, 
-    0x7, 0x3a, 0x2, 0x2, 0x87, 0x88, 0x7, 0x4, 0x2, 0x2, 0x88, 0x89, 0x5, 
-    0x18, 0xd, 0x2, 0x89, 0x8a, 0x7, 0x11, 0x2, 0x2, 0x8a, 0x8d, 0x5, 0x18, 
-    0xd, 0x2, 0x8b, 0x8c, 0x7, 0x11, 0x2, 0x2, 0x8c, 0x8e, 0x5, 0x18, 0xd, 
-    0x2, 0x8d, 0x8b, 0x3, 0x2, 0x2, 0x2, 0x8d, 0x8e, 0x3, 0x2, 0x2, 0x2, 
-    0x8e, 0x8f, 0x3, 0x2, 0x2, 0x2, 0x8f, 0x90, 0x7, 0x7, 0x2, 0x2, 0x90, 
-    0x91, 0x5, 0x4, 0x3, 0x2, 0x91, 0x92, 0x7, 0x8, 0x2, 0x2, 0x92, 0xaa, 
-    0x3, 0x2, 0x2, 0x2, 0x93, 0x94, 0x7, 0x10, 0x2, 0x2, 0x94, 0x95, 0x5, 
-    0x14, 0xb, 0x2, 0x95, 0x96, 0x7, 0x12, 0x2, 0x2, 0x96, 0x97, 0x5, 0x16, 
-    0xc, 0x2, 0x97, 0x98, 0x7, 0x7, 0x2, 0x2, 0x98, 0x99, 0x5, 0x4, 0x3, 
-    0x2, 0x99, 0x9a, 0x7, 0x8, 0x2, 0x2, 0x9a, 0xaa, 0x3, 0x2, 0x2, 0x2, 
-    0x9b, 0x9c, 0x7, 0x13, 0x2, 0x2, 0x9c, 0x9d, 0x5, 0x10, 0x9, 0x2, 0x9d, 
-    0x9e, 0x5, 0x2a, 0x16, 0x2, 0x9e, 0xaa, 0x3, 0x2, 0x2, 0x2, 0x9f, 0xa0, 
-    0x7, 0x14, 0x2, 0x2, 0xa0, 0xa1, 0x7, 0x13, 0x2, 0x2, 0xa1, 0xa2, 0x7, 
-    0x3a, 0x2, 0x2, 0xa2, 0xaa, 0x5, 0x2a, 0x16, 0x2, 0xa3, 0xa4, 0x7, 0x14, 
-    0x2, 0x2, 0xa4, 0xa7, 0x5, 0x8, 0x5, 0x2, 0xa5, 0xa6, 0x7, 0x4, 0x2, 
-    0x2, 0xa6, 0xa8, 0x5, 0x16, 0xc, 0x2, 0xa7, 0xa5, 0x3, 0x2, 0x2, 0x2, 
-    0xa7, 0xa8, 0x3, 0x2, 0x2, 0x2, 0xa8, 0xaa, 0x3, 0x2, 0x2, 0x2, 0xa9, 
-    0x58, 0x3, 0x2, 0x2, 0x2, 0xa9, 0x59, 0x3, 0x2, 0x2, 0x2, 0xa9, 0x5d, 
-    0x3, 0x2, 0x2, 0x2, 0xa9, 0x5e, 0x3, 0x2, 0x2, 0x2, 0xa9, 0x5f, 0x3, 
-    0x2, 0x2, 0x2, 0xa9, 0x60, 0x3, 0x2, 0x2, 0x2, 0xa9, 0x62, 0x3, 0x2, 
-    0x2, 0x2, 0xa9, 0x66, 0x3, 0x2, 0x2, 0x2, 0xa9, 0x6c, 0x3, 0x2, 0x2, 
-    0x2, 0xa9, 0x71, 0x3, 0x2, 0x2, 0x2, 0xa9, 0x85, 0x3, 0x2, 0x2, 0x2, 
-    0xa9, 0x93, 0x3, 0x2, 0x2, 0x2, 0xa9, 0x9b, 0x3, 0x2, 0x2, 0x2, 0xa9, 
-    0x9f, 0x3, 0x2, 0x2, 0x2, 0xa9, 0xa3, 0x3, 0x2, 0x2, 0x2, 0xaa, 0x7, 
-    0x3, 0x2, 0x2, 0x2, 0xab, 0xac, 0x7, 0x3a, 0x2, 0x2, 0xac, 0xb2, 0x5, 
-    0xa, 0x6, 0x2, 0xad, 0xae, 0x7, 0x11, 0x2, 0x2, 0xae, 0xaf, 0x7, 0x3a, 
-    0x2, 0x2, 0xaf, 0xb1, 0x5, 0xa, 0x6, 0x2, 0xb0, 0xad, 0x3, 0x2, 0x2, 
-    0x2, 0xb1, 0xb4, 0x3, 0x2, 0x2, 0x2, 0xb2, 0xb0, 0x3, 0x2, 0x2, 0x2, 
-    0xb2, 0xb3, 0x3, 0x2, 0x2, 0x2, 0xb3, 0x9, 0x3, 0x2, 0x2, 0x2, 0xb4, 
-    0xb2, 0x3, 0x2, 0x2, 0x2, 0xb5, 0xb6, 0x7, 0x15, 0x2, 0x2, 0xb6, 0xb7, 
-    0x7, 0x3a, 0x2, 0x2, 0xb7, 0xb9, 0x7, 0x16, 0x2, 0x2, 0xb8, 0xb5, 0x3, 
-    0x2, 0x2, 0x2, 0xb8, 0xb9, 0x3, 0x2, 0x2, 0x2, 0xb9, 0xb, 0x3, 0x2, 
-    0x2, 0x2, 0xba, 0xbc, 0x7, 0x17, 0x2, 0x2, 0xbb, 0xbd, 0x5, 0x16, 0xc, 
-    0x2, 0xbc, 0xbb, 0x3, 0x2, 0x2, 0x2, 0xbc, 0xbd, 0x3, 0x2, 0x2, 0x2, 
-    0xbd, 0xbf, 0x3, 0x2, 0x2, 0x2, 0xbe, 0xc0, 0x7, 0x3, 0x2, 0x2, 0xbf, 
-    0xbe, 0x3, 0x2, 0x2, 0x2, 0xbf, 0xc0, 0x3, 0x2, 0x2, 0x2, 0xc0, 0xd, 
-    0x3, 0x2, 0x2, 0x2, 0xc1, 0xc2, 0x7, 0x18, 0x2, 0x2, 0xc2, 0xc3, 0x7, 
-    0x3a, 0x2, 0x2, 0xc3, 0xc4, 0x7, 0x18, 0x2, 0x2, 0xc4, 0xf, 0x3, 0x2, 
-    0x2, 0x2, 0xc5, 0xca, 0x7, 0x3a, 0x2, 0x2, 0xc6, 0xc7, 0x7, 0x19, 0x2, 
-    0x2, 0xc7, 0xc9, 0x7, 0x3a, 0x2, 0x2, 0xc8, 0xc6, 0x3, 0x2, 0x2, 0x2, 
-    0xc9, 0xcc, 0x3, 0x2, 0x2, 0x2, 0xca, 0xc8, 0x3, 0x2, 0x2, 0x2, 0xca, 
-    0xcb, 0x3, 0x2, 0x2, 0x2, 0xcb, 0xcf, 0x3, 0x2, 0x2, 0x2, 0xcc, 0xca, 
-    0x3, 0x2, 0x2, 0x2, 0xcd, 0xce, 0x7, 0x1a, 0x2, 0x2, 0xce, 0xd0, 0x7, 
-    0x3a, 0x2, 0x2, 0xcf, 0xcd, 0x3, 0x2, 0x2, 0x2, 0xcf, 0xd0, 0x3, 0x2, 
-    0x2, 0x2, 0xd0, 0x11, 0x3, 0x2, 0x2, 0x2, 0xd1, 0xd6, 0x5, 0x20, 0x11, 
-    0x2, 0xd2, 0xd3, 0x7, 0x11, 0x2, 0x2, 0xd3, 0xd5, 0x5, 0x20, 0x11, 0x2, 
-    0xd4, 0xd2, 0x3, 0x2, 0x2, 0x2, 0xd5, 0xd8, 0x3, 0x2, 0x2, 0x2, 0xd6, 
-    0xd4, 0x3, 0x2, 0x2, 0x2, 0xd6, 0xd7, 0x3, 0x2, 0x2, 0x2, 0xd7, 0x13, 
-    0x3, 0x2, 0x2, 0x2, 0xd8, 0xd6, 0x3, 0x2, 0x2, 0x2, 0xd9, 0xde, 0x7, 
-    0x3a, 0x2, 0x2, 0xda, 0xdb, 0x7, 0x11, 0x2, 0x2, 0xdb, 0xdd, 0x7, 0x3a, 
-    0x2, 0x2, 0xdc, 0xda, 0x3, 0x2, 0x2, 0x2, 0xdd, 0xe0, 0x3, 0x2, 0x2, 
-    0x2, 0xde, 0xdc, 0x3, 0x2, 0x2, 0x2, 0xde, 0xdf, 0x3, 0x2, 0x2, 0x2, 
-    0xdf, 0x15, 0x3, 0x2, 0x2, 0x2, 0xe0, 0xde, 0x3, 0x2, 0x2, 0x2, 0xe1, 
-    0xe6, 0x5, 0x18, 0xd, 0x2, 0xe2, 0xe3, 0x7, 0x11, 0x2, 0x2, 0xe3, 0xe5, 
-    0x5, 0x18, 0xd, 0x2, 0xe4, 0xe2, 0x3, 0x2, 0x2, 0x2, 0xe5, 0xe8, 0x3, 
-    0x2, 0x2, 0x2, 0xe6, 0xe4, 0x3, 0x2, 0x2, 0x2, 0xe6, 0xe7, 0x3, 0x2, 
-    0x2, 0x2, 0xe7, 0x17, 0x3, 0x2, 0x2, 0x2, 0xe8, 0xe6, 0x3, 0x2, 0x2, 
-    0x2, 0xe9, 0xea, 0x8, 0xd, 0x1, 0x2, 0xea, 0xf7, 0x7, 0x1b, 0x2, 0x2, 
-    0xeb, 0xf7, 0x7, 0x1c, 0x2, 0x2, 0xec, 0xf7, 0x7, 0x1d, 0x2, 0x2, 0xed, 
-    0xf7, 0x5, 0x48, 0x25, 0x2, 0xee, 0xf7, 0x5, 0x4a, 0x26, 0x2, 0xef, 
-    0xf7, 0x7, 0x1e, 0x2, 0x2, 0xf0, 0xf7, 0x5, 0x28, 0x15, 0x2, 0xf1, 0xf7, 
-    0x5, 0x1a, 0xe, 0x2, 0xf2, 0xf7, 0x5, 0x2e, 0x18, 0x2, 0xf3, 0xf4, 0x5, 
-    0x44, 0x23, 0x2, 0xf4, 0xf5, 0x5, 0x18, 0xd, 0xa, 0xf5, 0xf7, 0x3, 0x2, 
-    0x2, 0x2, 0xf6, 0xe9, 0x3, 0x2, 0x2, 0x2, 0xf6, 0xeb, 0x3, 0x2, 0x2, 
-    0x2, 0xf6, 0xec, 0x3, 0x2, 0x2, 0x2, 0xf6, 0xed, 0x3, 0x2, 0x2, 0x2, 
-    0xf6, 0xee, 0x3, 0x2, 0x2, 0x2, 0xf6, 0xef, 0x3, 0x2, 0x2, 0x2, 0xf6, 
-    0xf0, 0x3, 0x2, 0x2, 0x2, 0xf6, 0xf1, 0x3, 0x2, 0x2, 0x2, 0xf6, 0xf2, 
-    0x3, 0x2, 0x2, 0x2, 0xf6, 0xf3, 0x3, 0x2, 0x2, 0x2, 0xf7, 0x11a, 0x3, 
-    0x2, 0x2, 0x2, 0xf8, 0xf9, 0xc, 0xb, 0x2, 0x2, 0xf9, 0xfa, 0x5, 0x46, 
-    0x24, 0x2, 0xfa, 0xfb, 0x5, 0x18, 0xd, 0xb, 0xfb, 0x119, 0x3, 0x2, 0x2, 
-    0x2, 0xfc, 0xfd, 0xc, 0x9, 0x2, 0x2, 0xfd, 0xfe, 0x5, 0x40, 0x21, 0x2, 
-    0xfe, 0xff, 0x5, 0x18, 0xd, 0xa, 0xff, 0x119, 0x3, 0x2, 0x2, 0x2, 0x100, 
-    0x101, 0xc, 0x8, 0x2, 0x2, 0x101, 0x102, 0x5, 0x3e, 0x20, 0x2, 0x102, 
-    0x103, 0x5, 0x18, 0xd, 0x9, 0x103, 0x119, 0x3, 0x2, 0x2, 0x2, 0x104, 
-    0x105, 0xc, 0x7, 0x2, 0x2, 0x105, 0x106, 0x5, 0x3c, 0x1f, 0x2, 0x106, 
-    0x107, 0x5, 0x18, 0xd, 0x7, 0x107, 0x119, 0x3, 0x2, 0x2, 0x2, 0x108, 
-    0x109, 0xc, 0x6, 0x2, 0x2, 0x109, 0x10a, 0x5, 0x3a, 0x1e, 0x2, 0x10a, 
-    0x10b, 0x5, 0x18, 0xd, 0x7, 0x10b, 0x119, 0x3, 0x2, 0x2, 0x2, 0x10c, 
-    0x10d, 0xc, 0x5, 0x2, 0x2, 0x10d, 0x10e, 0x5, 0x38, 0x1d, 0x2, 0x10e, 
-    0x10f, 0x5, 0x18, 0xd, 0x6, 0x10f, 0x119, 0x3, 0x2, 0x2, 0x2, 0x110, 
-    0x111, 0xc, 0x4, 0x2, 0x2, 0x111, 0x112, 0x5, 0x36, 0x1c, 0x2, 0x112, 
-    0x113, 0x5, 0x18, 0xd, 0x5, 0x113, 0x119, 0x3, 0x2, 0x2, 0x2, 0x114, 
-    0x115, 0xc, 0x3, 0x2, 0x2, 0x115, 0x116, 0x5, 0x42, 0x22, 0x2, 0x116, 
-    0x117, 0x5, 0x18, 0xd, 0x4, 0x117, 0x119, 0x3, 0x2, 0x2, 0x2, 0x118, 
-    0xf8, 0x3, 0x2, 0x2, 0x2, 0x118, 0xfc, 0x3, 0x2, 0x2, 0x2, 0x118, 0x100, 
-    0x3, 0x2, 0x2, 0x2, 0x118, 0x104, 0x3, 0x2, 0x2, 0x2, 0x118, 0x108, 
-    0x3, 0x2, 0x2, 0x2, 0x118, 0x10c, 0x3, 0x2, 0x2, 0x2, 0x118, 0x110, 
-    0x3, 0x2, 0x2, 0x2, 0x118, 0x114, 0x3, 0x2, 0x2, 0x2, 0x119, 0x11c, 
-    0x3, 0x2, 0x2, 0x2, 0x11a, 0x118, 0x3, 0x2, 0x2, 0x2, 0x11a, 0x11b, 
-    0x3, 0x2, 0x2, 0x2, 0x11b, 0x19, 0x3, 0x2, 0x2, 0x2, 0x11c, 0x11a, 0x3, 
-    0x2, 0x2, 0x2, 0x11d, 0x121, 0x5, 0x1e, 0x10, 0x2, 0x11e, 0x120, 0x5, 
-    0x24, 0x13, 0x2, 0x11f, 0x11e, 0x3, 0x2, 0x2, 0x2, 0x120, 0x123, 0x3, 
-    0x2, 0x2, 0x2, 0x121, 0x11f, 0x3, 0x2, 0x2, 0x2, 0x121, 0x122, 0x3, 
-    0x2, 0x2, 0x2, 0x122, 0x1b, 0x3, 0x2, 0x2, 0x2, 0x123, 0x121, 0x3, 0x2, 
-    0x2, 0x2, 0x124, 0x126, 0x5, 0x1e, 0x10, 0x2, 0x125, 0x127, 0x5, 0x24, 
-    0x13, 0x2, 0x126, 0x125, 0x3, 0x2, 0x2, 0x2, 0x127, 0x128, 0x3, 0x2, 
-    0x2, 0x2, 0x128, 0x126, 0x3, 0x2, 0x2, 0x2, 0x128, 0x129, 0x3, 0x2, 
-    0x2, 0x2, 0x129, 0x1d, 0x3, 0x2, 0x2, 0x2, 0x12a, 0x130, 0x5, 0x20, 
-    0x11, 0x2, 0x12b, 0x12c, 0x7, 0x1f, 0x2, 0x2, 0x12c, 0x12d, 0x5, 0x18, 
-    0xd, 0x2, 0x12d, 0x12e, 0x7, 0x20, 0x2, 0x2, 0x12e, 0x130, 0x3, 0x2, 
-    0x2, 0x2, 0x12f, 0x12a, 0x3, 0x2, 0x2, 0x2, 0x12f, 0x12b, 0x3, 0x2, 
-    0x2, 0x2, 0x130, 0x1f, 0x3, 0x2, 0x2, 0x2, 0x131, 0x138, 0x7, 0x3a, 
-    0x2, 0x2, 0x132, 0x133, 0x7, 0x1f, 0x2, 0x2, 0x133, 0x134, 0x5, 0x18, 
-    0xd, 0x2, 0x134, 0x135, 0x7, 0x20, 0x2, 0x2, 0x135, 0x136, 0x5, 0x22, 
-    0x12, 0x2, 0x136, 0x138, 0x3, 0x2, 0x2, 0x2, 0x137, 0x131, 0x3, 0x2, 
-    0x2, 0x2, 0x137, 0x132, 0x3, 0x2, 0x2, 0x2, 0x138, 0x13c, 0x3, 0x2, 
-    0x2, 0x2, 0x139, 0x13b, 0x5, 0x22, 0x12, 0x2, 0x13a, 0x139, 0x3, 0x2, 
-    0x2, 0x2, 0x13b, 0x13e, 0x3, 0x2, 0x2, 0x2, 0x13c, 0x13a, 0x3, 0x2, 
-    0x2, 0x2, 0x13c, 0x13d, 0x3, 0x2, 0x2, 0x2, 0x13d, 0x21, 0x3, 0x2, 0x2, 
-    0x2, 0x13e, 0x13c, 0x3, 0x2, 0x2, 0x2, 0x13f, 0x141, 0x5, 0x24, 0x13, 
-    0x2, 0x140, 0x13f, 0x3, 0x2, 0x2, 0x2, 0x141, 0x144, 0x3, 0x2, 0x2, 
-    0x2, 0x142, 0x140, 0x3, 0x2, 0x2, 0x2, 0x142, 0x143, 0x3, 0x2, 0x2, 
-    0x2, 0x143, 0x14b, 0x3, 0x2, 0x2, 0x2, 0x144, 0x142, 0x3, 0x2, 0x2, 
-    0x2, 0x145, 0x146, 0x7, 0x21, 0x2, 0x2, 0x146, 0x147, 0x5, 0x18, 0xd, 
-    0x2, 0x147, 0x148, 0x7, 0x22, 0x2, 0x2, 0x148, 0x14c, 0x3, 0x2, 0x2, 
-    0x2, 0x149, 0x14a, 0x7, 0x19, 0x2, 0x2, 0x14a, 0x14c, 0x7, 0x3a, 0x2, 
-    0x2, 0x14b, 0x145, 0x3, 0x2, 0x2, 0x2, 0x14b, 0x149, 0x3, 0x2, 0x2, 
-    0x2, 0x14c, 0x23, 0x3, 0x2, 0x2, 0x2, 0x14d, 0x14e, 0x7, 0x1a, 0x2, 
-    0x2, 0x14e, 0x150, 0x7, 0x3a, 0x2, 0x2, 0x14f, 0x14d, 0x3, 0x2, 0x2, 
-    0x2, 0x14f, 0x150, 0x3, 0x2, 0x2, 0x2, 0x150, 0x151, 0x3, 0x2, 0x2, 
-    0x2, 0x151, 0x152, 0x5, 0x26, 0x14, 0x2, 0x152, 0x25, 0x3, 0x2, 0x2, 
-    0x2, 0x153, 0x155, 0x7, 0x1f, 0x2, 0x2, 0x154, 0x156, 0x5, 0x16, 0xc, 
-    0x2, 0x155, 0x154, 0x3, 0x2, 0x2, 0x2, 0x155, 0x156, 0x3, 0x2, 0x2, 
-    0x2, 0x156, 0x157, 0x3, 0x2, 0x2, 0x2, 0x157, 0x15b, 0x7, 0x20, 0x2, 
-    0x2, 0x158, 0x15b, 0x5, 0x2e, 0x18, 0x2, 0x159, 0x15b, 0x5, 0x4a, 0x26, 
-    0x2, 0x15a, 0x153, 0x3, 0x2, 0x2, 0x2, 0x15a, 0x158, 0x3, 0x2, 0x2, 
-    0x2, 0x15a, 0x159, 0x3, 0x2, 0x2, 0x2, 0x15b, 0x27, 0x3, 0x2, 0x2, 0x2, 
-    0x15c, 0x15d, 0x7, 0x13, 0x2, 0x2, 0x15d, 0x15e, 0x5, 0x2a, 0x16, 0x2, 
-    0x15e, 0x29, 0x3, 0x2, 0x2, 0x2, 0x15f, 0x161, 0x7, 0x1f, 0x2, 0x2, 
-    0x160, 0x162, 0x5, 0x2c, 0x17, 0x2, 0x161, 0x160, 0x3, 0x2, 0x2, 0x2, 
-    0x161, 0x162, 0x3, 0x2, 0x2, 0x2, 0x162, 0x163, 0x3, 0x2, 0x2, 0x2, 
-    0x163, 0x164, 0x7, 0x20, 0x2, 0x2, 0x164, 0x165, 0x5, 0x4, 0x3, 0x2, 
-    0x165, 0x166, 0x7, 0x8, 0x2, 0x2, 0x166, 0x2b, 0x3, 0x2, 0x2, 0x2, 0x167, 
-    0x16a, 0x5, 0x14, 0xb, 0x2, 0x168, 0x169, 0x7, 0x11, 0x2, 0x2, 0x169, 
-    0x16b, 0x7, 0x1e, 0x2, 0x2, 0x16a, 0x168, 0x3, 0x2, 0x2, 0x2, 0x16a, 
-    0x16b, 0x3, 0x2, 0x2, 0x2, 0x16b, 0x16e, 0x3, 0x2, 0x2, 0x2, 0x16c, 
-    0x16e, 0x7, 0x1e, 0x2, 0x2, 0x16d, 0x167, 0x3, 0x2, 0x2, 0x2, 0x16d, 
-    0x16c, 0x3, 0x2, 0x2, 0x2, 0x16e, 0x2d, 0x3, 0x2, 0x2, 0x2, 0x16f, 0x171, 
-    0x7, 0x23, 0x2, 0x2, 0x170, 0x172, 0x5, 0x30, 0x19, 0x2, 0x171, 0x170, 
-    0x3, 0x2, 0x2, 0x2, 0x171, 0x172, 0x3, 0x2, 0x2, 0x2, 0x172, 0x173, 
-    0x3, 0x2, 0x2, 0x2, 0x173, 0x174, 0x7, 0x24, 0x2, 0x2, 0x174, 0x2f, 
-    0x3, 0x2, 0x2, 0x2, 0x175, 0x17b, 0x5, 0x32, 0x1a, 0x2, 0x176, 0x177, 
-    0x5, 0x34, 0x1b, 0x2, 0x177, 0x178, 0x5, 0x32, 0x1a, 0x2, 0x178, 0x17a, 
-    0x3, 0x2, 0x2, 0x2, 0x179, 0x176, 0x3, 0x2, 0x2, 0x2, 0x17a, 0x17d, 
-    0x3, 0x2, 0x2, 0x2, 0x17b, 0x179, 0x3, 0x2, 0x2, 0x2, 0x17b, 0x17c, 
-    0x3, 0x2, 0x2, 0x2, 0x17c, 0x17f, 0x3, 0x2, 0x2, 0x2, 0x17d, 0x17b, 
-    0x3, 0x2, 0x2, 0x2, 0x17e, 0x180, 0x5, 0x34, 0x1b, 0x2, 0x17f, 0x17e, 
-    0x3, 0x2, 0x2, 0x2, 0x17f, 0x180, 0x3, 0x2, 0x2, 0x2, 0x180, 0x31, 0x3, 
-    0x2, 0x2, 0x2, 0x181, 0x182, 0x7, 0x21, 0x2, 0x2, 0x182, 0x183, 0x5, 
-    0x18, 0xd, 0x2, 0x183, 0x184, 0x7, 0x22, 0x2, 0x2, 0x184, 0x185, 0x7, 
-    0x4, 0x2, 0x2, 0x185, 0x186, 0x5, 0x18, 0xd, 0x2, 0x186, 0x18c, 0x3, 
-    0x2, 0x2, 0x2, 0x187, 0x188, 0x7, 0x3a, 0x2, 0x2, 0x188, 0x189, 0x7, 
-    0x4, 0x2, 0x2, 0x189, 0x18c, 0x5, 0x18, 0xd, 0x2, 0x18a, 0x18c, 0x5, 
-    0x18, 0xd, 0x2, 0x18b, 0x181, 0x3, 0x2, 0x2, 0x2, 0x18b, 0x187, 0x3, 
-    0x2, 0x2, 0x2, 0x18b, 0x18a, 0x3, 0x2, 0x2, 0x2, 0x18c, 0x33, 0x3, 0x2, 
-    0x2, 0x2, 0x18d, 0x18e, 0x9, 0x2, 0x2, 0x2, 0x18e, 0x35, 0x3, 0x2, 0x2, 
-    0x2, 0x18f, 0x190, 0x7, 0x25, 0x2, 0x2, 0x190, 0x37, 0x3, 0x2, 0x2, 
-    0x2, 0x191, 0x192, 0x7, 0x26, 0x2, 0x2, 0x192, 0x39, 0x3, 0x2, 0x2, 
-    0x2, 0x193, 0x194, 0x9, 0x3, 0x2, 0x2, 0x194, 0x3b, 0x3, 0x2, 0x2, 0x2, 
-    0x195, 0x196, 0x7, 0x2b, 0x2, 0x2, 0x196, 0x3d, 0x3, 0x2, 0x2, 0x2, 
-    0x197, 0x198, 0x9, 0x4, 0x2, 0x2, 0x198, 0x3f, 0x3, 0x2, 0x2, 0x2, 0x199, 
-    0x19a, 0x9, 0x5, 0x2, 0x2, 0x19a, 0x41, 0x3, 0x2, 0x2, 0x2, 0x19b, 0x19c, 
-    0x9, 0x6, 0x2, 0x2, 0x19c, 0x43, 0x3, 0x2, 0x2, 0x2, 0x19d, 0x19e, 0x9, 
-    0x7, 0x2, 0x2, 0x19e, 0x45, 0x3, 0x2, 0x2, 0x2, 0x19f, 0x1a0, 0x7, 0x39, 
-    0x2, 0x2, 0x1a0, 0x47, 0x3, 0x2, 0x2, 0x2, 0x1a1, 0x1a2, 0x9, 0x8, 0x2, 
-    0x2, 0x1a2, 0x49, 0x3, 0x2, 0x2, 0x2, 0x1a3, 0x1a4, 0x9, 0x9, 0x2, 0x2, 
-    0x1a4, 0x4b, 0x3, 0x2, 0x2, 0x2, 0x26, 0x52, 0x56, 0x7c, 0x81, 0x8d, 
-    0xa7, 0xa9, 0xb2, 0xb8, 0xbc, 0xbf, 0xca, 0xcf, 0xd6, 0xde, 0xe6, 0xf6, 
-    0x118, 0x11a, 0x121, 0x128, 0x12f, 0x137, 0x13c, 0x142, 0x14b, 0x14f, 
-    0x155, 0x15a, 0x161, 0x16a, 0x16d, 0x171, 0x17b, 0x17f, 0x18b, 
+    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x5, 0x4, 0x8a, 0xa, 0x4, 0x3, 0x4, 
+    0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
+    0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
+    0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
+    0x3, 0x4, 0x3, 0x4, 0x5, 0x4, 0xa4, 0xa, 0x4, 0x5, 0x4, 0xa6, 0xa, 0x4, 
+    0x3, 0x5, 0x3, 0x5, 0x5, 0x5, 0xaa, 0xa, 0x5, 0x3, 0x5, 0x5, 0x5, 0xad, 
+    0xa, 0x5, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x7, 0x3, 0x7, 
+    0x3, 0x7, 0x7, 0x7, 0xb6, 0xa, 0x7, 0xc, 0x7, 0xe, 0x7, 0xb9, 0xb, 0x7, 
+    0x3, 0x7, 0x3, 0x7, 0x5, 0x7, 0xbd, 0xa, 0x7, 0x3, 0x8, 0x3, 0x8, 0x3, 
+    0x8, 0x7, 0x8, 0xc2, 0xa, 0x8, 0xc, 0x8, 0xe, 0x8, 0xc5, 0xb, 0x8, 0x3, 
+    0x9, 0x3, 0x9, 0x3, 0x9, 0x7, 0x9, 0xca, 0xa, 0x9, 0xc, 0x9, 0xe, 0x9, 
+    0xcd, 0xb, 0x9, 0x3, 0xa, 0x3, 0xa, 0x3, 0xa, 0x7, 0xa, 0xd2, 0xa, 0xa, 
+    0xc, 0xa, 0xe, 0xa, 0xd5, 0xb, 0xa, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 
+    0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 
+    0xb, 0x3, 0xb, 0x3, 0xb, 0x5, 0xb, 0xe4, 0xa, 0xb, 0x3, 0xb, 0x3, 0xb, 
+    0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 
+    0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 
+    0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 
+    0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 
+    0x3, 0xb, 0x3, 0xb, 0x7, 0xb, 0x106, 0xa, 0xb, 0xc, 0xb, 0xe, 0xb, 0x109, 
+    0xb, 0xb, 0x3, 0xc, 0x3, 0xc, 0x7, 0xc, 0x10d, 0xa, 0xc, 0xc, 0xc, 0xe, 
+    0xc, 0x110, 0xb, 0xc, 0x3, 0xd, 0x3, 0xd, 0x6, 0xd, 0x114, 0xa, 0xd, 
+    0xd, 0xd, 0xe, 0xd, 0x115, 0x3, 0xe, 0x3, 0xe, 0x3, 0xe, 0x3, 0xe, 0x3, 
+    0xe, 0x5, 0xe, 0x11d, 0xa, 0xe, 0x3, 0xf, 0x3, 0xf, 0x3, 0xf, 0x3, 0xf, 
+    0x3, 0xf, 0x3, 0xf, 0x5, 0xf, 0x125, 0xa, 0xf, 0x3, 0xf, 0x7, 0xf, 0x128, 
+    0xa, 0xf, 0xc, 0xf, 0xe, 0xf, 0x12b, 0xb, 0xf, 0x3, 0x10, 0x7, 0x10, 
+    0x12e, 0xa, 0x10, 0xc, 0x10, 0xe, 0x10, 0x131, 0xb, 0x10, 0x3, 0x10, 
+    0x3, 0x10, 0x3, 0x10, 0x3, 0x10, 0x3, 0x10, 0x3, 0x10, 0x5, 0x10, 0x139, 
+    0xa, 0x10, 0x3, 0x11, 0x3, 0x11, 0x5, 0x11, 0x13d, 0xa, 0x11, 0x3, 0x11, 
+    0x3, 0x11, 0x3, 0x12, 0x3, 0x12, 0x5, 0x12, 0x143, 0xa, 0x12, 0x3, 0x12, 
+    0x3, 0x12, 0x3, 0x12, 0x5, 0x12, 0x148, 0xa, 0x12, 0x3, 0x13, 0x3, 0x13, 
+    0x3, 0x13, 0x3, 0x14, 0x3, 0x14, 0x5, 0x14, 0x14f, 0xa, 0x14, 0x3, 0x14, 
+    0x3, 0x14, 0x3, 0x14, 0x3, 0x14, 0x3, 0x15, 0x3, 0x15, 0x3, 0x15, 0x5, 
+    0x15, 0x158, 0xa, 0x15, 0x3, 0x15, 0x5, 0x15, 0x15b, 0xa, 0x15, 0x3, 
+    0x16, 0x3, 0x16, 0x5, 0x16, 0x15f, 0xa, 0x16, 0x3, 0x16, 0x3, 0x16, 
+    0x3, 0x17, 0x3, 0x17, 0x3, 0x17, 0x3, 0x17, 0x7, 0x17, 0x167, 0xa, 0x17, 
+    0xc, 0x17, 0xe, 0x17, 0x16a, 0xb, 0x17, 0x3, 0x17, 0x5, 0x17, 0x16d, 
+    0xa, 0x17, 0x3, 0x18, 0x3, 0x18, 0x3, 0x18, 0x3, 0x18, 0x3, 0x18, 0x3, 
+    0x18, 0x3, 0x18, 0x3, 0x18, 0x3, 0x18, 0x3, 0x18, 0x5, 0x18, 0x179, 
+    0xa, 0x18, 0x3, 0x19, 0x3, 0x19, 0x3, 0x1a, 0x3, 0x1a, 0x3, 0x1b, 0x3, 
+    0x1b, 0x3, 0x1c, 0x3, 0x1c, 0x3, 0x1d, 0x3, 0x1d, 0x3, 0x1e, 0x3, 0x1e, 
+    0x3, 0x1f, 0x3, 0x1f, 0x3, 0x20, 0x3, 0x20, 0x3, 0x21, 0x3, 0x21, 0x3, 
+    0x22, 0x3, 0x22, 0x3, 0x23, 0x3, 0x23, 0x3, 0x24, 0x3, 0x24, 0x3, 0x24, 
+    0x2, 0x3, 0x14, 0x25, 0x2, 0x4, 0x6, 0x8, 0xa, 0xc, 0xe, 0x10, 0x12, 
+    0x14, 0x16, 0x18, 0x1a, 0x1c, 0x1e, 0x20, 0x22, 0x24, 0x26, 0x28, 0x2a, 
+    0x2c, 0x2e, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3a, 0x3c, 0x3e, 0x40, 0x42, 
+    0x44, 0x46, 0x2, 0xa, 0x4, 0x2, 0x3, 0x3, 0x11, 0x11, 0x3, 0x2, 0x25, 
+    0x2a, 0x3, 0x2, 0x2c, 0x2d, 0x3, 0x2, 0x2e, 0x31, 0x3, 0x2, 0x32, 0x36, 
+    0x5, 0x2, 0x2d, 0x2d, 0x34, 0x34, 0x37, 0x38, 0x3, 0x2, 0x3e, 0x41, 
+    0x3, 0x2, 0x3b, 0x3d, 0x2, 0x1ae, 0x2, 0x48, 0x3, 0x2, 0x2, 0x2, 0x4, 
+    0x4e, 0x3, 0x2, 0x2, 0x2, 0x6, 0xa5, 0x3, 0x2, 0x2, 0x2, 0x8, 0xa7, 
+    0x3, 0x2, 0x2, 0x2, 0xa, 0xae, 0x3, 0x2, 0x2, 0x2, 0xc, 0xb2, 0x3, 0x2, 
+    0x2, 0x2, 0xe, 0xbe, 0x3, 0x2, 0x2, 0x2, 0x10, 0xc6, 0x3, 0x2, 0x2, 
+    0x2, 0x12, 0xce, 0x3, 0x2, 0x2, 0x2, 0x14, 0xe3, 0x3, 0x2, 0x2, 0x2, 
+    0x16, 0x10a, 0x3, 0x2, 0x2, 0x2, 0x18, 0x111, 0x3, 0x2, 0x2, 0x2, 0x1a, 
+    0x11c, 0x3, 0x2, 0x2, 0x2, 0x1c, 0x124, 0x3, 0x2, 0x2, 0x2, 0x1e, 0x12f, 
+    0x3, 0x2, 0x2, 0x2, 0x20, 0x13c, 0x3, 0x2, 0x2, 0x2, 0x22, 0x147, 0x3, 
+    0x2, 0x2, 0x2, 0x24, 0x149, 0x3, 0x2, 0x2, 0x2, 0x26, 0x14c, 0x3, 0x2, 
+    0x2, 0x2, 0x28, 0x15a, 0x3, 0x2, 0x2, 0x2, 0x2a, 0x15c, 0x3, 0x2, 0x2, 
+    0x2, 0x2c, 0x162, 0x3, 0x2, 0x2, 0x2, 0x2e, 0x178, 0x3, 0x2, 0x2, 0x2, 
+    0x30, 0x17a, 0x3, 0x2, 0x2, 0x2, 0x32, 0x17c, 0x3, 0x2, 0x2, 0x2, 0x34, 
+    0x17e, 0x3, 0x2, 0x2, 0x2, 0x36, 0x180, 0x3, 0x2, 0x2, 0x2, 0x38, 0x182, 
+    0x3, 0x2, 0x2, 0x2, 0x3a, 0x184, 0x3, 0x2, 0x2, 0x2, 0x3c, 0x186, 0x3, 
+    0x2, 0x2, 0x2, 0x3e, 0x188, 0x3, 0x2, 0x2, 0x2, 0x40, 0x18a, 0x3, 0x2, 
+    0x2, 0x2, 0x42, 0x18c, 0x3, 0x2, 0x2, 0x2, 0x44, 0x18e, 0x3, 0x2, 0x2, 
+    0x2, 0x46, 0x190, 0x3, 0x2, 0x2, 0x2, 0x48, 0x49, 0x5, 0x4, 0x3, 0x2, 
+    0x49, 0x4a, 0x7, 0x2, 0x2, 0x3, 0x4a, 0x3, 0x3, 0x2, 0x2, 0x2, 0x4b, 
+    0x4d, 0x5, 0x6, 0x4, 0x2, 0x4c, 0x4b, 0x3, 0x2, 0x2, 0x2, 0x4d, 0x50, 
+    0x3, 0x2, 0x2, 0x2, 0x4e, 0x4c, 0x3, 0x2, 0x2, 0x2, 0x4e, 0x4f, 0x3, 
+    0x2, 0x2, 0x2, 0x4f, 0x52, 0x3, 0x2, 0x2, 0x2, 0x50, 0x4e, 0x3, 0x2, 
+    0x2, 0x2, 0x51, 0x53, 0x5, 0x8, 0x5, 0x2, 0x52, 0x51, 0x3, 0x2, 0x2, 
+    0x2, 0x52, 0x53, 0x3, 0x2, 0x2, 0x2, 0x53, 0x5, 0x3, 0x2, 0x2, 0x2, 
+    0x54, 0xa6, 0x7, 0x3, 0x2, 0x2, 0x55, 0x56, 0x5, 0xe, 0x8, 0x2, 0x56, 
+    0x57, 0x7, 0x4, 0x2, 0x2, 0x57, 0x58, 0x5, 0x12, 0xa, 0x2, 0x58, 0xa6, 
+    0x3, 0x2, 0x2, 0x2, 0x59, 0xa6, 0x5, 0x18, 0xd, 0x2, 0x5a, 0xa6, 0x5, 
+    0xa, 0x6, 0x2, 0x5b, 0xa6, 0x7, 0x5, 0x2, 0x2, 0x5c, 0x5d, 0x7, 0x6, 
+    0x2, 0x2, 0x5d, 0xa6, 0x7, 0x3a, 0x2, 0x2, 0x5e, 0x5f, 0x7, 0x7, 0x2, 
+    0x2, 0x5f, 0x60, 0x5, 0x4, 0x3, 0x2, 0x60, 0x61, 0x7, 0x8, 0x2, 0x2, 
+    0x61, 0xa6, 0x3, 0x2, 0x2, 0x2, 0x62, 0x63, 0x7, 0x9, 0x2, 0x2, 0x63, 
+    0x64, 0x5, 0x14, 0xb, 0x2, 0x64, 0x65, 0x7, 0x7, 0x2, 0x2, 0x65, 0x66, 
+    0x5, 0x4, 0x3, 0x2, 0x66, 0x67, 0x7, 0x8, 0x2, 0x2, 0x67, 0xa6, 0x3, 
+    0x2, 0x2, 0x2, 0x68, 0x69, 0x7, 0xa, 0x2, 0x2, 0x69, 0x6a, 0x5, 0x4, 
+    0x3, 0x2, 0x6a, 0x6b, 0x7, 0xb, 0x2, 0x2, 0x6b, 0x6c, 0x5, 0x14, 0xb, 
+    0x2, 0x6c, 0xa6, 0x3, 0x2, 0x2, 0x2, 0x6d, 0x6e, 0x7, 0xc, 0x2, 0x2, 
+    0x6e, 0x6f, 0x5, 0x14, 0xb, 0x2, 0x6f, 0x70, 0x7, 0xd, 0x2, 0x2, 0x70, 
+    0x78, 0x5, 0x4, 0x3, 0x2, 0x71, 0x72, 0x7, 0xe, 0x2, 0x2, 0x72, 0x73, 
+    0x5, 0x14, 0xb, 0x2, 0x73, 0x74, 0x7, 0xd, 0x2, 0x2, 0x74, 0x75, 0x5, 
+    0x4, 0x3, 0x2, 0x75, 0x77, 0x3, 0x2, 0x2, 0x2, 0x76, 0x71, 0x3, 0x2, 
+    0x2, 0x2, 0x77, 0x7a, 0x3, 0x2, 0x2, 0x2, 0x78, 0x76, 0x3, 0x2, 0x2, 
+    0x2, 0x78, 0x79, 0x3, 0x2, 0x2, 0x2, 0x79, 0x7d, 0x3, 0x2, 0x2, 0x2, 
+    0x7a, 0x78, 0x3, 0x2, 0x2, 0x2, 0x7b, 0x7c, 0x7, 0xf, 0x2, 0x2, 0x7c, 
+    0x7e, 0x5, 0x4, 0x3, 0x2, 0x7d, 0x7b, 0x3, 0x2, 0x2, 0x2, 0x7d, 0x7e, 
+    0x3, 0x2, 0x2, 0x2, 0x7e, 0x7f, 0x3, 0x2, 0x2, 0x2, 0x7f, 0x80, 0x7, 
+    0x8, 0x2, 0x2, 0x80, 0xa6, 0x3, 0x2, 0x2, 0x2, 0x81, 0x82, 0x7, 0x10, 
+    0x2, 0x2, 0x82, 0x83, 0x7, 0x3a, 0x2, 0x2, 0x83, 0x84, 0x7, 0x4, 0x2, 
+    0x2, 0x84, 0x85, 0x5, 0x14, 0xb, 0x2, 0x85, 0x86, 0x7, 0x11, 0x2, 0x2, 
+    0x86, 0x89, 0x5, 0x14, 0xb, 0x2, 0x87, 0x88, 0x7, 0x11, 0x2, 0x2, 0x88, 
+    0x8a, 0x5, 0x14, 0xb, 0x2, 0x89, 0x87, 0x3, 0x2, 0x2, 0x2, 0x89, 0x8a, 
+    0x3, 0x2, 0x2, 0x2, 0x8a, 0x8b, 0x3, 0x2, 0x2, 0x2, 0x8b, 0x8c, 0x7, 
+    0x7, 0x2, 0x2, 0x8c, 0x8d, 0x5, 0x4, 0x3, 0x2, 0x8d, 0x8e, 0x7, 0x8, 
+    0x2, 0x2, 0x8e, 0xa6, 0x3, 0x2, 0x2, 0x2, 0x8f, 0x90, 0x7, 0x10, 0x2, 
+    0x2, 0x90, 0x91, 0x5, 0x10, 0x9, 0x2, 0x91, 0x92, 0x7, 0x12, 0x2, 0x2, 
+    0x92, 0x93, 0x5, 0x12, 0xa, 0x2, 0x93, 0x94, 0x7, 0x7, 0x2, 0x2, 0x94, 
+    0x95, 0x5, 0x4, 0x3, 0x2, 0x95, 0x96, 0x7, 0x8, 0x2, 0x2, 0x96, 0xa6, 
+    0x3, 0x2, 0x2, 0x2, 0x97, 0x98, 0x7, 0x13, 0x2, 0x2, 0x98, 0x99, 0x5, 
+    0xc, 0x7, 0x2, 0x99, 0x9a, 0x5, 0x26, 0x14, 0x2, 0x9a, 0xa6, 0x3, 0x2, 
+    0x2, 0x2, 0x9b, 0x9c, 0x7, 0x14, 0x2, 0x2, 0x9c, 0x9d, 0x7, 0x13, 0x2, 
+    0x2, 0x9d, 0x9e, 0x7, 0x3a, 0x2, 0x2, 0x9e, 0xa6, 0x5, 0x26, 0x14, 0x2, 
+    0x9f, 0xa0, 0x7, 0x14, 0x2, 0x2, 0xa0, 0xa3, 0x5, 0x10, 0x9, 0x2, 0xa1, 
+    0xa2, 0x7, 0x4, 0x2, 0x2, 0xa2, 0xa4, 0x5, 0x12, 0xa, 0x2, 0xa3, 0xa1, 
+    0x3, 0x2, 0x2, 0x2, 0xa3, 0xa4, 0x3, 0x2, 0x2, 0x2, 0xa4, 0xa6, 0x3, 
+    0x2, 0x2, 0x2, 0xa5, 0x54, 0x3, 0x2, 0x2, 0x2, 0xa5, 0x55, 0x3, 0x2, 
+    0x2, 0x2, 0xa5, 0x59, 0x3, 0x2, 0x2, 0x2, 0xa5, 0x5a, 0x3, 0x2, 0x2, 
+    0x2, 0xa5, 0x5b, 0x3, 0x2, 0x2, 0x2, 0xa5, 0x5c, 0x3, 0x2, 0x2, 0x2, 
+    0xa5, 0x5e, 0x3, 0x2, 0x2, 0x2, 0xa5, 0x62, 0x3, 0x2, 0x2, 0x2, 0xa5, 
+    0x68, 0x3, 0x2, 0x2, 0x2, 0xa5, 0x6d, 0x3, 0x2, 0x2, 0x2, 0xa5, 0x81, 
+    0x3, 0x2, 0x2, 0x2, 0xa5, 0x8f, 0x3, 0x2, 0x2, 0x2, 0xa5, 0x97, 0x3, 
+    0x2, 0x2, 0x2, 0xa5, 0x9b, 0x3, 0x2, 0x2, 0x2, 0xa5, 0x9f, 0x3, 0x2, 
+    0x2, 0x2, 0xa6, 0x7, 0x3, 0x2, 0x2, 0x2, 0xa7, 0xa9, 0x7, 0x15, 0x2, 
+    0x2, 0xa8, 0xaa, 0x5, 0x12, 0xa, 0x2, 0xa9, 0xa8, 0x3, 0x2, 0x2, 0x2, 
+    0xa9, 0xaa, 0x3, 0x2, 0x2, 0x2, 0xaa, 0xac, 0x3, 0x2, 0x2, 0x2, 0xab, 
+    0xad, 0x7, 0x3, 0x2, 0x2, 0xac, 0xab, 0x3, 0x2, 0x2, 0x2, 0xac, 0xad, 
+    0x3, 0x2, 0x2, 0x2, 0xad, 0x9, 0x3, 0x2, 0x2, 0x2, 0xae, 0xaf, 0x7, 
+    0x16, 0x2, 0x2, 0xaf, 0xb0, 0x7, 0x3a, 0x2, 0x2, 0xb0, 0xb1, 0x7, 0x16, 
+    0x2, 0x2, 0xb1, 0xb, 0x3, 0x2, 0x2, 0x2, 0xb2, 0xb7, 0x7, 0x3a, 0x2, 
+    0x2, 0xb3, 0xb4, 0x7, 0x17, 0x2, 0x2, 0xb4, 0xb6, 0x7, 0x3a, 0x2, 0x2, 
+    0xb5, 0xb3, 0x3, 0x2, 0x2, 0x2, 0xb6, 0xb9, 0x3, 0x2, 0x2, 0x2, 0xb7, 
+    0xb5, 0x3, 0x2, 0x2, 0x2, 0xb7, 0xb8, 0x3, 0x2, 0x2, 0x2, 0xb8, 0xbc, 
+    0x3, 0x2, 0x2, 0x2, 0xb9, 0xb7, 0x3, 0x2, 0x2, 0x2, 0xba, 0xbb, 0x7, 
+    0x18, 0x2, 0x2, 0xbb, 0xbd, 0x7, 0x3a, 0x2, 0x2, 0xbc, 0xba, 0x3, 0x2, 
+    0x2, 0x2, 0xbc, 0xbd, 0x3, 0x2, 0x2, 0x2, 0xbd, 0xd, 0x3, 0x2, 0x2, 
+    0x2, 0xbe, 0xc3, 0x5, 0x1c, 0xf, 0x2, 0xbf, 0xc0, 0x7, 0x11, 0x2, 0x2, 
+    0xc0, 0xc2, 0x5, 0x1c, 0xf, 0x2, 0xc1, 0xbf, 0x3, 0x2, 0x2, 0x2, 0xc2, 
+    0xc5, 0x3, 0x2, 0x2, 0x2, 0xc3, 0xc1, 0x3, 0x2, 0x2, 0x2, 0xc3, 0xc4, 
+    0x3, 0x2, 0x2, 0x2, 0xc4, 0xf, 0x3, 0x2, 0x2, 0x2, 0xc5, 0xc3, 0x3, 
+    0x2, 0x2, 0x2, 0xc6, 0xcb, 0x7, 0x3a, 0x2, 0x2, 0xc7, 0xc8, 0x7, 0x11, 
+    0x2, 0x2, 0xc8, 0xca, 0x7, 0x3a, 0x2, 0x2, 0xc9, 0xc7, 0x3, 0x2, 0x2, 
+    0x2, 0xca, 0xcd, 0x3, 0x2, 0x2, 0x2, 0xcb, 0xc9, 0x3, 0x2, 0x2, 0x2, 
+    0xcb, 0xcc, 0x3, 0x2, 0x2, 0x2, 0xcc, 0x11, 0x3, 0x2, 0x2, 0x2, 0xcd, 
+    0xcb, 0x3, 0x2, 0x2, 0x2, 0xce, 0xd3, 0x5, 0x14, 0xb, 0x2, 0xcf, 0xd0, 
+    0x7, 0x11, 0x2, 0x2, 0xd0, 0xd2, 0x5, 0x14, 0xb, 0x2, 0xd1, 0xcf, 0x3, 
+    0x2, 0x2, 0x2, 0xd2, 0xd5, 0x3, 0x2, 0x2, 0x2, 0xd3, 0xd1, 0x3, 0x2, 
+    0x2, 0x2, 0xd3, 0xd4, 0x3, 0x2, 0x2, 0x2, 0xd4, 0x13, 0x3, 0x2, 0x2, 
+    0x2, 0xd5, 0xd3, 0x3, 0x2, 0x2, 0x2, 0xd6, 0xd7, 0x8, 0xb, 0x1, 0x2, 
+    0xd7, 0xe4, 0x7, 0x19, 0x2, 0x2, 0xd8, 0xe4, 0x7, 0x1a, 0x2, 0x2, 0xd9, 
+    0xe4, 0x7, 0x1b, 0x2, 0x2, 0xda, 0xe4, 0x5, 0x44, 0x23, 0x2, 0xdb, 0xe4, 
+    0x5, 0x46, 0x24, 0x2, 0xdc, 0xe4, 0x7, 0x1c, 0x2, 0x2, 0xdd, 0xe4, 0x5, 
+    0x24, 0x13, 0x2, 0xde, 0xe4, 0x5, 0x16, 0xc, 0x2, 0xdf, 0xe4, 0x5, 0x2a, 
+    0x16, 0x2, 0xe0, 0xe1, 0x5, 0x40, 0x21, 0x2, 0xe1, 0xe2, 0x5, 0x14, 
+    0xb, 0xa, 0xe2, 0xe4, 0x3, 0x2, 0x2, 0x2, 0xe3, 0xd6, 0x3, 0x2, 0x2, 
+    0x2, 0xe3, 0xd8, 0x3, 0x2, 0x2, 0x2, 0xe3, 0xd9, 0x3, 0x2, 0x2, 0x2, 
+    0xe3, 0xda, 0x3, 0x2, 0x2, 0x2, 0xe3, 0xdb, 0x3, 0x2, 0x2, 0x2, 0xe3, 
+    0xdc, 0x3, 0x2, 0x2, 0x2, 0xe3, 0xdd, 0x3, 0x2, 0x2, 0x2, 0xe3, 0xde, 
+    0x3, 0x2, 0x2, 0x2, 0xe3, 0xdf, 0x3, 0x2, 0x2, 0x2, 0xe3, 0xe0, 0x3, 
+    0x2, 0x2, 0x2, 0xe4, 0x107, 0x3, 0x2, 0x2, 0x2, 0xe5, 0xe6, 0xc, 0xb, 
+    0x2, 0x2, 0xe6, 0xe7, 0x5, 0x42, 0x22, 0x2, 0xe7, 0xe8, 0x5, 0x14, 0xb, 
+    0xb, 0xe8, 0x106, 0x3, 0x2, 0x2, 0x2, 0xe9, 0xea, 0xc, 0x9, 0x2, 0x2, 
+    0xea, 0xeb, 0x5, 0x3c, 0x1f, 0x2, 0xeb, 0xec, 0x5, 0x14, 0xb, 0xa, 0xec, 
+    0x106, 0x3, 0x2, 0x2, 0x2, 0xed, 0xee, 0xc, 0x8, 0x2, 0x2, 0xee, 0xef, 
+    0x5, 0x3a, 0x1e, 0x2, 0xef, 0xf0, 0x5, 0x14, 0xb, 0x9, 0xf0, 0x106, 
+    0x3, 0x2, 0x2, 0x2, 0xf1, 0xf2, 0xc, 0x7, 0x2, 0x2, 0xf2, 0xf3, 0x5, 
+    0x38, 0x1d, 0x2, 0xf3, 0xf4, 0x5, 0x14, 0xb, 0x7, 0xf4, 0x106, 0x3, 
+    0x2, 0x2, 0x2, 0xf5, 0xf6, 0xc, 0x6, 0x2, 0x2, 0xf6, 0xf7, 0x5, 0x36, 
+    0x1c, 0x2, 0xf7, 0xf8, 0x5, 0x14, 0xb, 0x7, 0xf8, 0x106, 0x3, 0x2, 0x2, 
+    0x2, 0xf9, 0xfa, 0xc, 0x5, 0x2, 0x2, 0xfa, 0xfb, 0x5, 0x34, 0x1b, 0x2, 
+    0xfb, 0xfc, 0x5, 0x14, 0xb, 0x6, 0xfc, 0x106, 0x3, 0x2, 0x2, 0x2, 0xfd, 
+    0xfe, 0xc, 0x4, 0x2, 0x2, 0xfe, 0xff, 0x5, 0x32, 0x1a, 0x2, 0xff, 0x100, 
+    0x5, 0x14, 0xb, 0x5, 0x100, 0x106, 0x3, 0x2, 0x2, 0x2, 0x101, 0x102, 
+    0xc, 0x3, 0x2, 0x2, 0x102, 0x103, 0x5, 0x3e, 0x20, 0x2, 0x103, 0x104, 
+    0x5, 0x14, 0xb, 0x4, 0x104, 0x106, 0x3, 0x2, 0x2, 0x2, 0x105, 0xe5, 
+    0x3, 0x2, 0x2, 0x2, 0x105, 0xe9, 0x3, 0x2, 0x2, 0x2, 0x105, 0xed, 0x3, 
+    0x2, 0x2, 0x2, 0x105, 0xf1, 0x3, 0x2, 0x2, 0x2, 0x105, 0xf5, 0x3, 0x2, 
+    0x2, 0x2, 0x105, 0xf9, 0x3, 0x2, 0x2, 0x2, 0x105, 0xfd, 0x3, 0x2, 0x2, 
+    0x2, 0x105, 0x101, 0x3, 0x2, 0x2, 0x2, 0x106, 0x109, 0x3, 0x2, 0x2, 
+    0x2, 0x107, 0x105, 0x3, 0x2, 0x2, 0x2, 0x107, 0x108, 0x3, 0x2, 0x2, 
+    0x2, 0x108, 0x15, 0x3, 0x2, 0x2, 0x2, 0x109, 0x107, 0x3, 0x2, 0x2, 0x2, 
+    0x10a, 0x10e, 0x5, 0x1a, 0xe, 0x2, 0x10b, 0x10d, 0x5, 0x20, 0x11, 0x2, 
+    0x10c, 0x10b, 0x3, 0x2, 0x2, 0x2, 0x10d, 0x110, 0x3, 0x2, 0x2, 0x2, 
+    0x10e, 0x10c, 0x3, 0x2, 0x2, 0x2, 0x10e, 0x10f, 0x3, 0x2, 0x2, 0x2, 
+    0x10f, 0x17, 0x3, 0x2, 0x2, 0x2, 0x110, 0x10e, 0x3, 0x2, 0x2, 0x2, 0x111, 
+    0x113, 0x5, 0x1a, 0xe, 0x2, 0x112, 0x114, 0x5, 0x20, 0x11, 0x2, 0x113, 
+    0x112, 0x3, 0x2, 0x2, 0x2, 0x114, 0x115, 0x3, 0x2, 0x2, 0x2, 0x115, 
+    0x113, 0x3, 0x2, 0x2, 0x2, 0x115, 0x116, 0x3, 0x2, 0x2, 0x2, 0x116, 
+    0x19, 0x3, 0x2, 0x2, 0x2, 0x117, 0x11d, 0x5, 0x1c, 0xf, 0x2, 0x118, 
+    0x119, 0x7, 0x1d, 0x2, 0x2, 0x119, 0x11a, 0x5, 0x14, 0xb, 0x2, 0x11a, 
+    0x11b, 0x7, 0x1e, 0x2, 0x2, 0x11b, 0x11d, 0x3, 0x2, 0x2, 0x2, 0x11c, 
+    0x117, 0x3, 0x2, 0x2, 0x2, 0x11c, 0x118, 0x3, 0x2, 0x2, 0x2, 0x11d, 
+    0x1b, 0x3, 0x2, 0x2, 0x2, 0x11e, 0x125, 0x7, 0x3a, 0x2, 0x2, 0x11f, 
+    0x120, 0x7, 0x1d, 0x2, 0x2, 0x120, 0x121, 0x5, 0x14, 0xb, 0x2, 0x121, 
+    0x122, 0x7, 0x1e, 0x2, 0x2, 0x122, 0x123, 0x5, 0x1e, 0x10, 0x2, 0x123, 
+    0x125, 0x3, 0x2, 0x2, 0x2, 0x124, 0x11e, 0x3, 0x2, 0x2, 0x2, 0x124, 
+    0x11f, 0x3, 0x2, 0x2, 0x2, 0x125, 0x129, 0x3, 0x2, 0x2, 0x2, 0x126, 
+    0x128, 0x5, 0x1e, 0x10, 0x2, 0x127, 0x126, 0x3, 0x2, 0x2, 0x2, 0x128, 
+    0x12b, 0x3, 0x2, 0x2, 0x2, 0x129, 0x127, 0x3, 0x2, 0x2, 0x2, 0x129, 
+    0x12a, 0x3, 0x2, 0x2, 0x2, 0x12a, 0x1d, 0x3, 0x2, 0x2, 0x2, 0x12b, 0x129, 
+    0x3, 0x2, 0x2, 0x2, 0x12c, 0x12e, 0x5, 0x20, 0x11, 0x2, 0x12d, 0x12c, 
+    0x3, 0x2, 0x2, 0x2, 0x12e, 0x131, 0x3, 0x2, 0x2, 0x2, 0x12f, 0x12d, 
+    0x3, 0x2, 0x2, 0x2, 0x12f, 0x130, 0x3, 0x2, 0x2, 0x2, 0x130, 0x138, 
+    0x3, 0x2, 0x2, 0x2, 0x131, 0x12f, 0x3, 0x2, 0x2, 0x2, 0x132, 0x133, 
+    0x7, 0x1f, 0x2, 0x2, 0x133, 0x134, 0x5, 0x14, 0xb, 0x2, 0x134, 0x135, 
+    0x7, 0x20, 0x2, 0x2, 0x135, 0x139, 0x3, 0x2, 0x2, 0x2, 0x136, 0x137, 
+    0x7, 0x17, 0x2, 0x2, 0x137, 0x139, 0x7, 0x3a, 0x2, 0x2, 0x138, 0x132, 
+    0x3, 0x2, 0x2, 0x2, 0x138, 0x136, 0x3, 0x2, 0x2, 0x2, 0x139, 0x1f, 0x3, 
+    0x2, 0x2, 0x2, 0x13a, 0x13b, 0x7, 0x18, 0x2, 0x2, 0x13b, 0x13d, 0x7, 
+    0x3a, 0x2, 0x2, 0x13c, 0x13a, 0x3, 0x2, 0x2, 0x2, 0x13c, 0x13d, 0x3, 
+    0x2, 0x2, 0x2, 0x13d, 0x13e, 0x3, 0x2, 0x2, 0x2, 0x13e, 0x13f, 0x5, 
+    0x22, 0x12, 0x2, 0x13f, 0x21, 0x3, 0x2, 0x2, 0x2, 0x140, 0x142, 0x7, 
+    0x1d, 0x2, 0x2, 0x141, 0x143, 0x5, 0x12, 0xa, 0x2, 0x142, 0x141, 0x3, 
+    0x2, 0x2, 0x2, 0x142, 0x143, 0x3, 0x2, 0x2, 0x2, 0x143, 0x144, 0x3, 
+    0x2, 0x2, 0x2, 0x144, 0x148, 0x7, 0x1e, 0x2, 0x2, 0x145, 0x148, 0x5, 
+    0x2a, 0x16, 0x2, 0x146, 0x148, 0x5, 0x46, 0x24, 0x2, 0x147, 0x140, 0x3, 
+    0x2, 0x2, 0x2, 0x147, 0x145, 0x3, 0x2, 0x2, 0x2, 0x147, 0x146, 0x3, 
+    0x2, 0x2, 0x2, 0x148, 0x23, 0x3, 0x2, 0x2, 0x2, 0x149, 0x14a, 0x7, 0x13, 
+    0x2, 0x2, 0x14a, 0x14b, 0x5, 0x26, 0x14, 0x2, 0x14b, 0x25, 0x3, 0x2, 
+    0x2, 0x2, 0x14c, 0x14e, 0x7, 0x1d, 0x2, 0x2, 0x14d, 0x14f, 0x5, 0x28, 
+    0x15, 0x2, 0x14e, 0x14d, 0x3, 0x2, 0x2, 0x2, 0x14e, 0x14f, 0x3, 0x2, 
+    0x2, 0x2, 0x14f, 0x150, 0x3, 0x2, 0x2, 0x2, 0x150, 0x151, 0x7, 0x1e, 
+    0x2, 0x2, 0x151, 0x152, 0x5, 0x4, 0x3, 0x2, 0x152, 0x153, 0x7, 0x8, 
+    0x2, 0x2, 0x153, 0x27, 0x3, 0x2, 0x2, 0x2, 0x154, 0x157, 0x5, 0x10, 
+    0x9, 0x2, 0x155, 0x156, 0x7, 0x11, 0x2, 0x2, 0x156, 0x158, 0x7, 0x1c, 
+    0x2, 0x2, 0x157, 0x155, 0x3, 0x2, 0x2, 0x2, 0x157, 0x158, 0x3, 0x2, 
+    0x2, 0x2, 0x158, 0x15b, 0x3, 0x2, 0x2, 0x2, 0x159, 0x15b, 0x7, 0x1c, 
+    0x2, 0x2, 0x15a, 0x154, 0x3, 0x2, 0x2, 0x2, 0x15a, 0x159, 0x3, 0x2, 
+    0x2, 0x2, 0x15b, 0x29, 0x3, 0x2, 0x2, 0x2, 0x15c, 0x15e, 0x7, 0x21, 
+    0x2, 0x2, 0x15d, 0x15f, 0x5, 0x2c, 0x17, 0x2, 0x15e, 0x15d, 0x3, 0x2, 
+    0x2, 0x2, 0x15e, 0x15f, 0x3, 0x2, 0x2, 0x2, 0x15f, 0x160, 0x3, 0x2, 
+    0x2, 0x2, 0x160, 0x161, 0x7, 0x22, 0x2, 0x2, 0x161, 0x2b, 0x3, 0x2, 
+    0x2, 0x2, 0x162, 0x168, 0x5, 0x2e, 0x18, 0x2, 0x163, 0x164, 0x5, 0x30, 
+    0x19, 0x2, 0x164, 0x165, 0x5, 0x2e, 0x18, 0x2, 0x165, 0x167, 0x3, 0x2, 
+    0x2, 0x2, 0x166, 0x163, 0x3, 0x2, 0x2, 0x2, 0x167, 0x16a, 0x3, 0x2, 
+    0x2, 0x2, 0x168, 0x166, 0x3, 0x2, 0x2, 0x2, 0x168, 0x169, 0x3, 0x2, 
+    0x2, 0x2, 0x169, 0x16c, 0x3, 0x2, 0x2, 0x2, 0x16a, 0x168, 0x3, 0x2, 
+    0x2, 0x2, 0x16b, 0x16d, 0x5, 0x30, 0x19, 0x2, 0x16c, 0x16b, 0x3, 0x2, 
+    0x2, 0x2, 0x16c, 0x16d, 0x3, 0x2, 0x2, 0x2, 0x16d, 0x2d, 0x3, 0x2, 0x2, 
+    0x2, 0x16e, 0x16f, 0x7, 0x1f, 0x2, 0x2, 0x16f, 0x170, 0x5, 0x14, 0xb, 
+    0x2, 0x170, 0x171, 0x7, 0x20, 0x2, 0x2, 0x171, 0x172, 0x7, 0x4, 0x2, 
+    0x2, 0x172, 0x173, 0x5, 0x14, 0xb, 0x2, 0x173, 0x179, 0x3, 0x2, 0x2, 
+    0x2, 0x174, 0x175, 0x7, 0x3a, 0x2, 0x2, 0x175, 0x176, 0x7, 0x4, 0x2, 
+    0x2, 0x176, 0x179, 0x5, 0x14, 0xb, 0x2, 0x177, 0x179, 0x5, 0x14, 0xb, 
+    0x2, 0x178, 0x16e, 0x3, 0x2, 0x2, 0x2, 0x178, 0x174, 0x3, 0x2, 0x2, 
+    0x2, 0x178, 0x177, 0x3, 0x2, 0x2, 0x2, 0x179, 0x2f, 0x3, 0x2, 0x2, 0x2, 
+    0x17a, 0x17b, 0x9, 0x2, 0x2, 0x2, 0x17b, 0x31, 0x3, 0x2, 0x2, 0x2, 0x17c, 
+    0x17d, 0x7, 0x23, 0x2, 0x2, 0x17d, 0x33, 0x3, 0x2, 0x2, 0x2, 0x17e, 
+    0x17f, 0x7, 0x24, 0x2, 0x2, 0x17f, 0x35, 0x3, 0x2, 0x2, 0x2, 0x180, 
+    0x181, 0x9, 0x3, 0x2, 0x2, 0x181, 0x37, 0x3, 0x2, 0x2, 0x2, 0x182, 0x183, 
+    0x7, 0x2b, 0x2, 0x2, 0x183, 0x39, 0x3, 0x2, 0x2, 0x2, 0x184, 0x185, 
+    0x9, 0x4, 0x2, 0x2, 0x185, 0x3b, 0x3, 0x2, 0x2, 0x2, 0x186, 0x187, 0x9, 
+    0x5, 0x2, 0x2, 0x187, 0x3d, 0x3, 0x2, 0x2, 0x2, 0x188, 0x189, 0x9, 0x6, 
+    0x2, 0x2, 0x189, 0x3f, 0x3, 0x2, 0x2, 0x2, 0x18a, 0x18b, 0x9, 0x7, 0x2, 
+    0x2, 0x18b, 0x41, 0x3, 0x2, 0x2, 0x2, 0x18c, 0x18d, 0x7, 0x39, 0x2, 
+    0x2, 0x18d, 0x43, 0x3, 0x2, 0x2, 0x2, 0x18e, 0x18f, 0x9, 0x8, 0x2, 0x2, 
+    0x18f, 0x45, 0x3, 0x2, 0x2, 0x2, 0x190, 0x191, 0x9, 0x9, 0x2, 0x2, 0x191, 
+    0x47, 0x3, 0x2, 0x2, 0x2, 0x24, 0x4e, 0x52, 0x78, 0x7d, 0x89, 0xa3, 
+    0xa5, 0xa9, 0xac, 0xb7, 0xbc, 0xc3, 0xcb, 0xd3, 0xe3, 0x105, 0x107, 
+    0x10e, 0x115, 0x11c, 0x124, 0x129, 0x12f, 0x138, 0x13c, 0x142, 0x147, 
+    0x14e, 0x157, 0x15a, 0x15e, 0x168, 0x16c, 0x178, 
   };
 
   atn::ATNDeserializer deserializer;

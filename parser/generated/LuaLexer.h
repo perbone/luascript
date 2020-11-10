@@ -27,7 +27,7 @@ public:
     SHEBANG = 67
   };
 
-  LuaLexer(antlr4::CharStream *input);
+  explicit LuaLexer(antlr4::CharStream *input);
   ~LuaLexer();
 
   virtual std::string getGrammarFileName() const override;
