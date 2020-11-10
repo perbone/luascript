@@ -190,7 +190,7 @@ void Parser::removeParseListeners() {
 }
 
 void Parser::triggerEnterRuleEvent() {
-  for (auto listener : _parseListeners) {
+  for (auto *listener : _parseListeners) {
     listener->enterEveryRule(_ctx);
     _ctx->enterRule(listener);
   }
@@ -252,11 +252,11 @@ tree::pattern::ParseTreePattern Parser::compileParseTreePattern(const std::strin
   return m.compile(pattern, patternRuleIndex);
 }
 
-__Ref<ANTLRErrorStrategy> Parser::getErrorHandler() {
+Ref<ANTLRErrorStrategy> Parser::getErrorHandler() {
   return _errHandler;
 }
 
-void Parser::setErrorHandler(__Ref<ANTLRErrorStrategy> const& handler) {
+void Parser::setErrorHandler(Ref<ANTLRErrorStrategy> const& handler) {
   _errHandler = handler;
 }
 
@@ -307,14 +307,14 @@ Token* Parser::consume() {
       tree::ErrorNode *node = createErrorNode(o);
       _ctx->addChild(node);
       if (_parseListeners.size() > 0) {
-        for (auto listener : _parseListeners) {
+        for (auto *listener : _parseListeners) {
           listener->visitErrorNode(node);
         }
       }
     } else {
       tree::TerminalNode *node = _ctx->addChild(createTerminalNode(o));
       if (_parseListeners.size() > 0) {
-        for (auto listener : _parseListeners) {
+        for (auto *listener : _parseListeners) {
           listener->visitTerminal(node);
         }
       }

@@ -32,7 +32,7 @@ namespace atn {
     };
 
 
-    using Set = std::unordered_set<__Ref<ATNConfig>, Hasher, Comparer>;
+    using Set = std::unordered_set<Ref<ATNConfig>, Hasher, Comparer>;
 
     /// The ATN state associated with this configuration.
     ATNState * state;
@@ -45,7 +45,7 @@ namespace atn {
     /// execution of the ATN simulator.
     ///
     /// Can be shared between multiple ANTConfig instances.
-    __Ref<PredictionContext> context;
+    Ref<PredictionContext> context;
 
     /**
      * We cannot execute predicates dependent upon local context unless
@@ -73,17 +73,17 @@ namespace atn {
     size_t reachesIntoOuterContext;
 
     /// Can be shared between multiple ATNConfig instances.
-    __Ref<SemanticContext> semanticContext;
+    Ref<SemanticContext> semanticContext;
 
-    ATNConfig(ATNState *state, size_t alt, __Ref<PredictionContext> const& context);
-    ATNConfig(ATNState *state, size_t alt, __Ref<PredictionContext> const& context, __Ref<SemanticContext> const& semanticContext);
+    ATNConfig(ATNState *state, size_t alt, Ref<PredictionContext> const& context);
+    ATNConfig(ATNState *state, size_t alt, Ref<PredictionContext> const& context, Ref<SemanticContext> const& semanticContext);
 
-    ATNConfig(__Ref<ATNConfig> const& c); // dup
-    ATNConfig(__Ref<ATNConfig> const& c, ATNState *state);
-    ATNConfig(__Ref<ATNConfig> const& c, ATNState *state, __Ref<SemanticContext> const& semanticContext);
-    ATNConfig(__Ref<ATNConfig> const& c, __Ref<SemanticContext> const& semanticContext);
-    ATNConfig(__Ref<ATNConfig> const& c, ATNState *state, __Ref<PredictionContext> const& context);
-    ATNConfig(__Ref<ATNConfig> const& c, ATNState *state, __Ref<PredictionContext> const& context, __Ref<SemanticContext> const& semanticContext);
+    ATNConfig(Ref<ATNConfig> const& c); // dup
+    ATNConfig(Ref<ATNConfig> const& c, ATNState *state);
+    ATNConfig(Ref<ATNConfig> const& c, ATNState *state, Ref<SemanticContext> const& semanticContext);
+    ATNConfig(Ref<ATNConfig> const& c, Ref<SemanticContext> const& semanticContext);
+    ATNConfig(Ref<ATNConfig> const& c, ATNState *state, Ref<PredictionContext> const& context);
+    ATNConfig(Ref<ATNConfig> const& c, ATNState *state, Ref<PredictionContext> const& context, Ref<SemanticContext> const& semanticContext);
 
     ATNConfig(ATNConfig const&) = default;
     virtual ~ATNConfig();
@@ -114,7 +114,13 @@ namespace atn {
      * {@link #isPrecedenceFilterSuppressed} property as a bit within the
      * existing {@link #reachesIntoOuterContext} field.
      */
-    static const size_t SUPPRESS_PRECEDENCE_FILTER;
+#if __cplusplus >= 201703L
+    static constexpr size_t SUPPRESS_PRECEDENCE_FILTER = 0x40000000;
+#else
+    enum : size_t {
+      SUPPRESS_PRECEDENCE_FILTER = 0x40000000,
+    };
+#endif
   };
 
 } // namespace atn
@@ -134,12 +140,12 @@ namespace std {
     }
   };
 
-  template <> struct hash<std::vector<__Ref<ATNConfig>>>
+  template <> struct hash<std::vector<Ref<ATNConfig>>>
   {
-    size_t operator() (const std::vector<__Ref<ATNConfig>> &vector) const
+    size_t operator() (const std::vector<Ref<ATNConfig>> &vector) const
     {
       std::size_t seed = 0;
-      for (auto &config : vector) {
+      for (const auto &config : vector) {
         seed ^= config->hashCode() + 0x9e3779b9 + (seed << 6) + (seed >> 2);
       }
       return seed;

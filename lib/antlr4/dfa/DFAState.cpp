@@ -13,7 +13,7 @@
 using namespace antlr4::dfa;
 using namespace antlr4::atn;
 
-DFAState::PredPrediction::PredPrediction(const __Ref<SemanticContext> &pred, int alt) : pred(pred) {
+DFAState::PredPrediction::PredPrediction(const Ref<SemanticContext> &pred, int alt) : pred(pred) {
   InitializeInstanceFields();
   this->alt = alt;
 }
@@ -42,7 +42,7 @@ DFAState::DFAState(std::unique_ptr<ATNConfigSet> configs_) : DFAState() {
 }
 
 DFAState::~DFAState() {
-  for (auto predicate : predicates) {
+  for (auto *predicate : predicates) {
     delete predicate;
   }
 }

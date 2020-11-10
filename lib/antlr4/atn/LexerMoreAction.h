@@ -25,7 +25,7 @@ namespace atn {
     /// <summary>
     /// Provides a singleton instance of this parameterless lexer action.
     /// </summary>
-    static const __Ref<LexerMoreAction> getInstance();
+    static const Ref<LexerMoreAction> getInstance();
 
     /// <summary>
     /// {@inheritDoc} </summary>

@@ -19,7 +19,7 @@ ATNConfigSet::ATNConfigSet(bool fullCtx) : fullCtx(fullCtx) {
   InitializeInstanceFields();
 }
 
-ATNConfigSet::ATNConfigSet(const __Ref<ATNConfigSet> &old) : ATNConfigSet(old->fullCtx) {
+ATNConfigSet::ATNConfigSet(const Ref<ATNConfigSet> &old) : ATNConfigSet(old->fullCtx) {
   addAll(old);
   uniqueAlt = old->uniqueAlt;
   conflictingAlts = old->conflictingAlts;
@@ -30,11 +30,11 @@ ATNConfigSet::ATNConfigSet(const __Ref<ATNConfigSet> &old) : ATNConfigSet(old->f
 ATNConfigSet::~ATNConfigSet() {
 }
 
-bool ATNConfigSet::add(const __Ref<ATNConfig> &config) {
+bool ATNConfigSet::add(const Ref<ATNConfig> &config) {
   return add(config, nullptr);
 }
 
-bool ATNConfigSet::add(const __Ref<ATNConfig> &config, PredictionContextMergeCache *mergeCache) {
+bool ATNConfigSet::add(const Ref<ATNConfig> &config, PredictionContextMergeCache *mergeCache) {
   if (_readonly) {
     throw IllegalStateException("This set is readonly");
   }
@@ -57,7 +57,7 @@ bool ATNConfigSet::add(const __Ref<ATNConfig> &config, PredictionContextMergeCac
 
   // a previous (s,i,pi,_), merge with it and save result
   bool rootIsWildcard = !fullCtx;
-  __Ref<PredictionContext> merged = PredictionContext::merge(existing->context, config->context, rootIsWildcard, mergeCache);
+  Ref<PredictionContext> merged = PredictionContext::merge(existing->context, config->context, rootIsWildcard, mergeCache);
   // no need to check for existing.context, config.context in cache
   // since only way to create new graphs is "call rule" and here. We
   // cache at both places.
@@ -73,7 +73,7 @@ bool ATNConfigSet::add(const __Ref<ATNConfig> &config, PredictionContextMergeCac
   return true;
 }
 
-bool ATNConfigSet::addAll(const __Ref<ATNConfigSet> &other) {
+bool ATNConfigSet::addAll(const Ref<ATNConfigSet> &other) {
   for (auto &c : other->configs) {
     add(c);
   }
@@ -105,8 +105,8 @@ BitSet ATNConfigSet::getAlts() {
   return alts;
 }
 
-std::vector<__Ref<SemanticContext>> ATNConfigSet::getPredicates() {
-  std::vector<__Ref<SemanticContext>> preds;
+std::vector<Ref<SemanticContext>> ATNConfigSet::getPredicates() {
+  std::vector<Ref<SemanticContext>> preds;
   for (auto c : configs) {
     if (c->semanticContext != SemanticContext::NONE) {
       preds.push_back(c->semanticContext);
@@ -115,7 +115,7 @@ std::vector<__Ref<SemanticContext>> ATNConfigSet::getPredicates() {
   return preds;
 }
 
-__Ref<ATNConfig> ATNConfigSet::get(size_t i) const {
+Ref<ATNConfig> ATNConfigSet::get(size_t i) const {
   return configs[i];
 }
 

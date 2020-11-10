@@ -13,7 +13,13 @@ namespace atn {
 
   class ANTLR4CPP_PUBLIC ATNDeserializer {
   public:
-    static const size_t SERIALIZED_VERSION;
+#if __cplusplus >= 201703L
+    static constexpr size_t SERIALIZED_VERSION = 3;
+#else
+    enum : size_t {
+      SERIALIZED_VERSION = 3,
+    };
+#endif
 
     /// This is the current serialized UUID.
     // ml: defined as function to avoid the “static initialization order fiasco”.
@@ -50,7 +56,7 @@ namespace atn {
     /// introduced; otherwise, {@code false}. </returns>
     virtual bool isFeatureSupported(const Guid &feature, const Guid &actualUuid);
     void markPrecedenceDecisions(const ATN &atn);
-    __Ref<LexerAction> lexerActionFactory(LexerActionType type, int data1, int data2);
+    Ref<LexerAction> lexerActionFactory(LexerActionType type, int data1, int data2);
 
   private:
     /// This is the earliest supported serialized UUID.

@@ -22,7 +22,7 @@ namespace atn {
     /// <summary>
     /// Constructs an executor for a sequence of <seealso cref="LexerAction"/> actions. </summary>
     /// <param name="lexerActions"> The lexer actions to execute. </param>
-    LexerActionExecutor(const std::vector<__Ref<LexerAction>> &lexerActions);
+    LexerActionExecutor(const std::vector<Ref<LexerAction>> &lexerActions);
     virtual ~LexerActionExecutor();
 
     /// <summary>
@@ -39,8 +39,8 @@ namespace atn {
     /// </param>
     /// <returns> A <seealso cref="LexerActionExecutor"/> for executing the combine actions
     /// of {@code lexerActionExecutor} and {@code lexerAction}. </returns>
-    static __Ref<LexerActionExecutor> append(__Ref<LexerActionExecutor> const& lexerActionExecutor,
-                                           __Ref<LexerAction> const& lexerAction);
+    static Ref<LexerActionExecutor> append(Ref<LexerActionExecutor> const& lexerActionExecutor,
+                                           Ref<LexerAction> const& lexerAction);
 
     /// <summary>
     /// Creates a <seealso cref="LexerActionExecutor"/> which encodes the current offset
@@ -70,12 +70,12 @@ namespace atn {
     /// </param>
     /// <returns> A <seealso cref="LexerActionExecutor"/> which stores input stream offsets
     /// for all position-dependent lexer actions. </returns>
-    virtual __Ref<LexerActionExecutor> fixOffsetBeforeMatch(int offset);
+    virtual Ref<LexerActionExecutor> fixOffsetBeforeMatch(int offset);
 
     /// <summary>
     /// Gets the lexer actions to be executed by this executor. </summary>
     /// <returns> The lexer actions to be executed by this executor. </returns>
-    virtual std::vector<__Ref<LexerAction>> getLexerActions() const;
+    virtual std::vector<Ref<LexerAction>> getLexerActions() const;
 
     /// <summary>
     /// Execute the actions encapsulated by this executor within the context of a
@@ -102,7 +102,7 @@ namespace atn {
     virtual bool operator != (const LexerActionExecutor &obj) const;
 
   private:
-    const std::vector<__Ref<LexerAction>> _lexerActions;
+    const std::vector<Ref<LexerAction>> _lexerActions;
 
     /// Caches the result of <seealso cref="#hashCode"/> since the hash code is an element
     /// of the performance-critical <seealso cref="LexerATNConfig#hashCode"/> operation.

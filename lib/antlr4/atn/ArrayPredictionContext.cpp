@@ -10,11 +10,11 @@
 
 using namespace antlr4::atn;
 
-ArrayPredictionContext::ArrayPredictionContext(__Ref<SingletonPredictionContext> const& a)
+ArrayPredictionContext::ArrayPredictionContext(Ref<SingletonPredictionContext> const& a)
   : ArrayPredictionContext({ a->parent }, { a->returnState }) {
 }
 
-ArrayPredictionContext::ArrayPredictionContext(std::vector<__Ref<PredictionContext>> const& parents_,
+ArrayPredictionContext::ArrayPredictionContext(std::vector<Ref<PredictionContext>> const& parents_,
                                                std::vector<size_t> const& returnStates)
   : PredictionContext(calculateHashCode(parents_, returnStates)), parents(parents_), returnStates(returnStates) {
     assert(parents.size() > 0);
@@ -33,7 +33,7 @@ size_t ArrayPredictionContext::size() const {
   return returnStates.size();
 }
 
-__Ref<PredictionContext> ArrayPredictionContext::getParent(size_t index) const {
+Ref<PredictionContext> ArrayPredictionContext::getParent(size_t index) const {
   return parents[index];
 }
 

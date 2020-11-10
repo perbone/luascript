@@ -57,8 +57,6 @@ using namespace antlr4;
 using namespace antlr4::atn;
 using namespace antlrcpp;
 
-const size_t ATNDeserializer::SERIALIZED_VERSION = 3;
-
 namespace {
 
 uint32_t deserializeInt32(const std::vector<uint16_t>& data, size_t offset) {
@@ -424,7 +422,7 @@ ATN ATNDeserializer::deserialize(const std::vector<uint16_t>& input) {
 
           size_t ruleIndex = static_cast<ActionTransition *>(transition)->ruleIndex;
           size_t actionIndex = static_cast<ActionTransition *>(transition)->actionIndex;
-          __Ref<LexerCustomAction> lexerAction = std::make_shared<LexerCustomAction>(ruleIndex, actionIndex);
+          Ref<LexerCustomAction> lexerAction = std::make_shared<LexerCustomAction>(ruleIndex, actionIndex);
           state->transitions[i] = new ActionTransition(transition->target, ruleIndex, atn.lexerActions.size(), false); /* mem-check freed in ATNState d-tor */
           delete transition; // ml: no longer needed since we just replaced it.
           atn.lexerActions.push_back(lexerAction);
@@ -725,7 +723,7 @@ ATNState* ATNDeserializer::stateFactory(size_t type, size_t ruleIndex) {
   return s;
 }
 
-__Ref<LexerAction> ATNDeserializer::lexerActionFactory(LexerActionType type, int data1, int data2) {
+Ref<LexerAction> ATNDeserializer::lexerActionFactory(LexerActionType type, int data1, int data2) {
   switch (type) {
     case LexerActionType::CHANNEL:
       return std::make_shared<LexerChannelAction>(data1);

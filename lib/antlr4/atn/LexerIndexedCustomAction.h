@@ -38,7 +38,7 @@ namespace atn {
     /// executed. </param>
     /// <param name="action"> The lexer action to execute at a particular offset in the
     /// input <seealso cref="CharStream"/>. </param>
-    LexerIndexedCustomAction(int offset, __Ref<LexerAction> const& action);
+    LexerIndexedCustomAction(int offset, Ref<LexerAction> const& action);
 
     /// <summary>
     /// Gets the location in the input <seealso cref="CharStream"/> at which the lexer
@@ -53,7 +53,7 @@ namespace atn {
     /// Gets the lexer action to execute.
     /// </summary>
     /// <returns> A <seealso cref="LexerAction"/> object which executes the lexer action. </returns>
-    __Ref<LexerAction> getAction() const;
+    Ref<LexerAction> getAction() const;
 
     /// <summary>
     /// {@inheritDoc}
@@ -74,7 +74,7 @@ namespace atn {
 
   private:
     const int _offset;
-    const __Ref<LexerAction> _action;
+    const Ref<LexerAction> _action;
   };
 
 } // namespace atn

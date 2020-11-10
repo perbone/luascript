@@ -96,7 +96,7 @@ namespace antlr4 {
      */
     void addDecisionOverride(int decision, int tokenIndex, int forcedAlt);
 
-    __Ref<InterpreterRuleContext> getOverrideDecisionRoot() const;
+    Ref<InterpreterRuleContext> getOverrideDecisionRoot() const;
 
     /** Return the root of the parse, which can be useful if the parser
      *  bails out. You still can access the top node. Note that,
@@ -145,7 +145,7 @@ namespace antlr4 {
      *  us what the root of the parse tree is when using override
      *  for an ambiguity/lookahead check.
      */
-    __Ref<InterpreterRuleContext> _overrideDecisionRoot;
+    Ref<InterpreterRuleContext> _overrideDecisionRoot;
     InterpreterRuleContext* _rootContext;
 
     virtual atn::ATNState *getATNState();

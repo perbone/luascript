@@ -81,7 +81,7 @@ namespace atn {
 
     /// Gets the <seealso cref="LookaheadEventInfo"/> associated with the event where the
     /// <seealso cref="#SLL_MaxLook"/> value was set.
-    __Ref<LookaheadEventInfo> SLL_MaxLookEvent;
+    Ref<LookaheadEventInfo> SLL_MaxLookEvent;
 
     /// <summary>
     /// The sum of the lookahead required for LL prediction for this decision.
@@ -112,7 +112,7 @@ namespace atn {
     /// Gets the <seealso cref="LookaheadEventInfo"/> associated with the event where the
     /// <seealso cref="#LL_MaxLook"/> value was set.
     /// </summary>
-    __Ref<LookaheadEventInfo> LL_MaxLookEvent;
+    Ref<LookaheadEventInfo> LL_MaxLookEvent;
 
     /// <summary>
     /// A collection of <seealso cref="ContextSensitivityInfo"/> instances describing the

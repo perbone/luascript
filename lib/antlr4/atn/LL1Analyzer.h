@@ -17,7 +17,13 @@ namespace atn {
   public:
     /// Special value added to the lookahead sets to indicate that we hit
     ///  a predicate during analysis if {@code seeThruPreds==false}.
-    static const size_t HIT_PRED = Token::INVALID_TYPE;
+#if __cplusplus >= 201703L
+    static constexpr size_t HIT_PRED = Token::INVALID_TYPE;
+#else
+    enum : size_t {
+      HIT_PRED = Token::INVALID_TYPE,
+    };
+#endif
 
     const atn::ATN &_atn;
 
@@ -101,7 +107,7 @@ namespace atn {
     /// outermost context is reached. This parameter has no effect if {@code ctx}
     /// is {@code null}. </param>
   protected:
-    virtual void _LOOK(ATNState *s, ATNState *stopState, __Ref<PredictionContext> const& ctx, misc::IntervalSet &look,
+    virtual void _LOOK(ATNState *s, ATNState *stopState, Ref<PredictionContext> const& ctx, misc::IntervalSet &look,
       ATNConfig::Set &lookBusy, antlrcpp::BitSet &calledRuleStack, bool seeThruPreds, bool addEOF) const;
   };
 

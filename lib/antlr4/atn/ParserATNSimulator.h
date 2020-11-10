@@ -348,7 +348,7 @@ namespace atn {
     bool canDropLoopEntryEdgeInLeftRecursiveRule(ATNConfig *config) const;
     virtual std::string getRuleName(size_t index);
 
-    virtual __Ref<ATNConfig> precedenceTransition(__Ref<ATNConfig> const& config, PrecedencePredicateTransition *pt,
+    virtual Ref<ATNConfig> precedenceTransition(Ref<ATNConfig> const& config, PrecedencePredicateTransition *pt,
                                                 bool collectPredicates, bool inContext, bool fullCtx);
 
     void setPredictionMode(PredictionMode newMode);
@@ -648,11 +648,11 @@ namespace atn {
 
     virtual ATNState *getReachableTarget(Transition *trans, size_t ttype);
 
-    virtual std::vector<__Ref<SemanticContext>> getPredsForAmbigAlts(const antlrcpp::BitSet &ambigAlts,
+    virtual std::vector<Ref<SemanticContext>> getPredsForAmbigAlts(const antlrcpp::BitSet &ambigAlts,
                                                                    ATNConfigSet *configs, size_t nalts);
 
     virtual std::vector<dfa::DFAState::PredPrediction*> getPredicatePredictions(const antlrcpp::BitSet &ambigAlts,
-                                                                                std::vector<__Ref<SemanticContext>> const& altToPred);
+                                                                                std::vector<Ref<SemanticContext>> const& altToPred);
 
     /**
      * This method is used to improve the localization of error messages by
@@ -757,7 +757,7 @@ namespace atn {
      *
      * @since 4.3
      */
-    virtual bool evalSemanticContext(__Ref<SemanticContext> const& pred, ParserRuleContext *parserCallStack,
+    virtual bool evalSemanticContext(Ref<SemanticContext> const& pred, ParserRuleContext *parserCallStack,
                                      size_t alt, bool fullCtx);
 
     /* TODO: If we are doing predicates, there is no point in pursuing
@@ -766,24 +766,24 @@ namespace atn {
      waste to pursue the closure. Might have to advance when we do
      ambig detection thought :(
      */
-    virtual void closure(__Ref<ATNConfig> const& config, ATNConfigSet *configs, ATNConfig::Set &closureBusy,
+    virtual void closure(Ref<ATNConfig> const& config, ATNConfigSet *configs, ATNConfig::Set &closureBusy,
                          bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon);
 
-    virtual void closureCheckingStopState(__Ref<ATNConfig> const& config, ATNConfigSet *configs, ATNConfig::Set &closureBusy,
+    virtual void closureCheckingStopState(Ref<ATNConfig> const& config, ATNConfigSet *configs, ATNConfig::Set &closureBusy,
                                           bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon);
     
     /// Do the actual work of walking epsilon edges.
-    virtual void closure_(__Ref<ATNConfig> const& config, ATNConfigSet *configs, ATNConfig::Set &closureBusy,
+    virtual void closure_(Ref<ATNConfig> const& config, ATNConfigSet *configs, ATNConfig::Set &closureBusy,
                           bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon);
     
-    virtual __Ref<ATNConfig> getEpsilonTarget(__Ref<ATNConfig> const& config, Transition *t, bool collectPredicates,
+    virtual Ref<ATNConfig> getEpsilonTarget(Ref<ATNConfig> const& config, Transition *t, bool collectPredicates,
                                             bool inContext, bool fullCtx, bool treatEofAsEpsilon);
-    virtual __Ref<ATNConfig> actionTransition(__Ref<ATNConfig> const& config, ActionTransition *t);
+    virtual Ref<ATNConfig> actionTransition(Ref<ATNConfig> const& config, ActionTransition *t);
 
-    virtual __Ref<ATNConfig> predTransition(__Ref<ATNConfig> const& config, PredicateTransition *pt, bool collectPredicates,
+    virtual Ref<ATNConfig> predTransition(Ref<ATNConfig> const& config, PredicateTransition *pt, bool collectPredicates,
                                           bool inContext, bool fullCtx);
 
-    virtual __Ref<ATNConfig> ruleTransition(__Ref<ATNConfig> const& config, RuleTransition *t);
+    virtual Ref<ATNConfig> ruleTransition(Ref<ATNConfig> const& config, RuleTransition *t);
 
     /**
      * Gets a {@link BitSet} containing the alternatives in {@code configs}

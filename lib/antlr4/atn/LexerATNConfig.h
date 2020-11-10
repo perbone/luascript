@@ -12,18 +12,18 @@ namespace atn {
 
   class ANTLR4CPP_PUBLIC LexerATNConfig : public ATNConfig {
   public:
-    LexerATNConfig(ATNState *state, int alt, __Ref<PredictionContext> const& context);
-    LexerATNConfig(ATNState *state, int alt, __Ref<PredictionContext> const& context, __Ref<LexerActionExecutor> const& lexerActionExecutor);
+    LexerATNConfig(ATNState *state, int alt, Ref<PredictionContext> const& context);
+    LexerATNConfig(ATNState *state, int alt, Ref<PredictionContext> const& context, Ref<LexerActionExecutor> const& lexerActionExecutor);
 
-    LexerATNConfig(__Ref<LexerATNConfig> const& c, ATNState *state);
-    LexerATNConfig(__Ref<LexerATNConfig> const& c, ATNState *state, __Ref<LexerActionExecutor> const& lexerActionExecutor);
-    LexerATNConfig(__Ref<LexerATNConfig> const& c, ATNState *state, __Ref<PredictionContext> const& context);
+    LexerATNConfig(Ref<LexerATNConfig> const& c, ATNState *state);
+    LexerATNConfig(Ref<LexerATNConfig> const& c, ATNState *state, Ref<LexerActionExecutor> const& lexerActionExecutor);
+    LexerATNConfig(Ref<LexerATNConfig> const& c, ATNState *state, Ref<PredictionContext> const& context);
 
     /**
      * Gets the {@link LexerActionExecutor} capable of executing the embedded
      * action(s) for the current configuration.
      */
-    __Ref<LexerActionExecutor> getLexerActionExecutor() const;
+    Ref<LexerActionExecutor> getLexerActionExecutor() const;
     bool hasPassedThroughNonGreedyDecision();
 
     virtual size_t hashCode() const override;
@@ -34,10 +34,10 @@ namespace atn {
     /**
      * This is the backing field for {@link #getLexerActionExecutor}.
      */
-    const __Ref<LexerActionExecutor> _lexerActionExecutor;
+    const Ref<LexerActionExecutor> _lexerActionExecutor;
     const bool _passedThroughNonGreedyDecision;
 
-    static bool checkNonGreedyDecision(__Ref<LexerATNConfig> const& source, ATNState *target);
+    static bool checkNonGreedyDecision(Ref<LexerATNConfig> const& source, ATNState *target);
   };
 
 } // namespace atn

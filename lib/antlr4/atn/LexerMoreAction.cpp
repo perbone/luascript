@@ -12,8 +12,8 @@ using namespace antlr4;
 using namespace antlr4::atn;
 using namespace antlr4::misc;
 
-const __Ref<LexerMoreAction> LexerMoreAction::getInstance() {
-  static __Ref<LexerMoreAction> instance(new LexerMoreAction());
+const Ref<LexerMoreAction> LexerMoreAction::getInstance() {
+  static Ref<LexerMoreAction> instance(new LexerMoreAction());
   return instance;
 }
 

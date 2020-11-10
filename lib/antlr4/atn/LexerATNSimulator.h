@@ -38,8 +38,15 @@ namespace atn {
 
 
   public:
-    static const size_t MIN_DFA_EDGE = 0;
-    static const size_t MAX_DFA_EDGE = 127; // forces unicode to stay in ATN
+#if __cplusplus >= 201703L
+    static constexpr size_t MIN_DFA_EDGE = 0;
+    static constexpr size_t MAX_DFA_EDGE = 127; // forces unicode to stay in ATN
+#else
+    enum : size_t {
+      MIN_DFA_EDGE = 0,
+      MAX_DFA_EDGE = 127, // forces unicode to stay in ATN
+    };
+#endif
 
   protected:
     /// <summary>
@@ -133,7 +140,7 @@ namespace atn {
     void getReachableConfigSet(CharStream *input, ATNConfigSet *closure_, // closure_ as we have a closure() already
                                ATNConfigSet *reach, size_t t);
 
-    virtual void accept(CharStream *input, const __Ref<LexerActionExecutor> &lexerActionExecutor, size_t startIndex, size_t index,
+    virtual void accept(CharStream *input, const Ref<LexerActionExecutor> &lexerActionExecutor, size_t startIndex, size_t index,
                         size_t line, size_t charPos);
 
     virtual ATNState *getReachableTarget(Transition *trans, size_t t);
@@ -149,11 +156,11 @@ namespace atn {
     /// </summary>
     /// <returns> {@code true} if an accept state is reached, otherwise
     /// {@code false}. </returns>
-    virtual bool closure(CharStream *input, const __Ref<LexerATNConfig> &config, ATNConfigSet *configs,
+    virtual bool closure(CharStream *input, const Ref<LexerATNConfig> &config, ATNConfigSet *configs,
                          bool currentAltReachedAcceptState, bool speculative, bool treatEofAsEpsilon);
 
     // side-effect: can alter configs.hasSemanticContext
-    virtual __Ref<LexerATNConfig> getEpsilonTarget(CharStream *input, const __Ref<LexerATNConfig> &config, Transition *t,
+    virtual Ref<LexerATNConfig> getEpsilonTarget(CharStream *input, const Ref<LexerATNConfig> &config, Transition *t,
       ATNConfigSet *configs, bool speculative, bool treatEofAsEpsilon);
 
     /// <summary>
