@@ -28,5 +28,5 @@ class TreeWalker {
 public:
 	virtual ~TreeWalker();
 
-	virtual const AbstractSyntaxTree& walk(const std::string chunk);
+	virtual const AbstractSyntaxTree &walk(const std::string chunk);
 };

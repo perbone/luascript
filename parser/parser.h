@@ -20,7 +20,6 @@
 #pragma once
 
 #include "ast/tree_walker.h"
-#include "ast/abstract_syntax_tree.h"
 
 class Parser {
 
