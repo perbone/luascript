@@ -17,13 +17,8 @@
  * limitations under the License
  */
 
-#include "antlr_tree_walker.h"
+#include "abstract_syntax_tree.h"
 
-AntlrTreeWalker::AntlrTreeWalker() {}
+AbstractSyntaxTree::AbstractSyntaxTree() {}
 
-AntlrTreeWalker::~AntlrTreeWalker() {}
-
-const AbstractSyntaxTree& AntlrTreeWalker::walk(const std::string chunk) {
-
-	return AbstractSyntaxTree();
-}
+AbstractSyntaxTree::~AbstractSyntaxTree() {}

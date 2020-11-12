@@ -28,4 +28,6 @@ class AntlrTreeWalker : public TreeWalker, luaparser::LuaBaseListener {
 public:
 	AntlrTreeWalker();
 	~AntlrTreeWalker();
+
+	const AbstractSyntaxTree& walk(const std::string chunk);
 };

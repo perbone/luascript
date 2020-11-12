@@ -19,8 +19,14 @@
 
 #pragma once
 
+#include <string>
+
+#include "abstract_syntax_tree.h"
+
 class TreeWalker {
 
 public:
 	virtual ~TreeWalker();
+
+	virtual const AbstractSyntaxTree& walk(const std::string chunk);
 };
