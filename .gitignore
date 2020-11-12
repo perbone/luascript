@@ -75,3 +75,6 @@ atlassian-ide-plugin.xml
 .vscode/launch.json
 .vscode/
 .vscode/settings.json
+
+# Antlr4 files
+.antlr
