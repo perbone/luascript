@@ -27,6 +27,8 @@ public:
 	Parser();
 	~Parser();
 
+	std::unique_ptr<AbstractSyntaxTree> parse(const std::string chunk);
+
 private:
-	TreeWalker treeWalker;
+	//TreeWalker treeWalker;
 };

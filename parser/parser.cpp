@@ -21,7 +21,10 @@
 
 #include "ast/antlr_tree_walker.h"
 
-Parser::Parser() :
-		treeWalker(AntlrTreeWalker{}) {}
+Parser::Parser() {} //:		treeWalker(AntlrTreeWalker{}) {}
 
 Parser::~Parser() {}
+
+std::unique_ptr<AbstractSyntaxTree> Parser::parse(const std::string chunk) {
+	return nullptr; //treeWalker.walk(chunk);
+}

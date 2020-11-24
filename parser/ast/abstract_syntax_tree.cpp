@@ -18,7 +18,3 @@
  */
 
 #include "abstract_syntax_tree.h"
-
-AbstractSyntaxTree::AbstractSyntaxTree() {}
-
-AbstractSyntaxTree::~AbstractSyntaxTree() {}

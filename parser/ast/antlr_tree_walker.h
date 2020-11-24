@@ -29,5 +29,7 @@ public:
 	AntlrTreeWalker();
 	~AntlrTreeWalker();
 
-	const AbstractSyntaxTree &walk(const std::string chunk);
+	AntlrTreeWalker(const AntlrTreeWalker &) = default;
+
+	std::unique_ptr<AbstractSyntaxTree> walk(const std::string chunk);
 };

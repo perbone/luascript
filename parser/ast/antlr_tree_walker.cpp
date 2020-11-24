@@ -23,7 +23,7 @@ AntlrTreeWalker::AntlrTreeWalker() {}
 
 AntlrTreeWalker::~AntlrTreeWalker() {}
 
-const AbstractSyntaxTree& AntlrTreeWalker::walk(const std::string chunk) {
+std::unique_ptr<AbstractSyntaxTree> AntlrTreeWalker::walk(const std::string chunk) {
 
-	return AbstractSyntaxTree();
+	return std::make_unique<AbstractSyntaxTree>();
 }
