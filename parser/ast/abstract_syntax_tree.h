@@ -58,10 +58,9 @@ public:
 	~AbstractSyntaxTree();
 
 	bool is_valid();
-
 	ast::Methods get_methods() const;
 
 private:
-	ast::Methods methods;
 	bool valid;
+	ast::Methods methods;
 };

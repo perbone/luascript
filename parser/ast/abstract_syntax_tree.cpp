@@ -20,8 +20,8 @@
 #include "abstract_syntax_tree.h"
 
 AbstractSyntaxTree::AbstractSyntaxTree(ast::Methods &&methods, bool valid) :
-		methods(methods),
-		valid(valid) {
+		valid(valid),
+		methods(methods) {
 }
 
 AbstractSyntaxTree::~AbstractSyntaxTree() {
