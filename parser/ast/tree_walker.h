@@ -20,14 +20,13 @@
 #pragma once
 
 #include <memory>
-#include <string>
+#include <string_view>
 
 #include "abstract_syntax_tree.h"
 
 class TreeWalker {
-
 public:
 	virtual ~TreeWalker() = default;
 
-	virtual std::unique_ptr<AbstractSyntaxTree> walk(const std::string chunk) = 0;
+	virtual std::unique_ptr<AbstractSyntaxTree> walk(const std::string_view chunk) = 0;
 };

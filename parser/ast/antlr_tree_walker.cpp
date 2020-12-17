@@ -17,13 +17,37 @@
  * limitations under the License
  */
 
+#include <vector>
+
+#include "../generated/LuaLexer.h"
+
 #include "antlr_tree_walker.h"
 
-AntlrTreeWalker::AntlrTreeWalker() {}
+AntlrTreeWalker::AntlrTreeWalker() {
+}
 
-AntlrTreeWalker::~AntlrTreeWalker() {}
+AntlrTreeWalker::~AntlrTreeWalker() {
+}
 
-std::unique_ptr<AbstractSyntaxTree> AntlrTreeWalker::walk(const std::string chunk) {
+std::unique_ptr<AbstractSyntaxTree> AntlrTreeWalker::walk(const std::string_view chunk) {
+	antlr4::ANTLRInputStream input(chunk);
+	luaparser::LuaLexer lexer(&input);
+	antlr4::CommonTokenStream tokens(&lexer);
+	LuaParser parser(&tokens);
+	LuaListener *listener = this;
 
-	return std::make_unique<AbstractSyntaxTree>();
+	this->methods = ast::Methods{};
+
+	antlr4::tree::ParseTree *chunk_tree = parser.chunk();
+	antlr4::tree::ParseTreeWalker::DEFAULT.walk(listener, chunk_tree);
+	parser.reset();
+
+	return std::make_unique<AbstractSyntaxTree>(std::move(this->methods), true);
+}
+
+void AntlrTreeWalker::exitStatFunction(LuaParser::StatFunctionContext *ctx) {
+	std::vector<antlr4::tree::TerminalNode *> names = ctx->funcname()->NAME();
+	auto token = names[ctx->funcname()->NAME().size() - 1]->getSymbol();
+
+	this->methods.push_back(ast::Method{ token->getText(), token->getLine(), token->getCharPositionInLine() + 1 });
 }
