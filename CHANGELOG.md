@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.59 - 2020-12-17
+
+### Added
+
+* Add parsing for the script methods (wip)
+
+### Changed
+
+* Update clang-format & clang-tidy to be in sync with Godot's standards
+
 ## 0.0.58 - 2020-11-15
 
 ### Changed

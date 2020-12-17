@@ -17,11 +17,17 @@
  * limitations under the License
  */
 
-#include "parser.h"
-
 #include "ast/antlr_tree_walker.h"
 
-Parser::Parser() :
-		treeWalker(AntlrTreeWalker{}) {}
+#include "parser.h"
 
-Parser::~Parser() {}
+Parser::Parser() :
+		treeWalker(std::make_unique<AntlrTreeWalker>()) {
+}
+
+Parser::~Parser() {
+}
+
+std::unique_ptr<AbstractSyntaxTree> Parser::parse(const std::string_view chunk) const {
+	return treeWalker->walk(chunk);
+}

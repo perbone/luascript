@@ -19,9 +19,49 @@
 
 #pragma once
 
-class AbstractSyntaxTree {
+#include <string_view>
+#include <vector>
 
+namespace ast {
+
+struct Method {
+	Method(std::string &&name, size_t line, size_t position) :
+			name(name),
+			line(line),
+			position(position) {}
+	Method(const Method &other) = default;
+	Method(Method &&other) = default;
+	Method &operator=(const Method &rhs) {
+		this->name = rhs.name;
+		this->line = rhs.line;
+		this->position = rhs.position;
+		return *this;
+	}
+	Method &operator=(Method &&rhs) {
+		this->name = std::move(rhs.name);
+		this->line = rhs.line;
+		this->position = rhs.position;
+		return *this;
+	}
+	~Method() = default;
+
+	std::string name;
+	size_t line;
+	size_t position;
+};
+using Methods = std::vector<ast::Method>;
+}; // namespace ast
+
+class AbstractSyntaxTree {
 public:
-	AbstractSyntaxTree();
+	AbstractSyntaxTree(ast::Methods &&methods, bool valid = true);
 	~AbstractSyntaxTree();
+
+	bool is_valid();
+
+	ast::Methods get_methods() const;
+
+private:
+	ast::Methods methods;
+	bool valid;
 };

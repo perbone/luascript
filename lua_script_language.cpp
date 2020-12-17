@@ -24,6 +24,7 @@
 
 #include "constants.h"
 #include "debug.h"
+
 #include "lua_script_language.h"
 
 LuaScriptLanguage *LuaScriptLanguage::singleton = nullptr;
@@ -42,8 +43,9 @@ LuaScriptLanguage::~LuaScriptLanguage() {
 
 	memdelete(this->mutex);
 
-	if (this->singleton == this)
+	if (this->singleton == this) {
 		this->singleton = nullptr;
+	}
 
 } // TODO
 
@@ -191,12 +193,20 @@ bool LuaScriptLanguage::is_using_templates() {
 
 bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path,
 		List<String> *r_functions, List<Warning> *r_warnings, Set<int> *r_safe_lines) const {
-	print_debug("LuaScriptLanguage::validate");
+	print_debug("LuaScriptLanguage::validate( p_path = %s )", p_path.ascii().get_data());
 
-	const std::string code(p_script.ascii().get_data());
-	const std::string source_name(p_path.ascii().get_data());
+	std::unique_ptr<AbstractSyntaxTree> ast = parser.parse(p_script.ascii().get_data());
 
-	return true;
+	if (ast->is_valid()) {
+		r_functions->clear();
+		for (auto method : ast->get_methods()) {
+			r_functions->push_back(String{ (method.name + ":" + std::to_string(method.line)).c_str() });
+		}
+	} else {
+		// TODO handle parsing error
+	}
+
+	return ast->is_valid();
 } // TODO
 
 String LuaScriptLanguage::validate_path(const String &p_path) const { // TODO
@@ -247,8 +257,9 @@ String LuaScriptLanguage::make_function(const String &p_class, const String &p_n
 
 	String funcDef = "function " + p_class + ":" + p_name + "(";
 	for (int i = 0; i < p_args.size(); i++) {
-		if (i > 0)
+		if (i > 0) {
 			funcDef += ", ";
+		}
 		funcDef += p_args[i].get_slice(":", 0);
 	}
 
@@ -372,7 +383,7 @@ void LuaScriptLanguage::reload_all_scripts() {
 	print_debug("LuaScriptLanguage::reload_all_scripts");
 
 #ifdef DEBUG_ENABLED
-	List<Ref<LuaScript> > scripts;
+	List<Ref<LuaScript>> scripts;
 
 	{
 		auto guard = LuaScriptLanguage::acquire();
@@ -388,7 +399,7 @@ void LuaScriptLanguage::reload_all_scripts() {
 
 	scripts.sort(); // update in inheritance dependency order, parent must be reload first
 
-	for (List<Ref<LuaScript> >::Element *E = scripts.front(); E; E = E->next()) {
+	for (List<Ref<LuaScript>>::Element *E = scripts.front(); E; E = E->next()) {
 		E->get()->load_source_code(E->get()->get_path());
 		E->get()->reload(true);
 	}
@@ -409,7 +420,7 @@ void LuaScriptLanguage::get_public_functions(List<MethodInfo> *p_functions) cons
 	print_debug("LuaScriptLanguage::get_public_functions");
 } // TODO
 
-void LuaScriptLanguage::get_public_constants(List<Pair<String, Variant> > *p_constants) const {
+void LuaScriptLanguage::get_public_constants(List<Pair<String, Variant>> *p_constants) const {
 	print_debug("LuaScriptLanguage::get_public_constants");
 } // TODO
 
