@@ -58,10 +58,10 @@ public:
 	AbstractSyntaxTree(ast::Methods &&methods, bool valid = true);
 	~AbstractSyntaxTree();
 
-	bool is_valid();
 	ast::Methods get_methods() const;
+	bool is_valid();
 
 private:
-	bool valid;
 	ast::Methods methods;
+	bool valid;
 };

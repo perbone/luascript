@@ -20,17 +20,17 @@
 #include "abstract_syntax_tree.h"
 
 AbstractSyntaxTree::AbstractSyntaxTree(ast::Methods &&methods, bool valid) :
-		valid(valid),
-		methods(methods) {
+		methods(methods),
+		valid(valid) {
 }
 
 AbstractSyntaxTree::~AbstractSyntaxTree() {
 }
 
-bool AbstractSyntaxTree::is_valid() {
-	return this->valid;
-}
-
 ast::Methods AbstractSyntaxTree::get_methods() const {
 	return this->methods;
+}
+
+bool AbstractSyntaxTree::is_valid() {
+	return this->valid;
 }
