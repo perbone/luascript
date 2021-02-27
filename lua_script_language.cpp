@@ -34,14 +34,10 @@ LuaScriptLanguage::LuaScriptLanguage() {
 
 	ERR_FAIL_COND(singleton);
 	this->singleton = this;
-
-	this->mutex = Mutex::create();
 }
 
 LuaScriptLanguage::~LuaScriptLanguage() {
 	print_debug("LuaScriptLanguage::destructor");
-
-	memdelete(this->mutex);
 
 	if (this->singleton == this) {
 		this->singleton = nullptr;

@@ -37,14 +37,15 @@ private:
 		return singleton;
 	}
 
-	_FORCE_INLINE_ static MutexLock &acquire() {
+	_FORCE_INLINE_ static MutexLock &&acquire() {
 		print_debug("_LuaScriptLanguage::acquire");
-		return *(memnew(MutexLock(LuaScriptLanguage::singleton->mutex)));
+		MutexLock lock(LuaScriptLanguage::get_singleton()->mutex);
+		return std::move(lock);
 	}
 
 private:
-	Mutex *mutex;
-	SelfList<LuaScript>::List script_list;
+	Mutex mutex{};
+	SelfList<LuaScript>::List script_list{};
 	Parser parser{};
 
 public:
