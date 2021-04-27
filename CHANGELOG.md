@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.63 - 2021-04-27
+
+### Changed
+
+* Bump Lua to 5.4.3 from master
+* Bump Antlr4 to 4.9.2 from master
+
+### Fixed
+
+* Fix broken mutex lock (disabled for now)
+
 ## 0.0.62 - 2021-03-22
 
 ### Changed

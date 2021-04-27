@@ -382,7 +382,7 @@ void LuaScriptLanguage::reload_all_scripts() {
 	List<Ref<LuaScript>> scripts;
 
 	{
-		auto guard = LuaScriptLanguage::acquire();
+		// auto guard = LuaScriptLanguage::acquire();
 
 		SelfList<LuaScript> *elem = script_list.first();
 		while (elem) {
