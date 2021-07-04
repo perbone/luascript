@@ -128,6 +128,7 @@ bool LuaScriptLanguage::is_control_flow_keyword(String p_keyword) const {
 		   p_keyword == "if" ||
 		   p_keyword == "repeat" ||
 		   p_keyword == "return" ||
+		   p_keyword == "then" ||
 		   p_keyword == "until" ||
 		   p_keyword == "while";
 }
