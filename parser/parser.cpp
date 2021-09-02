@@ -17,9 +17,9 @@
  * limitations under the License
  */
 
-#include "ast/antlr_tree_walker.h"
-
 #include "parser.h"
+
+#include "ast/antlr_tree_walker.h"
 
 Parser::Parser() :
 		treeWalker(std::make_unique<AntlrTreeWalker>()) {

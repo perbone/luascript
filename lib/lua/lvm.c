@@ -766,7 +766,8 @@ lua_Number luaV_modf (lua_State *L, lua_Number m, lua_Number n) {
 /*
 ** Shift left operation. (Shift right just negates 'y'.)
 */
-#define luaV_shiftr(x,y)	luaV_shiftl(x,-(y))
+#define luaV_shiftr(x,y)	luaV_shiftl(x,intop(-, 0, y))
+
 
 lua_Integer luaV_shiftl (lua_Integer x, lua_Integer y) {
   if (y < 0) {  /* shift right? */
@@ -1647,18 +1648,31 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         int delta = (nparams1) ? ci->u.l.nextraargs + nparams1 : 0;
         if (b != 0)
           L->top = ra + b;
-        /* else previous instruction set top */
+        else  /* previous instruction set top */
+          b = cast_int(L->top - ra);
         savepc(ci);  /* several calls here can raise errors */
         if (TESTARG_k(i)) {
           luaF_closeupval(L, base);  /* close upvalues from current call */
           lua_assert(L->tbclist < base);  /* no pending tbc variables */
           lua_assert(base == ci->func + 1);
         }
-        if (luaD_precall(L, ra, delta2retdel(delta)))  /* Lua function? */
-          goto startfunc;  /* execute the callee */
-        else {  /* C function */
+        while (!ttisfunction(s2v(ra))) {  /* not a function? */
+          ra = luaD_tryfuncTM(L, ra);  /* try '__call' metamethod */
+          b++;  /* there is now one extra argument */
+        }
+        if (!ttisLclosure(s2v(ra))) {  /* C function? */
+          luaD_precall(L, ra, LUA_MULTRET);  /* call it */
           updatetrap(ci);
+          updatestack(ci);  /* stack may have been relocated */
+          ci->func -= delta;  /* restore 'func' (if vararg) */
+          luaD_poscall(L, ci, cast_int(L->top - ra));  /* finish caller */
+          updatetrap(ci);  /* 'luaD_poscall' can change hooks */
           goto ret;  /* caller returns after the tail call */
+        }
+        else {  /* Lua function */
+          ci->func -= delta;  /* restore 'func' (if vararg) */
+          luaD_pretailcall(L, ci, ra, b);  /* prepare call frame */
+          goto startfunc;  /* execute the callee */
         }
       }
       vmcase(OP_RETURN) {
