@@ -53,6 +53,8 @@ public:
 
 	virtual Ref<Script> get_base_script() const;
 
+	virtual bool inherits_script(const Ref<Script> &p_script) const;
+
 	virtual StringName get_instance_base_type() const;
 	virtual ScriptInstance *instance_create(Object *p_this);
 	virtual PlaceHolderScriptInstance *placeholder_instance_create(Object *p_this);

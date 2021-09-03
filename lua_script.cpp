@@ -64,6 +64,12 @@ Ref<Script> LuaScript::get_base_script() const { // TODO
 	return Ref<Script>();
 }
 
+bool LuaScript::inherits_script(const Ref<Script> &p_script) const {
+	print_debug("LuaScript::inherits_script");
+
+	return false;
+}
+
 StringName LuaScript::get_instance_base_type() const { // TODO
 	print_debug("LuaScript::get_instance_base_type");
 
