@@ -7,7 +7,7 @@
 #include "antlr4-runtime.h"
 
 
-namespace luaparser {
+namespace parser::generated {
 
 
 class  LuaParser : public antlr4::Parser {
@@ -922,4 +922,4 @@ private:
   static Initializer _init;
 };
 
-}  // namespace luaparser
+}  // namespace parser::generated

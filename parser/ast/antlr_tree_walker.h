@@ -19,24 +19,26 @@
 
 #pragma once
 
-#include <memory>
-#include <string_view>
+#include "tree_walker.h"
 
 #include "../generated/LuaBaseListener.h"
 
-#include "tree_walker.h"
+#include <memory>
+#include <string_view>
 
-using namespace luaparser;
+namespace parser::ast {
 
-class AntlrTreeWalker : public TreeWalker, LuaBaseListener {
+class AntlrTreeWalker : public TreeWalker, generated::LuaBaseListener {
 public:
 	AntlrTreeWalker();
 	~AntlrTreeWalker();
 
-	std::unique_ptr<AbstractSyntaxTree> walk(const std::string_view chunk) override;
+	std::unique_ptr<ast::AbstractSyntaxTree> walk(const std::string_view chunk) override;
 
-	virtual void exitStatFunction(LuaParser::StatFunctionContext *ctx) override;
+	virtual void exitStatFunction(generated::LuaParser::StatFunctionContext *ctx) override;
 
 private:
-	ast::Methods methods;
+	Methods methods;
 };
+
+} // namespace parser::ast

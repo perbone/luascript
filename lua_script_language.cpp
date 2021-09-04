@@ -123,7 +123,7 @@ bool LuaScriptLanguage::is_control_flow_keyword(String p_keyword) const {
 		   p_keyword == "else" ||
 		   p_keyword == "elseif" ||
 		   p_keyword == "do" ||
- 		   p_keyword == "for" ||
+		   p_keyword == "for" ||
 		   p_keyword == "goto" ||
 		   p_keyword == "if" ||
 		   p_keyword == "repeat" ||
@@ -206,7 +206,7 @@ bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int 
 		List<String> *r_functions, List<Warning> *r_warnings, Set<int> *r_safe_lines) const {
 	print_debug("LuaScriptLanguage::validate( p_path = %s )", p_path.ascii().get_data());
 
-	std::unique_ptr<AbstractSyntaxTree> ast = parser.parse(p_script.ascii().get_data());
+	std::unique_ptr<parser::ast::AbstractSyntaxTree> ast = parser.parse(p_script.ascii().get_data());
 
 	if (ast->is_valid()) {
 		r_functions->clear();

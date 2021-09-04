@@ -19,10 +19,12 @@
 
 #pragma once
 
+#include "abstract_syntax_tree.h"
+
 #include <memory>
 #include <string_view>
 
-#include "abstract_syntax_tree.h"
+namespace parser::ast {
 
 class TreeWalker {
 public:
@@ -30,3 +32,5 @@ public:
 
 	virtual std::unique_ptr<AbstractSyntaxTree> walk(const std::string_view chunk) = 0;
 };
+
+} // namespace parser::ast

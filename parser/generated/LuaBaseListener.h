@@ -8,7 +8,7 @@
 #include "LuaListener.h"
 
 
-namespace luaparser {
+namespace parser::generated {
 
 /**
  * This class provides an empty implementation of LuaListener,
@@ -224,4 +224,4 @@ public:
 
 };
 
-}  // namespace luaparser
+}  // namespace parser::generated

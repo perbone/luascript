@@ -5,5 +5,5 @@
 #include "LuaBaseListener.h"
 
 
-using namespace luaparser;
+using namespace parser::generated;
 

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.67 - 2021-09-04
+
+### Changed
+
+* Add missing namespace for parser classes
+
 ## 0.0.66 - 2021-09-02
 
 ### Fixed

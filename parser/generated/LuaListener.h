@@ -8,7 +8,7 @@
 #include "LuaParser.h"
 
 
-namespace luaparser {
+namespace parser::generated {
 
 /**
  * This interface defines an abstract listener for a parse tree produced by LuaParser.
@@ -217,4 +217,4 @@ public:
 
 };
 
-}  // namespace luaparser
+}  // namespace parser::generated

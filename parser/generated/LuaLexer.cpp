@@ -7,7 +7,7 @@
 
 using namespace antlr4;
 
-using namespace luaparser;
+using namespace parser::generated;
 
 LuaLexer::LuaLexer(CharStream *input) : Lexer(input) {
   _interpreter = new atn::LexerATNSimulator(this, _atn, _decisionToDFA, _sharedContextCache);

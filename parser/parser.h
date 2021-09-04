@@ -19,18 +19,22 @@
 
 #pragma once
 
+#include "ast/tree_walker.h"
+
 #include <memory>
 #include <string_view>
 
-#include "ast/tree_walker.h"
+namespace parser {
 
 class Parser {
 public:
 	Parser();
 	~Parser();
 
-	std::unique_ptr<AbstractSyntaxTree> parse(const std::string_view chunk) const;
+	std::unique_ptr<ast::AbstractSyntaxTree> parse(const std::string_view chunk) const;
 
 private:
-	std::unique_ptr<TreeWalker> treeWalker;
+	std::unique_ptr<ast::TreeWalker> treeWalker;
 };
+
+} // namespace parser

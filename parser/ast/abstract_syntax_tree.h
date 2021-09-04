@@ -23,7 +23,7 @@
 #include <string_view>
 #include <vector>
 
-namespace ast {
+namespace parser::ast {
 
 struct Method {
 	Method(std::string &&name, size_t line, size_t position) :
@@ -50,18 +50,20 @@ struct Method {
 	size_t line;
 	size_t position;
 };
-using Methods = std::vector<ast::Method>;
-}; // namespace ast
+
+using Methods = std::vector<Method>;
 
 class AbstractSyntaxTree {
 public:
-	AbstractSyntaxTree(ast::Methods &&methods, bool valid = true);
+	AbstractSyntaxTree(Methods &&methods, bool valid = true);
 	~AbstractSyntaxTree();
 
-	ast::Methods get_methods() const;
+	Methods get_methods() const;
 	bool is_valid();
 
 private:
-	ast::Methods methods;
+	Methods methods;
 	bool valid;
 };
+
+}; // namespace parser::ast

@@ -21,13 +21,17 @@
 
 #include "ast/antlr_tree_walker.h"
 
+namespace parser {
+
 Parser::Parser() :
-		treeWalker(std::make_unique<AntlrTreeWalker>()) {
+		treeWalker(std::make_unique<ast::AntlrTreeWalker>()) {
 }
 
 Parser::~Parser() {
 }
 
-std::unique_ptr<AbstractSyntaxTree> Parser::parse(const std::string_view chunk) const {
+std::unique_ptr<ast::AbstractSyntaxTree> Parser::parse(const std::string_view chunk) const {
 	return treeWalker->walk(chunk);
 }
+
+} // namespace parser

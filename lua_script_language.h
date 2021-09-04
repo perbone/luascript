@@ -21,9 +21,9 @@
 
 #include "core/os/mutex.h"
 
-#include "parser/parser.h"
-
 #include "lua_script.h"
+
+#include "parser/parser.h"
 
 class LuaScriptLanguage : public ScriptLanguage {
 	static LuaScriptLanguage *singleton;
@@ -46,7 +46,7 @@ private:
 private:
 	Mutex mutex{};
 	SelfList<LuaScript>::List script_list{};
-	Parser parser{};
+	parser::Parser parser{};
 
 public:
 	LuaScriptLanguage();

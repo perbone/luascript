@@ -19,7 +19,9 @@
 
 #include "abstract_syntax_tree.h"
 
-AbstractSyntaxTree::AbstractSyntaxTree(ast::Methods &&methods, bool valid) :
+namespace parser::ast {
+
+AbstractSyntaxTree::AbstractSyntaxTree(Methods &&methods, bool valid) :
 		methods(methods),
 		valid(valid) {
 }
@@ -27,10 +29,12 @@ AbstractSyntaxTree::AbstractSyntaxTree(ast::Methods &&methods, bool valid) :
 AbstractSyntaxTree::~AbstractSyntaxTree() {
 }
 
-ast::Methods AbstractSyntaxTree::get_methods() const {
+Methods AbstractSyntaxTree::get_methods() const {
 	return this->methods;
 }
 
 bool AbstractSyntaxTree::is_valid() {
 	return this->valid;
 }
+
+} // namespace parser::ast
