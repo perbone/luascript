@@ -1,5 +1,5 @@
 
-// Generated from Lua.g4 by ANTLR 4.8
+// Generated from /home/perbone/Work/luascript/Lua.g4 by ANTLR 4.9.2
 
 #pragma once
 
@@ -66,8 +66,14 @@ public:
   virtual void enterStatLocalFunction(LuaParser::StatLocalFunctionContext * /*ctx*/) override { }
   virtual void exitStatLocalFunction(LuaParser::StatLocalFunctionContext * /*ctx*/) override { }
 
-  virtual void enterStatLocalNameList(LuaParser::StatLocalNameListContext * /*ctx*/) override { }
-  virtual void exitStatLocalNameList(LuaParser::StatLocalNameListContext * /*ctx*/) override { }
+  virtual void enterStatLocalAttributeNameList(LuaParser::StatLocalAttributeNameListContext * /*ctx*/) override { }
+  virtual void exitStatLocalAttributeNameList(LuaParser::StatLocalAttributeNameListContext * /*ctx*/) override { }
+
+  virtual void enterAttnamelist(LuaParser::AttnamelistContext * /*ctx*/) override { }
+  virtual void exitAttnamelist(LuaParser::AttnamelistContext * /*ctx*/) override { }
+
+  virtual void enterAttrib(LuaParser::AttribContext * /*ctx*/) override { }
+  virtual void exitAttrib(LuaParser::AttribContext * /*ctx*/) override { }
 
   virtual void enterStatReturn(LuaParser::StatReturnContext * /*ctx*/) override { }
   virtual void exitStatReturn(LuaParser::StatReturnContext * /*ctx*/) override { }
@@ -150,8 +156,8 @@ public:
   virtual void enterVarOrExp(LuaParser::VarOrExpContext * /*ctx*/) override { }
   virtual void exitVarOrExp(LuaParser::VarOrExpContext * /*ctx*/) override { }
 
-  virtual void enterVar(LuaParser::VarContext * /*ctx*/) override { }
-  virtual void exitVar(LuaParser::VarContext * /*ctx*/) override { }
+  virtual void enterVar_(LuaParser::Var_Context * /*ctx*/) override { }
+  virtual void exitVar_(LuaParser::Var_Context * /*ctx*/) override { }
 
   virtual void enterVarSuffix(LuaParser::VarSuffixContext * /*ctx*/) override { }
   virtual void exitVarSuffix(LuaParser::VarSuffixContext * /*ctx*/) override { }

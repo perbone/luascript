@@ -1,5 +1,5 @@
 
-// Generated from Lua.g4 by ANTLR 4.8
+// Generated from /home/perbone/Work/luascript/Lua.g4 by ANTLR 4.9.2
 
 #pragma once
 
@@ -64,8 +64,14 @@ public:
   virtual void enterStatLocalFunction(LuaParser::StatLocalFunctionContext *ctx) = 0;
   virtual void exitStatLocalFunction(LuaParser::StatLocalFunctionContext *ctx) = 0;
 
-  virtual void enterStatLocalNameList(LuaParser::StatLocalNameListContext *ctx) = 0;
-  virtual void exitStatLocalNameList(LuaParser::StatLocalNameListContext *ctx) = 0;
+  virtual void enterStatLocalAttributeNameList(LuaParser::StatLocalAttributeNameListContext *ctx) = 0;
+  virtual void exitStatLocalAttributeNameList(LuaParser::StatLocalAttributeNameListContext *ctx) = 0;
+
+  virtual void enterAttnamelist(LuaParser::AttnamelistContext *ctx) = 0;
+  virtual void exitAttnamelist(LuaParser::AttnamelistContext *ctx) = 0;
+
+  virtual void enterAttrib(LuaParser::AttribContext *ctx) = 0;
+  virtual void exitAttrib(LuaParser::AttribContext *ctx) = 0;
 
   virtual void enterStatReturn(LuaParser::StatReturnContext *ctx) = 0;
   virtual void exitStatReturn(LuaParser::StatReturnContext *ctx) = 0;
@@ -148,8 +154,8 @@ public:
   virtual void enterVarOrExp(LuaParser::VarOrExpContext *ctx) = 0;
   virtual void exitVarOrExp(LuaParser::VarOrExpContext *ctx) = 0;
 
-  virtual void enterVar(LuaParser::VarContext *ctx) = 0;
-  virtual void exitVar(LuaParser::VarContext *ctx) = 0;
+  virtual void enterVar_(LuaParser::Var_Context *ctx) = 0;
+  virtual void exitVar_(LuaParser::Var_Context *ctx) = 0;
 
   virtual void enterVarSuffix(LuaParser::VarSuffixContext *ctx) = 0;
   virtual void exitVarSuffix(LuaParser::VarSuffixContext *ctx) = 0;

@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## 0.0.67 - 2021-09-04
 
+### Added
+
+* Add support for Lua 5.4 variable attributes
+
 ### Changed
 
 * Add missing namespace for parser classes

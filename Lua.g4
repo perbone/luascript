@@ -39,14 +39,14 @@ This grammar file derived from:
     https://www.lua.org/manual/5.3/manual.html
 
     Lua 5.2 Reference Manual
-    http://www.lua.org/manual/5.2/manual.html
+    https://www.lua.org/manual/5.2/manual.html
 
     Lua 5.1 grammar written by Nicolai Mainiero
-    http://www.antlr3.org/grammar/1178608849736/Lua.g
+    https://www.antlr3.org/grammar/1178608849736/Lua.g
 
 Tested by Kazunori Sakamoto with Test suite for Lua 5.2 (http://www.lua.org/tests/5.2/)
 
-Tested by Alexander Alexeev with Test suite for Lua 5.3 http://www.lua.org/tests/lua-5.3.2-tests.tar.gz 
+Tested by Alexander Alexeev with Test suite for Lua 5.3 http://www.lua.org/tests/lua-5.3.2-tests.tar.gz
 */
 
 grammar Lua;
@@ -74,7 +74,15 @@ stat
     | 'for' namelist 'in' explist 'do' block 'end'                                  # StatGenericFor
     | 'function' funcname funcbody                                                  # StatFunction
     | 'local' 'function' NAME funcbody                                              # StatLocalFunction
-    | 'local' namelist ('=' explist)?                                               # StatLocalNameList
+    | 'local' attnamelist ('=' explist)?                                            # StatLocalAttributeNameList
+    ;
+
+attnamelist
+    : NAME attrib (',' NAME attrib)*
+    ;
+
+attrib
+    : ('<' NAME '>')?
     ;
 
 retstat
@@ -90,7 +98,7 @@ funcname
     ;
 
 varlist
-    : var (',' var)*
+    : var_ (',' var_)*
     ;
 
 namelist
@@ -131,10 +139,10 @@ functioncall
     ;
 
 varOrExp
-    : var | '(' exp ')'
+    : var_ | '(' exp ')'
     ;
 
-var
+var_
     : (NAME | '(' exp ')' varSuffix) varSuffix*
     ;
 
@@ -145,6 +153,20 @@ varSuffix
 nameAndArgs
     : (':' NAME)? args
     ;
+
+/*
+var_
+    : NAME | prefixexp '[' exp ']' | prefixexp '.' NAME
+    ;
+
+prefixexp
+    : var_ | functioncall | '(' exp ')'
+    ;
+
+functioncall
+    : prefixexp args | prefixexp ':' NAME args
+    ;
+*/
 
 args
     : '(' explist? ')' | tableconstructor | string
@@ -178,13 +200,13 @@ fieldsep
     : ',' | ';'
     ;
 
-operatorOr 
+operatorOr
 	: 'or';
 
-operatorAnd 
+operatorAnd
 	: 'and';
 
-operatorComparison 
+operatorComparison
 	: '<' | '>' | '<=' | '>=' | '~=' | '==';
 
 operatorStrcat
@@ -220,7 +242,7 @@ NAME
     ;
 
 NORMALSTRING
-    : '"' ( EscapeSequence | ~('\\'|'"') )* '"' 
+    : '"' ( EscapeSequence | ~('\\'|'"') )* '"'
     ;
 
 CHARSTRING
@@ -275,14 +297,14 @@ EscapeSequence
     | HexEscape
     | UtfEscape
     ;
-    
+
 fragment
 DecimalEscape
     : '\\' Digit
     | '\\' Digit Digit
     | '\\' [0-2] Digit Digit
     ;
-    
+
 fragment
 HexEscape
     : '\\' 'x' HexDigit HexDigit
@@ -306,7 +328,7 @@ HexDigit
 COMMENT
     : '--[' NESTED_STR ']' -> channel(HIDDEN)
     ;
-    
+
 LINE_COMMENT
     : '--'
     (                                               // --
@@ -316,8 +338,8 @@ LINE_COMMENT
     ) ('\r\n'|'\r'|'\n'|EOF)
     -> channel(HIDDEN)
     ;
-    
-WS  
+
+WS
     : [ \t\u000C\r\n]+ -> skip
     ;
 

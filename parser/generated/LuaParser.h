@@ -1,5 +1,5 @@
 
-// Generated from Lua.g4 by ANTLR 4.8
+// Generated from /home/perbone/Work/luascript/Lua.g4 by ANTLR 4.9.2
 
 #pragma once
 
@@ -28,15 +28,16 @@ public:
   };
 
   enum {
-    RuleChunk = 0, RuleBlock = 1, RuleStat = 2, RuleRetstat = 3, RuleLabel = 4, 
-    RuleFuncname = 5, RuleVarlist = 6, RuleNamelist = 7, RuleExplist = 8, 
-    RuleExp = 9, RulePrefixexp = 10, RuleFunctioncall = 11, RuleVarOrExp = 12, 
-    RuleVar = 13, RuleVarSuffix = 14, RuleNameAndArgs = 15, RuleArgs = 16, 
-    RuleFunctiondef = 17, RuleFuncbody = 18, RuleParlist = 19, RuleTableconstructor = 20, 
-    RuleFieldlist = 21, RuleField = 22, RuleFieldsep = 23, RuleOperatorOr = 24, 
-    RuleOperatorAnd = 25, RuleOperatorComparison = 26, RuleOperatorStrcat = 27, 
-    RuleOperatorAddSub = 28, RuleOperatorMulDivMod = 29, RuleOperatorBitwise = 30, 
-    RuleOperatorUnary = 31, RuleOperatorPower = 32, RuleNumber = 33, RuleString = 34
+    RuleChunk = 0, RuleBlock = 1, RuleStat = 2, RuleAttnamelist = 3, RuleAttrib = 4, 
+    RuleRetstat = 5, RuleLabel = 6, RuleFuncname = 7, RuleVarlist = 8, RuleNamelist = 9, 
+    RuleExplist = 10, RuleExp = 11, RulePrefixexp = 12, RuleFunctioncall = 13, 
+    RuleVarOrExp = 14, RuleVar_ = 15, RuleVarSuffix = 16, RuleNameAndArgs = 17, 
+    RuleArgs = 18, RuleFunctiondef = 19, RuleFuncbody = 20, RuleParlist = 21, 
+    RuleTableconstructor = 22, RuleFieldlist = 23, RuleField = 24, RuleFieldsep = 25, 
+    RuleOperatorOr = 26, RuleOperatorAnd = 27, RuleOperatorComparison = 28, 
+    RuleOperatorStrcat = 29, RuleOperatorAddSub = 30, RuleOperatorMulDivMod = 31, 
+    RuleOperatorBitwise = 32, RuleOperatorUnary = 33, RuleOperatorPower = 34, 
+    RuleNumber = 35, RuleString = 36
   };
 
   explicit LuaParser(antlr4::TokenStream *input);
@@ -52,6 +53,8 @@ public:
   class ChunkContext;
   class BlockContext;
   class StatContext;
+  class AttnamelistContext;
+  class AttribContext;
   class RetstatContext;
   class LabelContext;
   class FuncnameContext;
@@ -62,7 +65,7 @@ public:
   class PrefixexpContext;
   class FunctioncallContext;
   class VarOrExpContext;
-  class VarContext;
+  class Var_Context;
   class VarSuffixContext;
   class NameAndArgsContext;
   class ArgsContext;
@@ -206,16 +209,6 @@ public:
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
   };
 
-  class  StatLocalNameListContext : public StatContext {
-  public:
-    StatLocalNameListContext(StatContext *ctx);
-
-    NamelistContext *namelist();
-    ExplistContext *explist();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-  };
-
   class  StatGenericForContext : public StatContext {
   public:
     StatGenericForContext(StatContext *ctx);
@@ -232,6 +225,16 @@ public:
     StatDoContext(StatContext *ctx);
 
     BlockContext *block();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+  };
+
+  class  StatLocalAttributeNameListContext : public StatContext {
+  public:
+    StatLocalAttributeNameListContext(StatContext *ctx);
+
+    AttnamelistContext *attnamelist();
+    ExplistContext *explist();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
   };
@@ -275,6 +278,35 @@ public:
   };
 
   StatContext* stat();
+
+  class  AttnamelistContext : public antlr4::ParserRuleContext {
+  public:
+    AttnamelistContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<antlr4::tree::TerminalNode *> NAME();
+    antlr4::tree::TerminalNode* NAME(size_t i);
+    std::vector<AttribContext *> attrib();
+    AttribContext* attrib(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  AttnamelistContext* attnamelist();
+
+  class  AttribContext : public antlr4::ParserRuleContext {
+  public:
+    AttribContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *NAME();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  AttribContext* attrib();
 
   class  RetstatContext : public antlr4::ParserRuleContext {
   public:
@@ -331,8 +363,8 @@ public:
   public:
     VarlistContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    std::vector<VarContext *> var();
-    VarContext* var(size_t i);
+    std::vector<Var_Context *> var_();
+    Var_Context* var_(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -593,7 +625,7 @@ public:
   public:
     VarOrExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    VarContext *var();
+    Var_Context *var_();
     ExpContext *exp();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -603,9 +635,9 @@ public:
 
   VarOrExpContext* varOrExp();
 
-  class  VarContext : public antlr4::ParserRuleContext {
+  class  Var_Context : public antlr4::ParserRuleContext {
   public:
-    VarContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    Var_Context(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *NAME();
     ExpContext *exp();
@@ -617,7 +649,7 @@ public:
    
   };
 
-  VarContext* var();
+  Var_Context* var_();
 
   class  VarSuffixContext : public antlr4::ParserRuleContext {
   public:

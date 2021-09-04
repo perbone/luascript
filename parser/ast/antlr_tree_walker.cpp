@@ -31,26 +31,26 @@ AntlrTreeWalker::AntlrTreeWalker() {
 AntlrTreeWalker::~AntlrTreeWalker() {
 }
 
-std::unique_ptr<ast::AbstractSyntaxTree> AntlrTreeWalker::walk(const std::string_view chunk) {
+std::unique_ptr<AbstractSyntaxTree> AntlrTreeWalker::walk(const std::string_view chunk) {
 	antlr4::ANTLRInputStream input(chunk);
 	generated::LuaLexer lexer(&input);
 	antlr4::CommonTokenStream tokens(&lexer);
 	generated::LuaParser parser(&tokens);
 
-	this->methods = ast::Methods{};
+	this->methods = Methods{};
 
 	antlr4::tree::ParseTree *chunk_tree = parser.chunk();
 	antlr4::tree::ParseTreeWalker::DEFAULT.walk(this, chunk_tree);
 	parser.reset();
 
-	return std::make_unique<ast::AbstractSyntaxTree>(std::move(this->methods), true);
+	return std::make_unique<AbstractSyntaxTree>(std::move(this->methods), true);
 }
 
 void AntlrTreeWalker::exitStatFunction(generated::LuaParser::StatFunctionContext *ctx) {
 	std::vector<antlr4::tree::TerminalNode *> names = ctx->funcname()->NAME();
 	auto token = names[ctx->funcname()->NAME().size() - 1]->getSymbol();
 
-	this->methods.push_back(ast::Method{ token->getText(), token->getLine(), token->getCharPositionInLine() + 1 });
+	this->methods.push_back(Method{ token->getText(), token->getLine(), token->getCharPositionInLine() + 1 });
 }
 
 } // namespace parser::ast
