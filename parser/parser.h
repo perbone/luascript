@@ -31,7 +31,7 @@ public:
 	Parser();
 	~Parser();
 
-	std::unique_ptr<ast::AbstractSyntaxTree> parse(const std::string_view chunk) const;
+	ast::AST parse(const std::string_view chunk) const;
 
 private:
 	std::unique_ptr<ast::TreeWalker> treeWalker;

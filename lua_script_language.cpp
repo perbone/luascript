@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not  use this file except in compliance with the License.
@@ -206,7 +206,7 @@ bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int 
 		List<String> *r_functions, List<Warning> *r_warnings, Set<int> *r_safe_lines) const {
 	print_debug("LuaScriptLanguage::validate( p_path = %s )", p_path.ascii().get_data());
 
-	std::unique_ptr<parser::ast::AbstractSyntaxTree> ast = parser.parse(p_script.ascii().get_data());
+	parser::ast::AST ast = parser.parse(p_script.ascii().get_data());
 
 	if (ast->is_valid()) {
 		r_functions->clear();

@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not  use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -65,5 +66,7 @@ private:
 	Methods methods;
 	bool valid;
 };
+
+using AST = std::unique_ptr<ast::AbstractSyntaxTree>;
 
 }; // namespace parser::ast

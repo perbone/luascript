@@ -30,7 +30,7 @@ class TreeWalker {
 public:
 	virtual ~TreeWalker() = default;
 
-	virtual std::unique_ptr<AbstractSyntaxTree> walk(const std::string_view chunk) = 0;
+	virtual AST walk(const std::string_view chunk) = 0;
 };
 
 } // namespace parser::ast

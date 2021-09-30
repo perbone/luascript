@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not  use this file except in compliance with the License.
@@ -23,7 +23,6 @@
 
 #include "../generated/LuaBaseListener.h"
 
-#include <memory>
 #include <string_view>
 
 namespace parser::ast {
@@ -33,7 +32,7 @@ public:
 	AntlrTreeWalker();
 	~AntlrTreeWalker();
 
-	std::unique_ptr<ast::AbstractSyntaxTree> walk(const std::string_view chunk) override;
+	[[nodiscard]] AST walk(const std::string_view chunk) override;
 
 	virtual void exitStatFunction(generated::LuaParser::StatFunctionContext *ctx) override;
 

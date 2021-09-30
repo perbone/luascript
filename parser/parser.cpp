@@ -30,7 +30,7 @@ Parser::Parser() :
 Parser::~Parser() {
 }
 
-std::unique_ptr<ast::AbstractSyntaxTree> Parser::parse(const std::string_view chunk) const {
+ast::AST Parser::parse(const std::string_view chunk) const {
 	return treeWalker->walk(chunk);
 }
 

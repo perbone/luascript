@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not  use this file except in compliance with the License.
@@ -25,18 +25,20 @@
 
 namespace parser::ast {
 
-AntlrTreeWalker::AntlrTreeWalker() {
-}
+AntlrTreeWalker::AntlrTreeWalker() {}
 
-AntlrTreeWalker::~AntlrTreeWalker() {
-}
+AntlrTreeWalker::~AntlrTreeWalker() {}
 
-std::unique_ptr<AbstractSyntaxTree> AntlrTreeWalker::walk(const std::string_view chunk) {
+AST AntlrTreeWalker::walk(const std::string_view chunk) {
 	antlr4::ANTLRInputStream input(chunk);
 	generated::LuaLexer lexer(&input);
 	antlr4::CommonTokenStream tokens(&lexer);
 	generated::LuaParser parser(&tokens);
 
+	// We instantiate a new collection of methods each time we walk the tree 
+	// so we can move it to the returned AST at the end of the parser. 
+	// The fact that this collection is a data member is just for easy access 
+	// from within the listener functions.
 	this->methods = Methods{};
 
 	antlr4::tree::ParseTree *chunk_tree = parser.chunk();
