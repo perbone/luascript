@@ -53,9 +53,7 @@ module_luascript_enabled=yes
 
 If everything has gone well, you'll have a running Godot with Lua support!
 
-For now not much is done but the simple fact of having Godot built with this initial code is already a cool thing!
-
-So keep watching the development as I'm slowlly but steadly adding more features.
+Keep watching the development as I'm slowly but steadly adding more features.
 
 Have fun!
 
