@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not  use this file except in compliance with the License.
@@ -23,8 +23,8 @@
 #include "lua_script_language.h"
 
 LuaScriptInstance::LuaScriptInstance(Object *p_owner, Ref<LuaScript> p_script) :
-		owner(p_owner),
-		script(p_script) {
+		owner{ p_owner },
+		script{ p_script } {
 	print_debug("LuaScriptInstance::constructor");
 } // TODO
 

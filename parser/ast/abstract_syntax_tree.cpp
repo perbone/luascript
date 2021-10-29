@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not  use this file except in compliance with the License.
@@ -22,8 +22,8 @@
 namespace parser::ast {
 
 AbstractSyntaxTree::AbstractSyntaxTree(Methods &&methods, bool valid) :
-		methods(methods),
-		valid(valid) {
+		methods{ methods },
+		valid{ valid } {
 }
 
 AbstractSyntaxTree::~AbstractSyntaxTree() {
