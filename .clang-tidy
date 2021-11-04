@@ -1,5 +1,5 @@
 ---
-Checks:          'clang-diagnostic-*,clang-analyzer-*,-*,modernize-redundant-void-arg,modernize-use-bool-literals,modernize-use-default-member-init,modernize-use-nullptr,readability-braces-around-statements'
+Checks:          'clang-diagnostic-*,clang-analyzer-*,-*,modernize-redundant-void-arg,modernize-use-bool-literals,modernize-use-nullptr,readability-braces-around-statements'
 WarningsAsErrors: ''
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
@@ -41,3 +41,4 @@ CheckOptions:
   - key:             readability-braces-around-statements.ShortStatementLines
     value:           '0'
 ...
+
