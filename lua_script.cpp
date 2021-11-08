@@ -32,7 +32,7 @@ LuaScript::LuaScript() :
 	print_debug("LuaScript::constructor");
 
 #ifdef DEBUG_ENABLED
-	// auto guard = LuaScriptLanguage::acquire();
+	auto guard = LuaScriptLanguage::acquire();
 	LuaScriptLanguage::get_singleton()->script_list.add(&this->self);
 #endif
 } // TODO
@@ -41,7 +41,7 @@ LuaScript::~LuaScript() {
 	print_debug("LuaScript::destructor");
 
 #ifdef DEBUG_ENABLED
-	// auto guard = LuaScriptLanguage::acquire();
+	auto guard = LuaScriptLanguage::acquire();
 	LuaScriptLanguage::get_singleton()->script_list.remove(&this->self);
 #endif
 } // TODO
@@ -89,7 +89,7 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 
 	LuaScriptInstance *instance = memnew(LuaScriptInstance(p_this, Ref<LuaScript>(this)));
 
-	// auto guard = LuaScriptLanguage::acquire();
+	auto guard = LuaScriptLanguage::acquire();
 	this->instances.insert(p_this);
 
 	return instance;
@@ -110,7 +110,7 @@ PlaceHolderScriptInstance *LuaScript::placeholder_instance_create(Object *p_this
 bool LuaScript::instance_has(const Object *p_this) const { // TODO
 	print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + " )");
 
-	// auto guard = LuaScriptLanguage::acquire();
+	auto guard = LuaScriptLanguage::acquire();
 	bool found = this->instances.has((Object *)p_this);
 
 	print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + " ) found = " + (found ? "yes" : "no") + " )");
@@ -145,7 +145,7 @@ Error LuaScript::reload(bool p_keep_state) { // TODO
 	print_debug("LuaScript::reload( p_keep_state = %d )", p_keep_state);
 
 	{
-		// auto guard = LuaScriptLanguage::acquire();
+		auto guard = LuaScriptLanguage::acquire();
 		bool has_instances = instances.size();
 		ERR_FAIL_COND_V(!p_keep_state && has_instances, ERR_ALREADY_IN_USE);
 	}

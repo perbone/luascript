@@ -25,6 +25,8 @@
 
 #include "core/os/mutex.h"
 
+#include <memory>
+
 class LuaScriptLanguage : public ScriptLanguage {
 	static LuaScriptLanguage *singleton;
 
@@ -118,12 +120,10 @@ private:
 		return singleton;
 	}
 
-	_FORCE_INLINE_ static MutexLock<Mutex> &&acquire() {
+	_FORCE_INLINE_ static std::unique_ptr<MutexLock<Mutex>> acquire() {
 		print_debug("_LuaScriptLanguage::acquire");
 
-		MutexLock lock(LuaScriptLanguage::get_singleton()->mutex);
-
-		return std::move(lock);
+		return std::make_unique<MutexLock<Mutex>>(LuaScriptLanguage::get_singleton()->mutex);
 	}
 
 	Mutex mutex{};

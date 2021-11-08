@@ -33,7 +33,7 @@ LuaScriptInstance::~LuaScriptInstance() {
 	print_debug("LuaScriptInstance::destructor");
 
 	if (script.is_valid() && owner) {
-		// auto guard = LuaScriptLanguage::acquire();
+		auto guard = LuaScriptLanguage::acquire();
 		script->instances.erase(owner);
 	}
 }
