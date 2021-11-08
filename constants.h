@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "core/ustring.h"
+#include "core/string/ustring.h"
 
 const String EMPTY_STRING = "";
 const String SCRIPT_TYPE = "Script";

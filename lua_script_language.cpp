@@ -17,15 +17,19 @@
  * limitations under the License
  */
 
-#include <string>
-
-#include "core/engine.h"
-#include "editor/editor_settings.h"
+#include "lua_script_language.h"
 
 #include "constants.h"
 #include "debug.h"
 
-#include "lua_script_language.h"
+#include "core/config/engine.h"
+#include "core/config/project_settings.h"
+
+#ifdef TOOLS_ENABLED
+//#include "core/config/project_settings.h"
+//#include "editor/editor_file_system.h"
+#include "editor/editor_settings.h"
+#endif
 
 LuaScriptLanguage *LuaScriptLanguage::singleton = nullptr;
 
@@ -120,17 +124,17 @@ void LuaScriptLanguage::get_reserved_words(List<String> *p_words) const {
 
 bool LuaScriptLanguage::is_control_flow_keyword(String p_keyword) const {
 	return p_keyword == "break" ||
-		   p_keyword == "else" ||
-		   p_keyword == "elseif" ||
-		   p_keyword == "do" ||
-		   p_keyword == "for" ||
-		   p_keyword == "goto" ||
-		   p_keyword == "if" ||
-		   p_keyword == "repeat" ||
-		   p_keyword == "return" ||
-		   p_keyword == "then" ||
-		   p_keyword == "until" ||
-		   p_keyword == "while";
+			p_keyword == "else" ||
+			p_keyword == "elseif" ||
+			p_keyword == "do" ||
+			p_keyword == "for" ||
+			p_keyword == "goto" ||
+			p_keyword == "if" ||
+			p_keyword == "repeat" ||
+			p_keyword == "return" ||
+			p_keyword == "then" ||
+			p_keyword == "until" ||
+			p_keyword == "while";
 }
 
 void LuaScriptLanguage::get_comment_delimiters(List<String> *p_delimiters) const {
@@ -153,29 +157,29 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 
 	String _template = String() +
 
-					   "\n" +
-					   "local class = require 'lua.class'       -- Import the system class library\n" +
-					   "local %BASE% = require 'godot.%BASE%' 	-- Make sure to import the base class\n" +
-					   "\n" +
-					   "\n" +
-					   "local %CLASS% = class.extends(%BASE%) 	-- Create the user subclass\n" +
-					   "\n" +
-					   "function %CLASS%:_ready()\n" +
-					   "\n" +
-					   "end\n" +
-					   "\n" +
-					   "function %CLASS%:_process(delta)\n" +
-					   "\n" +
-					   "end\n" +
-					   "\n" +
-					   "\n" +
-					   "return %CLASS%\n";
+			"\n" +
+			"local class = require 'lua.class'       -- Import the system class library\n" +
+			"local %BASE% = require 'godot.%BASE%' 	-- Make sure to import the base class\n" +
+			"\n" +
+			"\n" +
+			"local %CLASS% = class.extends(%BASE%) 	-- Create the user subclass\n" +
+			"\n" +
+			"function %CLASS%:_ready()\n" +
+			"\n" +
+			"end\n" +
+			"\n" +
+			"function %CLASS%:_process(delta)\n" +
+			"\n" +
+			"end\n" +
+			"\n" +
+			"\n" +
+			"return %CLASS%\n";
 
 	_template = _template.replace("%BASE%", p_base_class_name);
 	_template = _template.replace("%CLASS%", p_class_name.capitalize().replace(" ", "").strip_edges());
 
 	Ref<LuaScript> script;
-	script.instance();
+	script.instantiate();
 	script->set_source_code(_template);
 	script->set_name(p_class_name);
 
@@ -202,8 +206,13 @@ bool LuaScriptLanguage::is_using_templates() {
 	return true;
 }
 
-bool LuaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path,
-		List<String> *r_functions, List<Warning> *r_warnings, Set<int> *r_safe_lines) const {
+bool LuaScriptLanguage::validate(
+		const String &p_script,
+		const String &p_path,
+		List<String> *r_functions,
+		List<ScriptError> *r_errors,
+		List<Warning> *r_warnings,
+		Set<int> *r_safe_lines) const {
 	print_debug("LuaScriptLanguage::validate( p_path = %s )", p_path.ascii().get_data());
 
 	parser::ast::AST ast = parser.parse(p_script.ascii().get_data());
@@ -244,7 +253,7 @@ bool LuaScriptLanguage::supports_builtin_mode() const {
 	return true;
 }
 
-bool LuaScriptLanguage::can_inherit_from_file() { // TODO
+bool LuaScriptLanguage::can_inherit_from_file() const { // TODO
 	print_debug("LuaScriptLanguage::can_inherit_from_file");
 
 	return true;
@@ -256,7 +265,7 @@ int LuaScriptLanguage::find_function(const String &p_function, const String &p_c
 	return -1;
 }
 
-String LuaScriptLanguage::make_function(const String &p_class, const String &p_name, const PoolStringArray &p_args) const {
+String LuaScriptLanguage::make_function(const String &p_class, const String &p_name, const PackedStringArray &p_args) const {
 	print_debug("LuaScriptLanguage::make_function( p_class = " + p_class + ", p_name = " + p_name + " )");
 
 	// FIXME! Godot does not pass p_class so the Lua class will be malformed.
@@ -298,11 +307,13 @@ Error LuaScriptLanguage::complete_code(const String &p_code, const String &p_pat
 	return ERR_UNAVAILABLE;
 }
 
+#ifdef TOOLS_ENABLED
 Error LuaScriptLanguage::lookup_code(const String &p_code, const String &p_symbol, const String &p_base_path, Object *p_owner, LookupResult &r_result) { // TODO
 	print_debug("LuaScriptLanguage::lookup_code");
 
 	return ERR_UNAVAILABLE;
 }
+#endif
 
 void LuaScriptLanguage::auto_indent_code(String &p_code, int p_from_line, int p_to_line) const {
 	print_debug("LuaScriptLanguage::auto_indent_code");
@@ -495,11 +506,12 @@ String LuaScriptLanguage::get_global_class_name(const String &p_path, String *r_
 String LuaScriptLanguage::get_indentation() const {
 	print_debug("LuaScriptLanguage::get_indentation");
 
+#ifdef TOOLS_ENABLED
 	if (Engine::get_singleton()->is_editor_hint()) {
-		bool use_space_indentation = EDITOR_DEF("text_editor/indent/type", 0);
+		bool use_space_indentation = EDITOR_DEF("text_editor/behavior/indent/type", false);
 
 		if (use_space_indentation) {
-			int indent_size = EDITOR_DEF("text_editor/indent/size", LUA_PIL_IDENTATION_SIZE);
+			int indent_size = EDITOR_DEF("text_editor/behavior/indent/size", LUA_PIL_IDENTATION_SIZE);
 
 			String space_indent = EMPTY_STRING;
 			for (int i = 0; i < indent_size; i++) {
@@ -508,6 +520,7 @@ String LuaScriptLanguage::get_indentation() const {
 			return space_indent;
 		}
 	}
+#endif
 
 	return LUA_PIL_IDENTATION;
 }

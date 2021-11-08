@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not  use this file except in compliance with the License.
@@ -30,7 +30,7 @@ LuaScriptResourceFormatLoader::~LuaScriptResourceFormatLoader() {
 	print_debug("LuaScriptResourceFormatLoader::destructor");
 }
 
-Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const String &p_original_path, Error *r_error) {
+RES LuaScriptResourceFormatLoader::load(const String &p_path, const String &p_original_path, Error *r_error, bool p_use_sub_threads, float *r_progress, CacheMode p_cache_mode) {
 	print_debug("LuaScriptResourceFormatLoader::load( p_path = " + p_path + ", p_original_path = " + p_original_path + " )");
 
 	LuaScript *script = memnew(LuaScript);
@@ -80,4 +80,8 @@ String LuaScriptResourceFormatLoader::get_resource_type(const String &p_path) co
 	print_debug("LuaScriptResourceFormatLoader::get_resource_type( p_path = " + p_path + " )");
 
 	return (p_path.get_extension().to_lower() == LUA_EXTENSION) ? LUA_TYPE : EMPTY_STRING;
+}
+
+void LuaScriptResourceFormatLoader::get_dependencies(const String &p_path, List<String> *p_dependencies, bool p_add_types) {
+	print_debug("LuaScriptResourceFormatLoader::get_dependencies( p_path = " + p_path + " )");
 }

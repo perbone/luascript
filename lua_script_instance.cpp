@@ -18,6 +18,7 @@
  */
 
 #include "lua_script_instance.h"
+
 #include "constants.h"
 #include "debug.h"
 #include "lua_script_language.h"
@@ -66,6 +67,10 @@ Object *LuaScriptInstance::get_owner() {
 	return this->owner;
 }
 
+void LuaScriptInstance::get_property_state(List<Pair<StringName, Variant>> &state) {
+	print_debug("LuaScriptInstance::get_property_state");
+}
+
 void LuaScriptInstance::get_method_list(List<MethodInfo> *p_list) const {
 	print_debug("LuaScriptInstance::get_method_list");
 
@@ -77,7 +82,7 @@ bool LuaScriptInstance::has_method(const StringName &p_method) const {
 	return false;
 }
 
-Variant LuaScriptInstance::call(const StringName &p_method, const Variant **p_args, int p_argcount, Variant::CallError &r_error) {
+Variant LuaScriptInstance::call(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
 	print_debug("LuaScriptInstance::call( p_method = " + p_method + " )");
 
 	if (!script.is_valid()) {
@@ -86,27 +91,9 @@ Variant LuaScriptInstance::call(const StringName &p_method, const Variant **p_ar
 
 	// FIXME call this|base::method
 
-	r_error.error = Variant::CallError::CALL_ERROR_INVALID_METHOD;
+	r_error.error = Callable::CallError::CALL_ERROR_INVALID_METHOD;
 
 	return Variant();
-} // TODO
-
-void LuaScriptInstance::call_multilevel(const StringName &p_method, const Variant **p_args, int p_argcount) {
-	print_debug("LuaScriptInstance::call_multilevel( p_method = " + p_method + " )");
-
-	Variant::CallError error;
-	this->call(p_method, p_args, p_argcount, error);
-	// FIXME call owner/base::call() after this::call()
-
-} // TODO
-
-void LuaScriptInstance::call_multilevel_reversed(const StringName &p_method, const Variant **p_args, int p_argcount) {
-	print_debug("LuaScriptInstance::call_multilevel_reversed( p_method = " + p_method + " )");
-
-	// FIXME call owner/base::call() before this::call()
-	Variant::CallError error;
-	this->call(p_method, p_args, p_argcount, error);
-
 } // TODO
 
 void LuaScriptInstance::notification(int p_notification) {
@@ -137,16 +124,26 @@ Ref<Script> LuaScriptInstance::get_script() const {
 	return this->script;
 }
 
-MultiplayerAPI::RPCMode LuaScriptInstance::get_rpc_mode(const StringName &p_method) const { // TODO
-	print_debug("LuaScriptInstance::get_rpc_mode( p_method = " + p_method + " )");
+bool LuaScriptInstance::is_placeholder() const {
+	print_debug("LuaScriptInstance::is_placeholder");
 
-	return MultiplayerAPI::RPC_MODE_DISABLED;
+	return false;
 }
 
-MultiplayerAPI::RPCMode LuaScriptInstance::get_rset_mode(const StringName &p_variable) const { // TODO
-	print_debug("LuaScriptInstance::get_rset_mode( p_variable = " + p_variable + " )");
+void LuaScriptInstance::property_set_fallback(const StringName &p_name, const Variant &p_value, bool *r_valid) {
+	print_debug("LuaScriptInstance::property_set_fallback");
+}
 
-	return MultiplayerAPI::RPC_MODE_DISABLED;
+Variant LuaScriptInstance::property_get_fallback(const StringName &p_name, bool *r_valid) {
+	print_debug("LuaScriptInstance::property_get_fallback");
+
+	return Variant{};
+}
+
+const Vector<Multiplayer::RPCConfig> LuaScriptInstance::get_rpc_methods() const {
+	print_debug("LuaScriptInstance::get_rpc_methods");
+
+	return this->script->get_rpc_methods();
 }
 
 ScriptLanguage *LuaScriptInstance::get_language() {

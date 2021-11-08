@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not  use this file except in compliance with the License.
@@ -17,24 +17,19 @@
  * limitations under the License
  */
 
-#include "core/os/os.h"
-
-#include "constants.h"
-#include "debug.h"
 #include "lua_script.h"
+
 #include "lua_script_instance.h"
 #include "lua_script_language.h"
 
+#include "constants.h"
+#include "debug.h"
+
+#include "core/os/os.h"
+
 LuaScript::LuaScript() :
-		tool(false),
-		valid(false),
 		self(this) {
 	print_debug("LuaScript::constructor");
-
-#ifdef TOOLS_ENABLED
-	source_changed_cache = false;
-	placeholder_fallback_enabled = false;
-#endif
 
 #ifdef DEBUG_ENABLED
 	// auto guard = LuaScriptLanguage::acquire();
@@ -51,8 +46,8 @@ LuaScript::~LuaScript() {
 #endif
 } // TODO
 
-bool LuaScript::can_instance() const {
-	print_debug("LuaScript::can_instance");
+bool LuaScript::can_instantiate() const {
+	print_debug("LuaScript::can_instantiate");
 
 	return valid || (!tool && !ScriptServer::is_scripting_enabled());
 }
@@ -100,18 +95,17 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 	return instance;
 }
 
+#ifdef TOOLS_ENABLED
 PlaceHolderScriptInstance *LuaScript::placeholder_instance_create(Object *p_this) {
 	print_debug("LuaScript::placeholder_instance_create( p_this = " + p_this->get_class_name() + " )");
 
-#ifdef TOOLS_ENABLED
 	PlaceHolderScriptInstance *instance = memnew(PlaceHolderScriptInstance(LuaScriptLanguage::get_singleton(), Ref<Script>(this), p_this));
 	placeholders.insert(instance);
 	update_exports();
+
 	return instance;
-#else
-	return nullptr;
-#endif
 }
+#endif
 
 bool LuaScript::instance_has(const Object *p_this) const { // TODO
 	print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + " )");
@@ -127,7 +121,7 @@ bool LuaScript::instance_has(const Object *p_this) const { // TODO
 bool LuaScript::has_source_code() const {
 	print_debug("LuaScript::has_source_code");
 
-	return !this->source.empty();
+	return !this->source.is_empty();
 }
 
 String LuaScript::get_source_code() const {
@@ -165,6 +159,14 @@ Error LuaScript::reload(bool p_keep_state) { // TODO
 
 	return OK;
 }
+
+#ifdef TOOLS_ENABLED
+const Vector<DocData::ClassDoc> &LuaScript::get_documentation() const {
+	print_debug("LuaScript::get_documentation");
+
+	return this->docs;
+} // TODO
+#endif
 
 bool LuaScript::has_method(const StringName &p_method) const { // TODO
 	print_debug("LuaScript::has_method( p_method = " + p_method + " )");
@@ -223,6 +225,7 @@ void LuaScript::update_exports() {
 
 #ifdef TOOLS_ENABLED
 	// TODO
+	this->placeholder_fallback_enabled = false;
 #endif
 
 } // TODO
@@ -271,14 +274,13 @@ Error LuaScript::load_source_code(const String &p_path) {
 		ERR_FAIL_COND_V(error, error);
 	}
 
-	PoolVector<uint8_t> buffer;
+	Vector<uint8_t> buffer;
 
-	const int len = static_cast<const int>(file->get_len());
+	const uint64_t len = static_cast<const uint64_t>(file->get_length());
 	buffer.resize(len + 1);
 
-	PoolVector<uint8_t>::Write w = buffer.write();
-
-	int r = file->get_buffer(w.ptr(), len);
+	uint8_t *w = buffer.ptrw();
+	uint64_t r = file->get_buffer(w, len);
 
 	file->close();
 	memdelete(file);
@@ -289,7 +291,7 @@ Error LuaScript::load_source_code(const String &p_path) {
 
 	String source;
 
-	if (source.parse_utf8((const char *)w.ptr())) {
+	if (source.parse_utf8((const char *)w)) {
 		ERR_FAIL_V_MSG(ERR_INVALID_DATA, "Script '" + p_path + "' contains invalid unicode (utf-8), so it was not loaded. Please ensure that scripts are saved in valid utf-8 unicode.");
 	}
 
@@ -304,20 +306,6 @@ void LuaScript::_bind_methods() {
 	ClassDB::bind_vararg_method(METHOD_FLAGS_DEFAULT, "new", &LuaScript::_new, MethodInfo(Variant::OBJECT, "new"));
 
 } // TODO
-bool LuaScript::_set(const StringName &p_name, const Variant &p_property) { // TODO
-	print_debug("LuaScript::_set( p_name = " + p_name + ", p_property = " + p_property + " )");
-	return false;
-}
-
-bool LuaScript::_get(const StringName &p_name, Variant &r_property) const { // TODO
-	print_debug("LuaScript::_get( p_name = " + p_name + ", r_property = " + r_property + " )");
-
-	return false;
-}
-
-void LuaScript::_get_property_list(List<PropertyInfo> *p_list) const { // TODO
-	print_debug("LuaScript::_get_property_list");
-}
 
 #ifdef TOOLS_ENABLED
 void LuaScript::_placeholder_erased(PlaceHolderScriptInstance *p_placeholder) {
@@ -327,7 +315,15 @@ void LuaScript::_placeholder_erased(PlaceHolderScriptInstance *p_placeholder) {
 }
 #endif
 
-Variant LuaScript::_new(const Variant **p_args, int p_argcount, Variant::CallError &r_error) { // TODO
+const Vector<Multiplayer::RPCConfig> LuaScript::get_rpc_methods() const {
+	print_debug("LuaScript::get_rpc_methods");
+
+	Vector<Multiplayer::RPCConfig> rpc_methods{};
+
+	return rpc_methods;
+}
+
+Variant LuaScript::_new(const Variant **p_args, int p_argcount, Callable::CallError &r_error) { // TODO
 	print_debug("LuaScript::_new");
 
 	return Variant();

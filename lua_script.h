@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not  use this file except in compliance with the License.
@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include "core/script_language.h"
-
 #include "debug.h"
+
+#include "core/object/script_language.h"
 
 class LuaScript : public Script {
 	GDCLASS(LuaScript, Script)
@@ -29,69 +29,63 @@ class LuaScript : public Script {
 	friend class LuaScriptInstance;
 	friend class LuaScriptLanguage;
 
-private:
-	bool tool;
-	bool valid;
-
-	SelfList<LuaScript> self;
-
-	String source;
-
-	Set<Object *> instances;
-
-#ifdef TOOLS_ENABLED
-	bool source_changed_cache;
-	bool placeholder_fallback_enabled;
-	Set<PlaceHolderScriptInstance *> placeholders;
-#endif
-
 public:
 	LuaScript();
-	virtual ~LuaScript();
+	~LuaScript();
 
-	virtual bool can_instance() const;
+	bool can_instantiate() const override;
 
-	virtual Ref<Script> get_base_script() const;
+	Ref<Script> get_base_script() const override;
 
-	virtual bool inherits_script(const Ref<Script> &p_script) const;
+	bool inherits_script(const Ref<Script> &p_script) const override;
 
-	virtual StringName get_instance_base_type() const;
-	virtual ScriptInstance *instance_create(Object *p_this);
-	virtual PlaceHolderScriptInstance *placeholder_instance_create(Object *p_this);
-	virtual bool instance_has(const Object *p_this) const;
+	StringName get_instance_base_type() const override;
+	ScriptInstance *instance_create(Object *p_this) override;
+#ifdef TOOLS_ENABLED
+	PlaceHolderScriptInstance *placeholder_instance_create(Object *p_this) override;
+#endif
+	bool instance_has(const Object *p_this) const override;
 
-	virtual bool has_source_code() const;
-	virtual String get_source_code() const;
-	virtual void set_source_code(const String &p_code);
-	virtual Error reload(bool p_keep_state = false);
-
-	virtual bool has_method(const StringName &p_method) const;
-	virtual MethodInfo get_method_info(const StringName &p_method) const;
-
-	virtual bool is_tool() const;
-	virtual bool is_valid() const;
-
-	virtual ScriptLanguage *get_language() const;
-
-	virtual bool has_script_signal(const StringName &p_signal) const;
-	virtual void get_script_signal_list(List<MethodInfo> *r_signals) const;
-
-	virtual bool get_property_default_value(const StringName &p_property, Variant &r_value) const;
-
-	virtual void update_exports();
-	virtual void get_script_method_list(List<MethodInfo> *p_list) const;
-	virtual void get_script_property_list(List<PropertyInfo> *p_list) const;
-
-	virtual int get_member_line(const StringName &p_member) const;
-
-	virtual void get_constants(Map<StringName, Variant> *p_constants);
-	virtual void get_members(Set<StringName> *p_constants);
+	bool has_source_code() const override;
+	String get_source_code() const override;
+	void set_source_code(const String &p_code) override;
+	Error reload(bool p_keep_state = false) override;
 
 #ifdef TOOLS_ENABLED
-	virtual bool is_placeholder_fallback_enabled() const;
+	const Vector<DocData::ClassDoc> &get_documentation() const override;
 #endif
 
+	bool has_method(const StringName &p_method) const override;
+	MethodInfo get_method_info(const StringName &p_method) const override;
+
+	bool is_tool() const override;
+	bool is_valid() const override;
+
+	ScriptLanguage *get_language() const override;
+
+	bool has_script_signal(const StringName &p_signal) const override;
+	void get_script_signal_list(List<MethodInfo> *r_signals) const override;
+
+	bool get_property_default_value(const StringName &p_property, Variant &r_value) const override;
+
+	void update_exports() override;
+	void get_script_method_list(List<MethodInfo> *p_list) const override;
+	void get_script_property_list(List<PropertyInfo> *p_list) const override;
+
+	int get_member_line(const StringName &p_member) const override;
+
+	void get_constants(Map<StringName, Variant> *p_constants) override;
+	void get_members(Set<StringName> *p_constants) override;
+
+#ifdef TOOLS_ENABLED
+	bool is_placeholder_fallback_enabled() const override;
+#endif
+
+	const Vector<Multiplayer::RPCConfig> get_rpc_methods() const override;
+
 public:
+	Variant _new(const Variant **p_args, int p_argcount, Callable::CallError &r_error);
+
 	Error load_source_code(const String &p_path);
 
 	// Supports sorting based on inheritance; parent must came first // TODO
@@ -100,14 +94,24 @@ public:
 protected:
 	static void _bind_methods();
 
-	bool _set(const StringName &p_name, const Variant &p_property);
-	bool _get(const StringName &p_name, Variant &r_property) const;
-	void _get_property_list(List<PropertyInfo> *p_list) const;
-
-private:
 #ifdef TOOLS_ENABLED
-	virtual void _placeholder_erased(PlaceHolderScriptInstance *p_placeholder);
+	void _placeholder_erased(PlaceHolderScriptInstance *p_placeholder) override;
 #endif
 
-	Variant _new(const Variant **p_args, int p_argcount, Variant::CallError &r_error);
+private:
+	bool tool{};
+	bool valid{};
+
+	SelfList<LuaScript> self;
+
+	String source;
+
+	Set<Object *> instances{};
+
+#ifdef TOOLS_ENABLED
+	bool source_changed_cache{};
+	bool placeholder_fallback_enabled{ true }; // FIXME: what does it do?
+	Set<PlaceHolderScriptInstance *> placeholders{};
+	Vector<DocData::ClassDoc> docs{};
+#endif
 };

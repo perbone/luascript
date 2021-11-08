@@ -1,12 +1,12 @@
 # LuaScript [![License](https://img.shields.io/:license-apache-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Lua 5.4 language support for Godot Engine 3.x (4.0-dev too unstable to work with for now)
+### Lua 5.4 language support for Godot Engine 4.x
 
 > WIP (heavily updated so you can expect constants changes - no commitment with feature freezing at this moment)
 >
 > Current progress:
 >
-> - I decided to use the Antlr4 library to do the parsing of Lua code. I am in the process of integrating it with the LuaScript module. With this in place it will be possible to start answering engine call backs, like for example, \_ready(), \_process() etc.
+> - The new parser using Antlr4 is up and running. Now comes the construction of the AST and the static analyzer.
 
 ## Features
 

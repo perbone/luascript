@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not  use this file except in compliance with the License.
@@ -24,38 +24,40 @@
 class LuaScriptInstance : public ScriptInstance {
 	friend class LuaScript;
 
+public:
+	~LuaScriptInstance();
+
+	bool set(const StringName &p_name, const Variant &p_value) override;
+	bool get(const StringName &p_name, Variant &r_ret) const override;
+	void get_property_list(List<PropertyInfo> *p_properties) const override;
+	Variant::Type get_property_type(const StringName &p_name, bool *r_is_valid = nullptr) const override;
+
+	Object *get_owner() override;
+	void get_property_state(List<Pair<StringName, Variant>> &state) override;
+
+	void get_method_list(List<MethodInfo> *p_list) const override;
+	bool has_method(const StringName &p_method) const override;
+	Variant call(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) override;
+	void notification(int p_notification) override;
+	String to_string(bool *r_valid) override;
+
+	void refcount_incremented() override;
+	bool refcount_decremented() override;
+
+	Ref<Script> get_script() const override;
+
+	bool is_placeholder() const override;
+
+	void property_set_fallback(const StringName &p_name, const Variant &p_value, bool *r_valid) override;
+	Variant property_get_fallback(const StringName &p_name, bool *r_valid) override;
+
+	const Vector<Multiplayer::RPCConfig> get_rpc_methods() const override;
+
+	ScriptLanguage *get_language() override;
+
 private:
 	LuaScriptInstance(Object *p_owner, Ref<LuaScript> p_script);
 
-private:
 	Object *owner;
 	Ref<LuaScript> script;
-
-public:
-	virtual ~LuaScriptInstance();
-
-	virtual bool set(const StringName &p_name, const Variant &p_value);
-	virtual bool get(const StringName &p_name, Variant &r_ret) const;
-	virtual void get_property_list(List<PropertyInfo> *p_properties) const;
-	virtual Variant::Type get_property_type(const StringName &p_name, bool *r_is_valid = nullptr) const;
-
-	virtual Object *get_owner();
-
-	virtual void get_method_list(List<MethodInfo> *p_list) const;
-	virtual bool has_method(const StringName &p_method) const;
-	virtual Variant call(const StringName &p_method, const Variant **p_args, int p_argcount, Variant::CallError &r_error);
-	virtual void call_multilevel(const StringName &p_method, const Variant **p_args, int p_argcount);
-	virtual void call_multilevel_reversed(const StringName &p_method, const Variant **p_args, int p_argcount);
-	virtual void notification(int p_notification);
-	virtual String to_string(bool *r_valid);
-
-	virtual void refcount_incremented();
-	virtual bool refcount_decremented();
-
-	virtual Ref<Script> get_script() const;
-
-	virtual MultiplayerAPI::RPCMode get_rpc_mode(const StringName &p_method) const;
-	virtual MultiplayerAPI::RPCMode get_rset_mode(const StringName &p_variable) const;
-
-	virtual ScriptLanguage *get_language();
 };

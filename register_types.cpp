@@ -2,7 +2,7 @@
  * This file is part of LuaScript
  * https://github.com/perbone/luascrip/
  *
- * Copyright 2017-2021 Paulo Perbone 
+ * Copyright 2017-2021 Paulo Perbone
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,19 @@
 #include "lua_script_resource_formate_saver.h"
 
 #ifdef TOOLS_ENABLED
-#include "editor/luascript_syntax_highlighter.h"
-#include "editor/plugins/script_editor_plugin.h"
+#include "editor/editor_node.h"
+#include "editor/luascript_editor_syntax_highlighter.h"
+
+static void _editor_init() {
+	Ref<LuaScriptEditorSyntaxHighlighter> editor_syntax_highlighter{};
+	editor_syntax_highlighter.instantiate();
+	ScriptEditor::get_singleton()->register_syntax_highlighter(editor_syntax_highlighter);
+}
 #endif
 
 LuaScriptLanguage *script_language = nullptr;
-LuaScriptResourceFormatLoader *resource_loader = nullptr;
-LuaScriptResourceFormatSaver *resource_saver = nullptr;
+Ref<LuaScriptResourceFormatLoader> resource_format_loader{};
+Ref<LuaScriptResourceFormatSaver> resource_format_saver{};
 
 void register_luascript_types() {
 	ClassDB::register_class<LuaScript>();
@@ -39,27 +45,23 @@ void register_luascript_types() {
 	if (script_language = memnew(LuaScriptLanguage); script_language)
 		ScriptServer::register_language(script_language);
 
-	if (resource_loader = memnew(LuaScriptResourceFormatLoader); resource_loader)
-		ResourceLoader::add_resource_format_loader(resource_loader);
+	resource_format_loader.instantiate();
+	ResourceLoader::add_resource_format_loader(resource_format_loader);
 
-	if (resource_saver = memnew(LuaScriptResourceFormatSaver); resource_saver)
-		ResourceSaver::add_resource_format_saver(resource_saver);
+	resource_format_saver.instantiate();
+	ResourceSaver::add_resource_format_saver(resource_format_saver);
 
 #ifdef TOOLS_ENABLED
-	ScriptEditor::register_create_syntax_highlighter_function(LuaScriptSyntaxHighlighter::create);
+	EditorNode::add_init_callback(_editor_init);
 #endif
 }
 
 void unregister_luascript_types() {
-	if (resource_saver) {
-		ResourceSaver::remove_resource_format_saver(resource_saver);
-		//memdelete(resource_saver); // it seems the remove method reclaims the given object memory
-	}
+	ResourceSaver::remove_resource_format_saver(resource_format_saver);
+	resource_format_saver.unref();
 
-	if (resource_loader) {
-		ResourceLoader::remove_resource_format_loader(resource_loader);
-		// memdelete(resource_loader); // it seems the remove method reclaims the given object memory
-	}
+	ResourceLoader::remove_resource_format_loader(resource_format_loader);
+	resource_format_loader.unref();
 
 	if (script_language) {
 		ScriptServer::unregister_language(script_language);

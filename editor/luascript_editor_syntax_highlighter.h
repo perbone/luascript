@@ -19,16 +19,23 @@
 
 #pragma once
 
-#include "core/io/resource_loader.h"
+#include "editor/plugins/script_editor_plugin.h"
+//#include "scene/gui/text_edit.h"
 
-class LuaScriptResourceFormatLoader : public ResourceFormatLoader {
+class LuaScriptEditorSyntaxHighlighter : public EditorSyntaxHighlighter {
+	GDCLASS(LuaScriptEditorSyntaxHighlighter, EditorSyntaxHighlighter)
+
 public:
-	LuaScriptResourceFormatLoader();
-	~LuaScriptResourceFormatLoader();
+	LuaScriptEditorSyntaxHighlighter();
+	~LuaScriptEditorSyntaxHighlighter();
 
-	RES load(const String &p_path, const String &p_original_path = "", Error *r_error = nullptr, bool p_use_sub_threads = false, float *r_progress = nullptr, CacheMode p_cache_mode = CACHE_MODE_REUSE) override;
-	void get_recognized_extensions(List<String> *p_extensions) const override;
-	bool handles_type(const String &p_type) const override;
-	String get_resource_type(const String &p_path) const override;
-	void get_dependencies(const String &p_path, List<String> *p_dependencies, bool p_add_types = false) override;
+	// Overrides from SyntaxHighlighter
+	Dictionary _get_line_syntax_highlighting_impl(int p_line) override;
+	void _clear_highlighting_cache() override;
+	void _update_cache() override;
+
+	// Overrides from EditorSyntaxHighlighter
+	String _get_name() const override;
+	Array _get_supported_languages() const override;
+	Ref<EditorSyntaxHighlighter> _create() const override;
 };
