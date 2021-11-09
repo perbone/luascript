@@ -475,30 +475,6 @@ void luaD_poscall (lua_State *L, CallInfo *ci, int nres) {
 #define next_ci(L)  (L->ci->next ? L->ci->next : luaE_extendCI(L))
 
 
-/*
-** Prepare a function for a tail call, building its call info on top
-** of the current call info. 'narg1' is the number of arguments plus 1
-** (so that it includes the function itself).
-*/
-void luaD_pretailcall (lua_State *L, CallInfo *ci, StkId func, int narg1) {
-  Proto *p = clLvalue(s2v(func))->p;
-  int fsize = p->maxstacksize;  /* frame size */
-  int nfixparams = p->numparams;
-  int i;
-  for (i = 0; i < narg1; i++)  /* move down function and arguments */
-    setobjs2s(L, ci->func + i, func + i);
-  checkstackGC(L, fsize);
-  func = ci->func;  /* moved-down function */
-  for (; narg1 <= nfixparams; narg1++)
-    setnilvalue(s2v(func + narg1));  /* complete missing arguments */
-  ci->top = func + 1 + fsize;  /* top for new function */
-  lua_assert(ci->top <= L->stack_last);
-  ci->u.l.savedpc = p->code;  /* starting point */
-  ci->callstatus |= CIST_TAIL;
-  L->top = func + narg1;  /* set top */
-}
-
-
 l_sinline CallInfo *prepCallInfo (lua_State *L, StkId func, int nret,
                                                 int mask, StkId top) {
   CallInfo *ci = L->ci = next_ci(L);  /* new frame */
@@ -511,6 +487,73 @@ l_sinline CallInfo *prepCallInfo (lua_State *L, StkId func, int nret,
 
 
 /*
+** precall for C functions
+*/
+l_sinline int precallC (lua_State *L, StkId func, int nresults,
+                                            lua_CFunction f) {
+  int n;  /* number of returns */
+  CallInfo *ci;
+  checkstackGCp(L, LUA_MINSTACK, func);  /* ensure minimum stack size */
+  L->ci = ci = prepCallInfo(L, func, nresults, CIST_C,
+                               L->top + LUA_MINSTACK);
+  lua_assert(ci->top <= L->stack_last);
+  if (l_unlikely(L->hookmask & LUA_MASKCALL)) {
+    int narg = cast_int(L->top - func) - 1;
+    luaD_hook(L, LUA_HOOKCALL, -1, 1, narg);
+  }
+  lua_unlock(L);
+  n = (*f)(L);  /* do the actual call */
+  lua_lock(L);
+  api_checknelems(L, n);
+  luaD_poscall(L, ci, n);
+  return n;
+}
+
+
+/*
+** Prepare a function for a tail call, building its call info on top
+** of the current call info. 'narg1' is the number of arguments plus 1
+** (so that it includes the function itself). Return the number of
+** results, if it was a C function, or -1 for a Lua function.
+*/
+int luaD_pretailcall (lua_State *L, CallInfo *ci, StkId func,
+                                    int narg1, int delta) {
+ retry:
+  switch (ttypetag(s2v(func))) {
+    case LUA_VCCL:  /* C closure */
+      return precallC(L, func, LUA_MULTRET, clCvalue(s2v(func))->f);
+    case LUA_VLCF:  /* light C function */
+      return precallC(L, func, LUA_MULTRET, fvalue(s2v(func)));
+    case LUA_VLCL: {  /* Lua function */
+      Proto *p = clLvalue(s2v(func))->p;
+      int fsize = p->maxstacksize;  /* frame size */
+      int nfixparams = p->numparams;
+      int i;
+      ci->func -= delta;  /* restore 'func' (if vararg) */
+      for (i = 0; i < narg1; i++)  /* move down function and arguments */
+        setobjs2s(L, ci->func + i, func + i);
+      checkstackGC(L, fsize);
+      func = ci->func;  /* moved-down function */
+      for (; narg1 <= nfixparams; narg1++)
+        setnilvalue(s2v(func + narg1));  /* complete missing arguments */
+      ci->top = func + 1 + fsize;  /* top for new function */
+      lua_assert(ci->top <= L->stack_last);
+      ci->u.l.savedpc = p->code;  /* starting point */
+      ci->callstatus |= CIST_TAIL;
+      L->top = func + narg1;  /* set top */
+      return -1;
+    }
+    default: {  /* not a function */
+      func = luaD_tryfuncTM(L, func);  /* try to get '__call' metamethod */
+      /* return luaD_pretailcall(L, ci, func, narg1 + 1, delta); */
+      narg1++;
+      goto retry;  /* try again */
+    }
+  }
+}
+
+
+/*
 ** Prepares the call to a function (C or Lua). For C functions, also do
 ** the call. The function to be called is at '*func'.  The arguments
 ** are on the stack, right after the function.  Returns the CallInfo
@@ -519,32 +562,14 @@ l_sinline CallInfo *prepCallInfo (lua_State *L, StkId func, int nret,
 ** original function position.
 */
 CallInfo *luaD_precall (lua_State *L, StkId func, int nresults) {
-  lua_CFunction f;
  retry:
   switch (ttypetag(s2v(func))) {
     case LUA_VCCL:  /* C closure */
-      f = clCvalue(s2v(func))->f;
-      goto Cfunc;
-    case LUA_VLCF:  /* light C function */
-      f = fvalue(s2v(func));
-     Cfunc: {
-      int n;  /* number of returns */
-      CallInfo *ci;
-      checkstackGCp(L, LUA_MINSTACK, func);  /* ensure minimum stack size */
-      L->ci = ci = prepCallInfo(L, func, nresults, CIST_C,
-                                   L->top + LUA_MINSTACK);
-      lua_assert(ci->top <= L->stack_last);
-      if (l_unlikely(L->hookmask & LUA_MASKCALL)) {
-        int narg = cast_int(L->top - func) - 1;
-        luaD_hook(L, LUA_HOOKCALL, -1, 1, narg);
-      }
-      lua_unlock(L);
-      n = (*f)(L);  /* do the actual call */
-      lua_lock(L);
-      api_checknelems(L, n);
-      luaD_poscall(L, ci, n);
+      precallC(L, func, nresults, clCvalue(s2v(func))->f);
       return NULL;
-    }
+    case LUA_VLCF:  /* light C function */
+      precallC(L, func, nresults, fvalue(s2v(func)));
+      return NULL;
     case LUA_VLCL: {  /* Lua function */
       CallInfo *ci;
       Proto *p = clLvalue(s2v(func))->p;
@@ -561,6 +586,7 @@ CallInfo *luaD_precall (lua_State *L, StkId func, int nresults) {
     }
     default: {  /* not a function */
       func = luaD_tryfuncTM(L, func);  /* try to get '__call' metamethod */
+      /* return luaD_precall(L, func, nresults); */
       goto retry;  /* try again with metamethod */
     }
   }
@@ -733,11 +759,10 @@ static void resume (lua_State *L, void *ud) {
   StkId firstArg = L->top - n;  /* first argument */
   CallInfo *ci = L->ci;
   if (L->status == LUA_OK)  /* starting a coroutine? */
-    ccall(L, firstArg - 1, LUA_MULTRET, 1);  /* just call its body */
+    ccall(L, firstArg - 1, LUA_MULTRET, 0);  /* just call its body */
   else {  /* resuming from previous yield */
     lua_assert(L->status == LUA_YIELD);
     L->status = LUA_OK;  /* mark that it is running (again) */
-    luaE_incCstack(L);  /* control the C stack */
     if (isLua(ci)) {  /* yielded inside a hook? */
       L->top = firstArg;  /* discard arguments */
       luaV_execute(L, ci);  /* just continue running Lua code */
@@ -788,6 +813,9 @@ LUA_API int lua_resume (lua_State *L, lua_State *from, int nargs,
   else if (L->status != LUA_YIELD)  /* ended with errors? */
     return resume_error(L, "cannot resume dead coroutine", nargs);
   L->nCcalls = (from) ? getCcalls(from) : 0;
+  if (getCcalls(L) >= LUAI_MAXCCALLS)
+    return resume_error(L, "C stack overflow", nargs);
+  L->nCcalls++;
   luai_userstateresume(L, nargs);
   api_checknelems(L, (L->status == LUA_OK) ? nargs + 1 : nargs);
   status = luaD_rawrunprotected(L, resume, &nargs);
