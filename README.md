@@ -1,6 +1,6 @@
 # LuaScript [![License](https://img.shields.io/:license-apache-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-### Lua 5.4 language support for Godot Engine 4.x
+## Lua 5.4 language support for Godot Engine 4.x
 
 > WIP (heavily updated so you can expect constants changes - no commitment with feature freezing at this moment)
 >
@@ -77,7 +77,7 @@ For transparency and insight into our release cycle, releases are be numbered wi
 
 ## License
 
-Copyright 2017-2021 Paulo Perbone 
+Copyright 2017-2021 Paulo Perbone
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
