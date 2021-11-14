@@ -52,7 +52,7 @@ String LuaScriptEditorSyntaxHighlighter::_get_name() const {
 Array LuaScriptEditorSyntaxHighlighter::_get_supported_languages() const {
 	print_debug("LuaScriptEditorSyntaxHighlighter::_get_supported_languages");
 
-	Array supported_languages;
+	Array supported_languages{};
 	supported_languages.push_back(LUA_TYPE);
 
 	return supported_languages;

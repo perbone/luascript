@@ -20,7 +20,6 @@
 #pragma once
 
 #include "editor/plugins/script_editor_plugin.h"
-//#include "scene/gui/text_edit.h"
 
 class LuaScriptEditorSyntaxHighlighter : public EditorSyntaxHighlighter {
 	GDCLASS(LuaScriptEditorSyntaxHighlighter, EditorSyntaxHighlighter)
