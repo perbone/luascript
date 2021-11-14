@@ -56,7 +56,7 @@ bool LuaScript::can_instantiate() const {
 Ref<Script> LuaScript::get_base_script() const { // TODO
 	print_debug("LuaScript::get_base_script");
 
-	return Ref<Script>();
+	return Ref<Script>{};
 }
 
 bool LuaScript::inherits_script(const Ref<Script> &p_script) const {
@@ -68,7 +68,7 @@ bool LuaScript::inherits_script(const Ref<Script> &p_script) const {
 StringName LuaScript::get_instance_base_type() const { // TODO
 	print_debug("LuaScript::get_instance_base_type");
 
-	return StringName();
+	return StringName{};
 }
 
 ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
@@ -177,7 +177,7 @@ bool LuaScript::has_method(const StringName &p_method) const { // TODO
 MethodInfo LuaScript::get_method_info(const StringName &p_method) const { // TODO
 	print_debug("LuaScript::get_method_info( p_method = " + p_method + " )");
 
-	return MethodInfo();
+	return MethodInfo{};
 }
 
 bool LuaScript::is_tool() const { // TODO
@@ -325,5 +325,5 @@ const Vector<Multiplayer::RPCConfig> LuaScript::get_rpc_methods() const {
 Variant LuaScript::_new(const Variant **p_args, int p_argcount, Callable::CallError &r_error) { // TODO
 	print_debug("LuaScript::_new");
 
-	return Variant();
+	return Variant{};
 }
