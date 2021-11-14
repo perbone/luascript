@@ -251,7 +251,7 @@ void LuaScript::get_constants(Map<StringName, Variant> *p_constants) {
 
 } // TODO
 
-void LuaScript::get_members(Set<StringName> *p_constants) {
+void LuaScript::get_members(Set<StringName> *p_members) {
 	print_debug("LuaScript::get_members");
 
 } // TODO

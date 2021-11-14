@@ -75,7 +75,7 @@ public:
 	int get_member_line(const StringName &p_member) const override;
 
 	void get_constants(Map<StringName, Variant> *p_constants) override;
-	void get_members(Set<StringName> *p_constants) override;
+	void get_members(Set<StringName> *p_members) override;
 
 #ifdef TOOLS_ENABLED
 	bool is_placeholder_fallback_enabled() const override;
