@@ -303,8 +303,7 @@ Error LuaScript::load_source_code(const String &p_path) {
 void LuaScript::_bind_methods() {
 	print_debug("LuaScript::_bind_methods");
 
-	ClassDB::bind_vararg_method(METHOD_FLAGS_DEFAULT, "new", &LuaScript::_new, MethodInfo(Variant::OBJECT, "new"));
-
+	ClassDB::bind_vararg_method(METHOD_FLAGS_DEFAULT, "new", &LuaScript::_new, MethodInfo("new"));
 } // TODO
 
 #ifdef TOOLS_ENABLED
