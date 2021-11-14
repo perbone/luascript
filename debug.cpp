@@ -109,9 +109,9 @@ void print_debug(const String fmt, ...) {
 
 	sprintf(tmpbuf, "%d %llu %2llu %2llu ",
 			OS::get_singleton()->get_process_id(),
-			OS::get_singleton()->get_ticks_msec(),
-			Thread::get_main_id(),
-			Thread::get_caller_id());
+			static_cast<long long unsigned>(OS::get_singleton()->get_ticks_msec()),
+			static_cast<long long unsigned>(Thread::get_main_id()),
+			static_cast<long long unsigned>(Thread::get_caller_id()));
 
 	strcat(tmpbuf, fmtbuf);
 
