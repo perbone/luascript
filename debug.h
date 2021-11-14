@@ -23,8 +23,7 @@
 
 #include <string>
 
-#include "core/os/os.h"
-#include "core/os/thread.h"
+#include "core/string/ustring.h"
 
 std::string get_notification_name(const int constant_value);
 void print_debug(const String fmt, ...);

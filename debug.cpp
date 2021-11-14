@@ -19,12 +19,15 @@
 
 #ifdef DEBUG_ENABLED
 
+#include "debug.h"
+
 #include <cstdlib>
 #include <cstring>
 #include <map>
 #include <vector>
 
-#include "debug.h"
+#include "core/os/os.h"
+#include "core/os/thread.h"
 
 std::map<int, std::string>
 		notifications{
@@ -104,7 +107,7 @@ void print_debug(const String fmt, ...) {
 
 	wcstombs(fmtbuf, (const wchar_t *)fmt.ptr(), fmt.size());
 
-	sprintf(tmpbuf, "%d %lu %2lu %2lu ",
+	sprintf(tmpbuf, "%d %llu %2llu %2llu ",
 			OS::get_singleton()->get_process_id(),
 			OS::get_singleton()->get_ticks_msec(),
 			Thread::get_main_id(),
