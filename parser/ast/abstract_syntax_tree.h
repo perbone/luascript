@@ -28,9 +28,9 @@ namespace parser::ast {
 
 struct Method {
 	Method(std::string &&name, size_t line, size_t position) :
-			name(name),
-			line(line),
-			position(position) {}
+			name{ name },
+			line{ line },
+			position{ position } {}
 	Method(const Method &other) = default;
 	Method(Method &&other) = default;
 	Method &operator=(const Method &rhs) {
