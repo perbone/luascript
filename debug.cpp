@@ -122,7 +122,7 @@ void print_debug(const String fmt, ...) {
 
 	va_end(ap);
 
-	print_line(finalbuf);
+	printf("%s\n", finalbuf);
 }
 
 #endif
