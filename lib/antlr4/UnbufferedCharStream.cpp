@@ -199,7 +199,7 @@ std::string UnbufferedCharStream::getText(const misc::Interval &interval) {
   if (!maybeUtf8.has_value()) {
     throw IllegalArgumentException("Unbuffered stream contains invalid Unicode code points");
   }
-  return std::move(maybeUtf8).value();
+  return *std::move(maybeUtf8);
 }
 
 size_t UnbufferedCharStream::getBufferStartIndex() const {
