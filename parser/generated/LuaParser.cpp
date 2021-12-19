@@ -1,5 +1,5 @@
 
-// Generated from /home/perbone/Work/luascript/Lua.g4 by ANTLR 4.9.2
+// Generated from /home/perbone/Work/luascript/Lua.g4 by ANTLR 4.9.3
 
 
 #include "LuaListener.h"
@@ -532,7 +532,7 @@ LuaParser::StatContext* LuaParser::stat() {
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 6, _ctx)) {
     case 1: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatEmptySemicolonContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatEmptySemicolonContext>(_localctx);
       enterOuterAlt(_localctx, 1);
       setState(86);
       match(LuaParser::T__0);
@@ -540,7 +540,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 2: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatAssignmentContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatAssignmentContext>(_localctx);
       enterOuterAlt(_localctx, 2);
       setState(87);
       varlist();
@@ -552,7 +552,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 3: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatFunctionCallContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatFunctionCallContext>(_localctx);
       enterOuterAlt(_localctx, 3);
       setState(91);
       functioncall();
@@ -560,7 +560,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 4: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatLabelContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatLabelContext>(_localctx);
       enterOuterAlt(_localctx, 4);
       setState(92);
       label();
@@ -568,7 +568,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 5: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatBreakContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatBreakContext>(_localctx);
       enterOuterAlt(_localctx, 5);
       setState(93);
       match(LuaParser::T__2);
@@ -576,7 +576,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 6: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatGotoContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatGotoContext>(_localctx);
       enterOuterAlt(_localctx, 6);
       setState(94);
       match(LuaParser::T__3);
@@ -586,7 +586,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 7: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatDoContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatDoContext>(_localctx);
       enterOuterAlt(_localctx, 7);
       setState(96);
       match(LuaParser::T__4);
@@ -598,7 +598,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 8: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatWhileContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatWhileContext>(_localctx);
       enterOuterAlt(_localctx, 8);
       setState(100);
       match(LuaParser::T__6);
@@ -614,7 +614,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 9: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatRepeatContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatRepeatContext>(_localctx);
       enterOuterAlt(_localctx, 9);
       setState(106);
       match(LuaParser::T__7);
@@ -628,7 +628,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 10: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatIfThenElseContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatIfThenElseContext>(_localctx);
       enterOuterAlt(_localctx, 10);
       setState(111);
       match(LuaParser::T__9);
@@ -670,7 +670,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 11: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatNumericForContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatNumericForContext>(_localctx);
       enterOuterAlt(_localctx, 11);
       setState(131);
       match(LuaParser::T__13);
@@ -704,7 +704,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 12: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatGenericForContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatGenericForContext>(_localctx);
       enterOuterAlt(_localctx, 12);
       setState(145);
       match(LuaParser::T__13);
@@ -724,7 +724,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 13: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatFunctionContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatFunctionContext>(_localctx);
       enterOuterAlt(_localctx, 13);
       setState(153);
       match(LuaParser::T__16);
@@ -736,7 +736,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 14: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatLocalFunctionContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatLocalFunctionContext>(_localctx);
       enterOuterAlt(_localctx, 14);
       setState(157);
       match(LuaParser::T__17);
@@ -750,7 +750,7 @@ LuaParser::StatContext* LuaParser::stat() {
     }
 
     case 15: {
-      _localctx = dynamic_cast<StatContext *>(_tracker.createInstance<LuaParser::StatLocalAttributeNameListContext>(_localctx));
+      _localctx = _tracker.createInstance<LuaParser::StatLocalAttributeNameListContext>(_localctx);
       enterOuterAlt(_localctx, 15);
       setState(161);
       match(LuaParser::T__17);
@@ -975,7 +975,7 @@ LuaParser::RetstatContext* LuaParser::retstat() {
     exitRule();
   });
   try {
-    _localctx = dynamic_cast<RetstatContext *>(_tracker.createInstance<LuaParser::StatReturnContext>(_localctx));
+    _localctx = _tracker.createInstance<LuaParser::StatReturnContext>(_localctx);
     enterOuterAlt(_localctx, 1);
     setState(184);
     match(LuaParser::T__20);
@@ -3855,7 +3855,7 @@ LuaParser::StringContext* LuaParser::string() {
 
 bool LuaParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicateIndex) {
   switch (ruleIndex) {
-    case 11: return expSempred(dynamic_cast<ExpContext *>(context), predicateIndex);
+    case 11: return expSempred(antlrcpp::downCast<ExpContext *>(context), predicateIndex);
 
   default:
     break;
@@ -3922,7 +3922,7 @@ std::vector<std::string> LuaParser::_tokenNames;
 
 LuaParser::Initializer::Initializer() {
 	for (size_t i = 0; i < _symbolicNames.size(); ++i) {
-		std::string name = _vocabulary.getLiteralName(i);
+		std::string name{_vocabulary.getLiteralName(i)};
 		if (name.empty()) {
 			name = _vocabulary.getSymbolicName(i);
 		}

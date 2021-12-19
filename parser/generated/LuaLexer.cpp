@@ -1,5 +1,5 @@
 
-// Generated from /home/perbone/Work/luascript/Lua.g4 by ANTLR 4.9.2
+// Generated from /home/perbone/Work/luascript/Lua.g4 by ANTLR 4.9.3
 
 
 #include "LuaLexer.h"
@@ -107,7 +107,7 @@ std::vector<std::string> LuaLexer::_tokenNames;
 LuaLexer::Initializer::Initializer() {
   // This code could be in a static initializer lambda, but VS doesn't allow access to private class members from there.
 	for (size_t i = 0; i < _symbolicNames.size(); ++i) {
-		std::string name = _vocabulary.getLiteralName(i);
+		std::string name{_vocabulary.getLiteralName(i)};
 		if (name.empty()) {
 			name = _vocabulary.getSymbolicName(i);
 		}
