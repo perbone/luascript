@@ -53,7 +53,7 @@ void ANTLRInputStream::load(const char *data, size_t length, bool lenient) {
     if (!maybe_utf32.has_value()) {
       throw IllegalArgumentException("UTF-8 string contains an illegal byte sequence");
     }
-    _data = std::move(maybe_utf32).value();
+    _data = *std::move(maybe_utf32);
   }
   p = 0;
 }
@@ -157,7 +157,7 @@ std::string ANTLRInputStream::getText(const Interval &interval) {
   if (!maybeUtf8.has_value()) {
     throw IllegalArgumentException("Input stream contains invalid Unicode code points");
   }
-  return std::move(maybeUtf8).value();
+  return *std::move(maybeUtf8);
 }
 
 std::string ANTLRInputStream::getSourceName() const {
@@ -172,7 +172,7 @@ std::string ANTLRInputStream::toString() const {
   if (!maybeUtf8.has_value()) {
     throw IllegalArgumentException("Input stream contains invalid Unicode code points");
   }
-  return std::move(maybeUtf8).value();
+  return *std::move(maybeUtf8);
 }
 
 void ANTLRInputStream::InitializeInstanceFields() {
