@@ -123,7 +123,7 @@ private:
 	_FORCE_INLINE_ static std::unique_ptr<MutexLock<Mutex>> acquire() {
 		print_debug("_LuaScriptLanguage::acquire");
 
-		return std::make_unique<MutexLock<Mutex>>(LuaScriptLanguage::get_singleton()->mutex);
+		return std::make_unique<MutexLock<Mutex>>(singleton->mutex);
 	}
 
 	Mutex mutex{};
