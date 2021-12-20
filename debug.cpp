@@ -107,7 +107,7 @@ void print_debug(const String fmt, ...) {
 
 	wcstombs(fmtbuf, (const wchar_t *)fmt.ptr(), fmt.size());
 
-	sprintf(tmpbuf, "%d %5llu %20llu %20llu ",
+	sprintf(tmpbuf, "%d %6llu %20llu %20llu ",
 			OS::get_singleton()->get_process_id(),
 			static_cast<long long unsigned>(OS::get_singleton()->get_ticks_msec()),
 			static_cast<long long unsigned>(Thread::get_main_id()),
