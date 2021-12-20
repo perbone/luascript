@@ -110,7 +110,7 @@ private:
 
 #ifdef TOOLS_ENABLED
 	bool source_changed_cache{};
-	bool placeholder_fallback_enabled{ true }; // FIXME: what does it do?
+	bool placeholder_fallback_enabled{};
 	Set<PlaceHolderScriptInstance *> placeholders{};
 	Vector<DocData::ClassDoc> docs{};
 #endif
