@@ -63,7 +63,7 @@ String LuaScriptLanguage::get_name() const {
 String LuaScriptLanguage::get_type() const {
 	print_debug("LuaScriptLanguage::get_type");
 
-	return LUA_TYPE;
+	return LUA_SCRIPT_TYPE;
 }
 
 String LuaScriptLanguage::get_extension() const {

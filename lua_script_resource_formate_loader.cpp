@@ -73,13 +73,13 @@ void LuaScriptResourceFormatLoader::get_recognized_extensions(List<String> *p_ex
 bool LuaScriptResourceFormatLoader::handles_type(const String &p_type) const {
 	print_debug("LuaScriptResourceFormatLoader::handles_type( p_type = " + p_type + " )");
 
-	return (p_type == SCRIPT_TYPE || p_type == LUA_TYPE);
+	return (p_type == SCRIPT_TYPE || p_type == LUA_SCRIPT_TYPE);
 }
 
 String LuaScriptResourceFormatLoader::get_resource_type(const String &p_path) const {
 	print_debug("LuaScriptResourceFormatLoader::get_resource_type( p_path = " + p_path + " )");
 
-	return (p_path.get_extension().to_lower() == LUA_EXTENSION) ? LUA_TYPE : EMPTY_STRING;
+	return (p_path.get_extension().to_lower() == LUA_EXTENSION) ? LUA_SCRIPT_TYPE : EMPTY_STRING;
 }
 
 void LuaScriptResourceFormatLoader::get_dependencies(const String &p_path, List<String> *p_dependencies, bool p_add_types) {
