@@ -152,8 +152,8 @@ void LuaScriptLanguage::get_string_delimiters(List<String> *p_delimiters) const 
 	p_delimiters->push_back("[[ ]]"); // Mult-line strings
 }
 
-Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const String &p_base_class_name) const {
-	print_debug("LuaScriptLanguage::get_template( p_class_name = " + p_class_name + ", p_base_class_name = " + p_base_class_name + " )");
+Ref<Script> LuaScriptLanguage::make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const {
+	print_debug("LuaScriptLanguage::make_template( p_class_name = " + p_class_name + ", p_base_class_name = " + p_base_class_name + " )");
 
 	String _template = String() +
 
@@ -190,15 +190,11 @@ Ref<Script> LuaScriptLanguage::get_template(const String &p_class_name, const St
 	return script;
 }
 
-void LuaScriptLanguage::make_template(const String &p_class_name, const String &p_base_class_name, Ref<Script> &p_script) {
-	print_debug("LuaScriptLanguage::make_template( p_class_name = " + p_class_name + ", p_base_class_name = " + p_base_class_name + " )");
+Vector<ScriptTemplate> LuaScriptLanguage::get_built_in_templates(StringName p_object) {
+	print_debug("LuaScriptLanguage::get_built_in_templates");
 
-	String src = p_script->get_source_code();
-	src = src.replace("%BASE%", p_base_class_name)
-				  .replace("%CLASS%", p_class_name)
-				  .replace("%TS%", get_indentation());
-	p_script->set_source_code(src);
-}
+	return Vector<ScriptTemplate>();
+} // TODO
 
 bool LuaScriptLanguage::is_using_templates() {
 	print_debug("LuaScriptLanguage::is_using_templates");

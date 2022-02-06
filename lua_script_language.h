@@ -27,6 +27,8 @@
 
 #include <memory>
 
+using ScriptTemplate = ScriptLanguage::ScriptTemplate;
+
 class LuaScriptLanguage : public ScriptLanguage {
 	static LuaScriptLanguage *singleton;
 
@@ -49,8 +51,8 @@ public:
 	bool is_control_flow_keyword(String p_keyword) const override;
 	void get_comment_delimiters(List<String> *p_delimiters) const override;
 	void get_string_delimiters(List<String> *p_delimiters) const override;
-	Ref<Script> get_template(const String &p_class_name, const String &p_base_class_name) const override;
-	void make_template(const String &p_class_name, const String &p_base_class_name, Ref<Script> &p_script) override;
+	Ref<Script> make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const override;
+	Vector<ScriptTemplate> get_built_in_templates(StringName p_object) override;
 	bool is_using_templates() override;
 	bool validate(const String &p_script, const String &p_path = "", List<String> *r_functions = nullptr, List<ScriptError> *r_errors = nullptr, List<Warning> *r_warnings = nullptr, Set<int> *r_safe_lines = nullptr) const override;
 	String validate_path(const String &p_path) const override;
