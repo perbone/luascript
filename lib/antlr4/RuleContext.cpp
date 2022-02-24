@@ -71,7 +71,7 @@ size_t RuleContext::getAltNumber() const {
 void RuleContext::setAltNumber(size_t /*altNumber*/) {
 }
 
-std::any RuleContext::accept(tree::ParseTreeVisitor *visitor) {
+antlrcpp::Any RuleContext::accept(tree::ParseTreeVisitor *visitor) {
   return visitor->visitChildren(this);
 }
 

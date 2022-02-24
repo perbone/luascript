@@ -18,6 +18,6 @@ ErrorNodeImpl::ErrorNodeImpl(Token *token) : TerminalNodeImpl(token) {
 ErrorNodeImpl::~ErrorNodeImpl() {
 }
 
-std::any ErrorNodeImpl::accept(ParseTreeVisitor *visitor) {
+antlrcpp::Any ErrorNodeImpl::accept(ParseTreeVisitor *visitor) {
   return visitor->visitErrorNode(this);
 }

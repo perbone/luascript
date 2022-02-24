@@ -81,11 +81,11 @@ size_t PredictionContext::calculateHashCode(const std::vector<Ref<PredictionCont
                                             const std::vector<size_t> &returnStates) {
   size_t hash = MurmurHash::initialize(INITIAL_HASH);
 
-  for (const auto &parent : parents) {
+  for (auto parent : parents) {
     hash = MurmurHash::update(hash, parent);
   }
 
-  for (const auto &returnState : returnStates) {
+  for (auto returnState : returnStates) {
     hash = MurmurHash::update(hash, returnState);
   }
 
@@ -391,7 +391,7 @@ std::string PredictionContext::toDOTString(const Ref<PredictionContext> &context
     return o1->id - o2->id;
   });
 
-  for (const auto &current : nodes) {
+  for (auto current : nodes) {
     if (is<SingletonPredictionContext>(current)) {
       std::string s = std::to_string(current->id);
       ss << "  s" << s;
@@ -420,7 +420,7 @@ std::string PredictionContext::toDOTString(const Ref<PredictionContext> &context
     ss << "\"];\n";
   }
 
-  for (const auto &current : nodes) {
+  for (auto current : nodes) {
     if (current == EMPTY) {
       continue;
     }
@@ -646,8 +646,8 @@ void PredictionContextMergeCache::clear() {
 
 std::string PredictionContextMergeCache::toString() const {
   std::string result;
-  for (const auto &pair : _data)
-    for (const auto &pair2 : pair.second)
+  for (auto pair : _data)
+    for (auto pair2 : pair.second)
       result += pair2.second->toString() + "\n";
 
   return result;
@@ -655,7 +655,7 @@ std::string PredictionContextMergeCache::toString() const {
 
 size_t PredictionContextMergeCache::count() const {
   size_t result = 0;
-  for (const auto &entry : _data)
+  for (auto entry : _data)
     result += entry.second.size();
   return result;
 }

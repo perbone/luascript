@@ -18,7 +18,13 @@ namespace atn {
 
   class ANTLR4CPP_PUBLIC ATN {
   public:
+#if __cplusplus >= 201703L
     static constexpr size_t INVALID_ALT_NUMBER = 0;
+#else
+    enum : size_t {
+      INVALID_ALT_NUMBER = 0,
+    };
+#endif
 
     /// Used for runtime deserialization of ATNs from strings.
     ATN();
@@ -60,8 +66,8 @@ namespace atn {
 
     std::vector<TokensStartState *> modeToStartState;
 
-    ATN& operator = (ATN &other) noexcept;
-    ATN& operator = (ATN &&other) noexcept;
+    ATN& operator = (ATN &other) NOEXCEPT;
+    ATN& operator = (ATN &&other) NOEXCEPT;
 
     /// <summary>
     /// Compute the set of valid tokens that can occur starting in state {@code s}.

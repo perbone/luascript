@@ -6,3 +6,8 @@
 #include "Any.h"
 
 using namespace antlrcpp;
+
+Any::~Any()
+{
+    delete _ptr;
+}

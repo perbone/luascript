@@ -10,12 +10,13 @@
 namespace antlr4 {
 namespace dfa {
 
-  class ANTLR4CPP_PUBLIC LexerDFASerializer final : public DFASerializer {
+  class ANTLR4CPP_PUBLIC LexerDFASerializer : public DFASerializer {
   public:
-    explicit LexerDFASerializer(const DFA *dfa);
+    LexerDFASerializer(DFA *dfa);
+    virtual ~LexerDFASerializer();
 
   protected:
-    std::string getEdgeLabel(size_t i) const override;
+    virtual std::string getEdgeLabel(size_t i) const override;
   };
 
 } // namespace atn

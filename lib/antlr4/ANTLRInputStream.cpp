@@ -9,7 +9,7 @@
 #include "misc/Interval.h"
 #include "IntStream.h"
 
-#include "support/Utf8.h"
+#include "support/StringUtils.h"
 #include "support/CPPUtils.h"
 
 #include "ANTLRInputStream.h"
@@ -23,8 +23,14 @@ ANTLRInputStream::ANTLRInputStream() {
   InitializeInstanceFields();
 }
 
-ANTLRInputStream::ANTLRInputStream(std::string_view input): ANTLRInputStream() {
+#if __cplusplus >= 201703L
+ANTLRInputStream::ANTLRInputStream(const std::string_view &input): ANTLRInputStream() {
   load(input.data(), input.length());
+}
+#endif
+
+ANTLRInputStream::ANTLRInputStream(const std::string &input): ANTLRInputStream() {
+  load(input.data(), input.size());
 }
 
 ANTLRInputStream::ANTLRInputStream(const char *data, size_t length) {
@@ -35,37 +41,28 @@ ANTLRInputStream::ANTLRInputStream(std::istream &stream): ANTLRInputStream() {
   load(stream);
 }
 
-void ANTLRInputStream::load(const std::string &input, bool lenient) {
-  load(input.data(), input.size(), lenient);
+void ANTLRInputStream::load(const std::string &input) {
+  load(input.data(), input.size());
 }
 
-void ANTLRInputStream::load(const char *data, size_t length, bool lenient) {
+void ANTLRInputStream::load(const char *data, size_t length) {
   // Remove the UTF-8 BOM if present.
   const char *bom = "\xef\xbb\xbf";
-  if (length >= 3 && strncmp(data, bom, 3) == 0) {
-    data += 3;
-    length -= 3;
-  }
-  if (lenient) {
-    _data = Utf8::lenientDecode(std::string_view(data, length));
-  } else {
-    auto maybe_utf32 = Utf8::strictDecode(std::string_view(data, length));
-    if (!maybe_utf32.has_value()) {
-      throw IllegalArgumentException("UTF-8 string contains an illegal byte sequence");
-    }
-    _data = std::move(maybe_utf32).value();
-  }
+  if (length >= 3 && strncmp(data, bom, 3) == 0)
+    _data = antlrcpp::utf8_to_utf32(data + 3, data + length);
+  else
+    _data = antlrcpp::utf8_to_utf32(data, data + length);
   p = 0;
 }
 
-void ANTLRInputStream::load(std::istream &stream, bool lenient) {
+void ANTLRInputStream::load(std::istream &stream) {
   if (!stream.good() || stream.eof()) // No fail, bad or EOF.
     return;
 
   _data.clear();
 
   std::string s((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
-  load(s.data(), s.length(), lenient);
+  load(s.data(), s.length());
 }
 
 void ANTLRInputStream::reset() {
@@ -153,11 +150,7 @@ std::string ANTLRInputStream::getText(const Interval &interval) {
     return "";
   }
 
-  auto maybeUtf8 = Utf8::strictEncode(std::u32string_view(_data).substr(start, count));
-  if (!maybeUtf8.has_value()) {
-    throw IllegalArgumentException("Input stream contains invalid Unicode code points");
-  }
-  return std::move(maybeUtf8).value();
+  return antlrcpp::utf32_to_utf8(_data.substr(start, count));
 }
 
 std::string ANTLRInputStream::getSourceName() const {
@@ -168,11 +161,7 @@ std::string ANTLRInputStream::getSourceName() const {
 }
 
 std::string ANTLRInputStream::toString() const {
-  auto maybeUtf8 = Utf8::strictEncode(_data);
-  if (!maybeUtf8.has_value()) {
-    throw IllegalArgumentException("Input stream contains invalid Unicode code points");
-  }
-  return std::move(maybeUtf8).value();
+  return antlrcpp::utf32_to_utf8(_data);
 }
 
 void ANTLRInputStream::InitializeInstanceFields() {

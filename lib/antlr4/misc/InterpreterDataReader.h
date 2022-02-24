@@ -6,8 +6,6 @@
 #pragma once
 
 #include "antlr4-common.h"
-#include "atn/ATN.h"
-#include "Vocabulary.h"
 
 namespace antlr4 {
 namespace misc {

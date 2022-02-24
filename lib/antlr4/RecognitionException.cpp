@@ -5,6 +5,7 @@
 
 #include "atn/ATN.h"
 #include "Recognizer.h"
+#include "support/StringUtils.h"
 #include "ParserRuleContext.h"
 #include "misc/IntervalSet.h"
 

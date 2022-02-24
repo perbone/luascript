@@ -7,10 +7,10 @@
 
 namespace antlrcpp {
 
-  std::string join(const std::vector<std::string> &strings, const std::string &separator) {
+  std::string join(std::vector<std::string> strings, const std::string &separator) {
     std::string str;
     bool firstItem = true;
-    for (const std::string &s : strings) {
+    for (std::string s : strings) {
       if (!firstItem) {
         str.append(separator);
       }
@@ -49,12 +49,15 @@ namespace antlrcpp {
             result += "\u00B7";
             break;
           }
-          result += c;
-          break;
+          // else fall through
+#ifndef _MSC_VER
+#if __has_cpp_attribute(clang::fallthrough)
+          [[clang::fallthrough]];
+#endif
+#endif
 
         default:
           result += c;
-          break;
       }
     }
 
@@ -69,13 +72,8 @@ namespace antlrcpp {
 
   std::string arrayToString(const std::vector<std::string> &data) {
     std::string answer;
-    size_t toReserve = 0;
-    for (const auto &sub : data) {
-      toReserve += sub.size();
-    }
-    answer.reserve(toReserve);
-    for (const auto &sub: data) {
-      answer.append(sub);
+    for (auto sub: data) {
+      answer += sub;
     }
     return answer;
   }
@@ -202,6 +200,43 @@ namespace antlrcpp {
 
     result += std::string(nestCount, ')');
     return result;
+  }
+
+  //----------------- SingleWriteMultipleRead --------------------------------------------------------------------------
+
+  void SingleWriteMultipleReadLock::readLock() {
+    std::unique_lock<std::mutex> lock(_mutex);
+    while (_waitingWriters != 0)
+      _readerGate.wait(lock);
+    ++_activeReaders;
+    lock.unlock();
+  }
+
+  void SingleWriteMultipleReadLock::readUnlock() {
+    std::unique_lock<std::mutex> lock(_mutex);
+    --_activeReaders;
+    lock.unlock();
+    _writerGate.notify_one();
+  }
+
+  void SingleWriteMultipleReadLock::writeLock() {
+    std::unique_lock<std::mutex> lock(_mutex);
+    ++_waitingWriters;
+    while (_activeReaders != 0 || _activeWriters != 0)
+      _writerGate.wait(lock);
+    ++_activeWriters;
+    lock.unlock();
+  }
+
+  void SingleWriteMultipleReadLock::writeUnlock() {
+    std::unique_lock<std::mutex> lock(_mutex);
+    --_waitingWriters;
+    --_activeWriters;
+    if (_waitingWriters > 0)
+      _writerGate.notify_one();
+    else
+      _readerGate.notify_all();
+    lock.unlock();
   }
 
 } // namespace antlrcpp

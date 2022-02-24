@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#include "support/StringUtils.h"
+
 #include "ANTLRFileStream.h"
 
 using namespace antlr4;

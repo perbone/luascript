@@ -21,6 +21,7 @@
 #include "ANTLRInputStream.h"
 #include "support/Arrays.h"
 #include "Exceptions.h"
+#include "support/StringUtils.h"
 #include "support/CPPUtils.h"
 
 #include "tree/pattern/ParseTreePatternMatcher.h"
@@ -108,7 +109,7 @@ ParseTreePattern ParseTreePatternMatcher::compile(const std::string &pattern, in
     throw e;
 #else
   } catch (std::exception & /*e*/) {
-    std::throw_with_nested(RuntimeException("Cannot invoke start rule")); // Wrap any other exception.
+    std::throw_with_nested((const char*)"Cannot invoke start rule"); // Wrap any other exception. We should however probably use one of the ANTLR exceptions here.
 #endif
   }
 

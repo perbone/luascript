@@ -5,7 +5,7 @@
 
 #include "misc/Interval.h"
 #include "Exceptions.h"
-#include "support/Utf8.h"
+#include "support/StringUtils.h"
 
 #include "UnbufferedCharStream.h"
 
@@ -195,11 +195,7 @@ std::string UnbufferedCharStream::getText(const misc::Interval &interval) {
   }
   // convert from absolute to local index
   size_t i = interval.a - bufferStartIndex;
-  auto maybeUtf8 = Utf8::strictEncode(std::u32string_view(_data).substr(i, interval.length()));
-  if (!maybeUtf8.has_value()) {
-    throw IllegalArgumentException("Unbuffered stream contains invalid Unicode code points");
-  }
-  return std::move(maybeUtf8).value();
+  return utf32_to_utf8(_data.substr(i, interval.length()));
 }
 
 size_t UnbufferedCharStream::getBufferStartIndex() const {

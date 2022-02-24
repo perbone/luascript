@@ -10,8 +10,8 @@
 
 #include "misc/Interval.h"
 
-#include "support/CPPUtils.h"
 #include "support/StringUtils.h"
+#include "support/CPPUtils.h"
 
 #include "CommonToken.h"
 
@@ -165,7 +165,9 @@ std::string CommonToken::toString(Recognizer *r) const {
   }
   std::string txt = getText();
   if (!txt.empty()) {
-    txt = antlrcpp::escapeWhitespace(txt);
+    antlrcpp::replaceAll(txt, "\n", "\\n");
+    antlrcpp::replaceAll(txt, "\r", "\\r");
+    antlrcpp::replaceAll(txt, "\t", "\\t");
   } else {
     txt = "<no text>";
   }

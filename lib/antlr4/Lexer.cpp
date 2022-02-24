@@ -11,6 +11,7 @@
 #include "ANTLRErrorListener.h"
 #include "support/CPPUtils.h"
 #include "CommonToken.h"
+#include "support/StringUtils.h"
 
 #include "Lexer.h"
 
