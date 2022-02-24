@@ -3922,7 +3922,7 @@ std::vector<std::string> LuaParser::_tokenNames;
 
 LuaParser::Initializer::Initializer() {
 	for (size_t i = 0; i < _symbolicNames.size(); ++i) {
-		std::string name{_vocabulary.getLiteralName(i)};
+		std::string name = _vocabulary.getLiteralName(i);
 		if (name.empty()) {
 			name = _vocabulary.getSymbolicName(i);
 		}
