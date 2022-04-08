@@ -297,7 +297,7 @@ bool LuaScriptLanguage::overrides_external_editor() { // TODO
 }
 
 Error LuaScriptLanguage::complete_code(const String &p_code, const String &p_path, Object *p_owner,
-		List<ScriptCodeCompletionOption> *r_options, bool &r_force, String &r_call_hint) { // TODO
+		List<CodeCompletionOption> *r_options, bool &r_force, String &r_call_hint) { // TODO
 	print_debug("LuaScriptLanguage::complete_code");
 
 	return ERR_UNAVAILABLE;
@@ -316,16 +316,16 @@ void LuaScriptLanguage::auto_indent_code(String &p_code, int p_from_line, int p_
 } // TODO
 
 void LuaScriptLanguage::add_global_constant(const StringName &p_variable, const Variant &p_value) {
-	print_debug("LuaScriptLanguage::add_global_constant( p_variable = " + p_variable + ", p_value = " + p_value + " )");
+	print_debug("LuaScriptLanguage::add_global_constant( p_variable = %s, p_value = %s )", String(p_variable).ascii().get_data(), String(p_value).ascii().get_data());
 } // TODO
 
 void LuaScriptLanguage::add_named_global_constant(const StringName &p_name, const Variant &p_value) {
-	print_debug("LuaScriptLanguage::add_named_global_constant( p_name = " + p_name + ", p_value = " + p_value + " )");
+	print_debug("LuaScriptLanguage::add_named_global_constant( p_name = %s, p_value = %s )", String(p_name).ascii().get_data(), String(p_value).ascii().get_data());
 
 } // TODO
 
 void LuaScriptLanguage::remove_named_global_constant(const StringName &p_name) {
-	print_debug("LuaScriptLanguage::remove_named_global_constant( p_name = " + p_name + " )");
+	print_debug("LuaScriptLanguage::remove_named_global_constant( p_name = %s )", String(p_name).ascii().get_data());
 
 } // TODO
 

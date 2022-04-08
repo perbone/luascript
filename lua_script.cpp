@@ -108,7 +108,7 @@ PlaceHolderScriptInstance *LuaScript::placeholder_instance_create(Object *p_this
 #endif
 
 bool LuaScript::instance_has(const Object *p_this) const { // TODO
-	print_debug("LuaScript::instance_has( p_this = " + p_this->get_class_name() + " )");
+	print_debug("LuaScript::instance_has( p_this = %s )", String(p_this->get_class_name()).ascii().get_data());
 
 	auto guard = LuaScriptLanguage::acquire();
 	bool found = this->instances.has((Object *)p_this);
@@ -161,7 +161,7 @@ Error LuaScript::reload(bool p_keep_state) { // TODO
 }
 
 #ifdef TOOLS_ENABLED
-const Vector<DocData::ClassDoc> &LuaScript::get_documentation() const {
+Vector<DocData::ClassDoc> LuaScript::get_documentation() const {
 	print_debug("LuaScript::get_documentation");
 
 	return this->docs;
@@ -169,13 +169,13 @@ const Vector<DocData::ClassDoc> &LuaScript::get_documentation() const {
 #endif
 
 bool LuaScript::has_method(const StringName &p_method) const { // TODO
-	print_debug("LuaScript::has_method( p_method = " + p_method + " )");
+	print_debug("LuaScript::has_method( p_method = %s )", String(p_method).ascii().get_data());
 
 	return false;
 }
 
 MethodInfo LuaScript::get_method_info(const StringName &p_method) const { // TODO
-	print_debug("LuaScript::get_method_info( p_method = " + p_method + " )");
+	print_debug("LuaScript::get_method_info( p_method = %s )", String(p_method).ascii().get_data());
 
 	return MethodInfo{};
 }
@@ -199,7 +199,7 @@ ScriptLanguage *LuaScript::get_language() const { // TODO
 }
 
 bool LuaScript::has_script_signal(const StringName &p_signal) const { // TODO
-	print_debug("LuaScript::has_script_signal( p_signal = " + p_signal + " )");
+	print_debug("LuaScript::has_script_signal( p_signal = %s )", String(p_signal).ascii().get_data());
 
 	return false;
 }
@@ -210,7 +210,7 @@ void LuaScript::get_script_signal_list(List<MethodInfo> *r_signals) const {
 } // TODO
 
 bool LuaScript::get_property_default_value(const StringName &p_property, Variant &r_value) const { // TODO
-	print_debug("LuaScript::get_property_default_value( p_property = " + p_property + " )");
+	print_debug("LuaScript::get_property_default_value( p_property = %s )", String(p_property).ascii().get_data());
 
 #ifdef TOOLS_ENABLED
 
@@ -267,7 +267,7 @@ bool LuaScript::is_placeholder_fallback_enabled() const {
 #endif
 
 Error LuaScript::load_source_code(const String &p_path) {
-	print_debug("LuaScript::load_source_code( p_path = " + p_path + " )");
+	print_debug("LuaScript::load_source_code( p_path = %s )", String(p_path).ascii().get_data());
 
 	Error error;
 

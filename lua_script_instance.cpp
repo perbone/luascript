@@ -39,13 +39,13 @@ LuaScriptInstance::~LuaScriptInstance() {
 }
 
 bool LuaScriptInstance::set(const StringName &p_name, const Variant &p_value) {
-	print_debug("LuaScriptInstance::set( p_name = " + p_name + ", p_value = " + p_value + " )");
+	print_debug("LuaScriptInstance::set( p_name = %s, p_value = %s )", String(p_name).ascii().get_data(), String(p_value).ascii().get_data());
 
 	return false;
 }
 
 bool LuaScriptInstance::get(const StringName &p_name, Variant &r_ret) const {
-	print_debug("LuaScriptInstance::get( p_name = " + p_name + " )");
+	print_debug("LuaScriptInstance::get( p_name = %s )", String(p_name).ascii().get_data());
 
 	return false;
 }
@@ -56,7 +56,7 @@ void LuaScriptInstance::get_property_list(List<PropertyInfo> *p_properties) cons
 } // TODO
 
 Variant::Type LuaScriptInstance::get_property_type(const StringName &p_name, bool *r_is_valid) const {
-	print_debug("LuaScriptInstance::get_property_type( p_name = " + p_name + " )");
+	print_debug("LuaScriptInstance::get_property_type( p_name = %s )", String(p_name).ascii().get_data());
 
 	return Variant::Type();
 }

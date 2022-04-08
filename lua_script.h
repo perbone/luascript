@@ -52,7 +52,7 @@ public:
 	Error reload(bool p_keep_state = false) override;
 
 #ifdef TOOLS_ENABLED
-	const Vector<DocData::ClassDoc> &get_documentation() const override;
+	Vector<DocData::ClassDoc> get_documentation() const override;
 #endif
 
 	bool has_method(const StringName &p_method) const override;
@@ -89,7 +89,9 @@ public:
 	Error load_source_code(const String &p_path);
 
 	// Supports sorting based on inheritance; parent must came first // TODO
-	bool operator()(const Ref<LuaScript> &a, const Ref<LuaScript> &b) const { return true; }
+	bool operator()(const Ref<LuaScript> &a, const Ref<LuaScript> &b) const {
+		return true;
+	}
 
 protected:
 	static void _bind_methods();
