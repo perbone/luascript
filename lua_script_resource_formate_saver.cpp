@@ -43,18 +43,15 @@ Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resourc
 	String source = script->get_source_code();
 
 	Error error;
-	FileAccess *file = FileAccess::open(p_path, FileAccess::WRITE, &error);
+	Ref<FileAccess> file = FileAccess::open(p_path, FileAccess::WRITE, &error);
 
 	if (error != OK)
 		return error;
 
 	file->store_string(source);
 	if (file->get_error() != OK && file->get_error() != ERR_FILE_EOF) {
-		memdelete(file);
 		return ERR_CANT_CREATE;
 	}
-	file->close();
-	memdelete(file);
 
 	return OK;
 }

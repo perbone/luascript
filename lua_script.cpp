@@ -271,7 +271,7 @@ Error LuaScript::load_source_code(const String &p_path) {
 
 	Error error;
 
-	FileAccess *file = FileAccess::open(p_path, FileAccess::READ, &error);
+	Ref<FileAccess> file = FileAccess::open(p_path, FileAccess::READ, &error);
 	if (error) {
 		ERR_FAIL_COND_V(error, error);
 	}
@@ -283,9 +283,6 @@ Error LuaScript::load_source_code(const String &p_path) {
 
 	uint8_t *w = buffer.ptrw();
 	uint64_t r = file->get_buffer(w, len);
-
-	file->close();
-	memdelete(file);
 
 	ERR_FAIL_COND_V(r != len, ERR_CANT_OPEN);
 
