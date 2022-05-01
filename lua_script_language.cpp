@@ -490,8 +490,8 @@ void LuaScriptLanguage::frame() {
 bool LuaScriptLanguage::handles_global_class_type(const String &p_type) const {
 	print_debug("LuaScriptLanguage::handles_global_class_type( p_type = " + p_type + " )");
 
-	return false;
-} // TODO
+	return p_type == LUA_SCRIPT_TYPE;
+}
 
 String LuaScriptLanguage::get_global_class_name(const String &p_path, String *r_base_type, String *r_icon_path) const {
 	print_debug("LuaScriptLanguage::get_global_class_name( p_path = " + p_path + ", r_base_type = " + *r_base_type + ", r_icon_path = " + *r_icon_path + " )");
