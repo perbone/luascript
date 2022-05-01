@@ -2,11 +2,13 @@
 
 ## Lua 5.4 language support for Godot Engine 4.x
 
-> WIP (heavily updated so you can expect constants changes - no commitment with feature freezing at this moment)
+> #### WIP (heavily updated so you can expect constants changes - no commitment with feature freezing at this moment)
 >
 > Current progress:
 >
 > - The new parser using Antlr4 is up and running. Now comes the construction of the AST and the static analyzer.
+> 
+> #### Warning!! Kindly note that the git tag 3.x exists only for historical reasons, and although it compiles it is unfinished. So please do not open issues nor send PR for this tag. Appreciate the understanding.
 
 ## Features
 
