@@ -1,5 +1,5 @@
 
-// Generated from /home/perbone/Work/luascript/Lua.g4 by ANTLR 4.9.3
+// Generated from /home/perbone/Work/luascript/Lua.g4 by ANTLR 4.10.1
 
 #pragma once
 

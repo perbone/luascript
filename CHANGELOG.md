@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.75 - 2022-05-01
+
+### Changed
+
+* Update Antlr4 4.10.x from master
+
 ## 0.0.74 - 2022-04-08
 
 ### Fixed
