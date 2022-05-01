@@ -21,9 +21,11 @@
 
 #include "debug.h"
 
+#include <atomic>
 #include <cstdlib>
 #include <cstring>
 #include <map>
+#include <mutex>
 #include <vector>
 
 #include "core/os/os.h"
@@ -100,6 +102,15 @@ std::string get_notification_name(const int constant_value) {
 		return "Unknown notification value [" + std::to_string(constant_value) + "]";
 }
 
+std::mutex tidMutex{};
+long currTid{ 0l };
+std::map<Thread::ID, long> tids{};
+
+long normalize_thread_id(const Thread::ID tid) {
+	const std::lock_guard<std::mutex> guard(tidMutex);
+	return tids.find(tid) == tids.end() ? tids[tid] = currTid++ : tids[tid];
+}
+
 void print_debug(const String fmt, ...) {
 	char tmpbuf[256], finalbuf[512];
 	std::vector<char> fmtbuffer(fmt.size());
@@ -107,11 +118,11 @@ void print_debug(const String fmt, ...) {
 
 	wcstombs(fmtbuf, (const wchar_t *)fmt.ptr(), fmt.size());
 
-	sprintf(tmpbuf, "%d %6llu %20llu %20llu ",
+	sprintf(tmpbuf, "%6d %f %2ld %2ld ",
 			OS::get_singleton()->get_process_id(),
-			static_cast<long long unsigned>(OS::get_singleton()->get_ticks_msec()),
-			static_cast<long long unsigned>(Thread::get_main_id()),
-			static_cast<long long unsigned>(Thread::get_caller_id()));
+			OS::get_singleton()->get_unix_time(),
+			normalize_thread_id(Thread::get_main_id()),
+			normalize_thread_id(Thread::get_caller_id()));
 
 	strcat(tmpbuf, fmtbuf);
 
