@@ -35,12 +35,16 @@ static void _editor_init() {
 }
 #endif
 
-LuaScriptLanguage *script_language = nullptr;
+LuaScriptLanguage *script_language{ nullptr };
 Ref<LuaScriptResourceFormatLoader> resource_format_loader{};
 Ref<LuaScriptResourceFormatSaver> resource_format_saver{};
 
-void register_luascript_types() {
-	ClassDB::register_class<LuaScript>();
+void initialize_luascript_module(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+
+	GDREGISTER_CLASS(LuaScript);
 
 	if (script_language = memnew(LuaScriptLanguage); script_language)
 		ScriptServer::register_language(script_language);
@@ -56,7 +60,11 @@ void register_luascript_types() {
 #endif
 }
 
-void unregister_luascript_types() {
+void uninitialize_luascript_module(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+
 	ResourceSaver::remove_resource_format_saver(resource_format_saver);
 	resource_format_saver.unref();
 

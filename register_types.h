@@ -19,5 +19,7 @@
 
 #pragma once
 
-void register_luascript_types();
-void unregister_luascript_types();
+#include "modules/register_module_types.h"
+
+void initialize_luascript_module(ModuleInitializationLevel p_level);
+void uninitialize_luascript_module(ModuleInitializationLevel p_level);
