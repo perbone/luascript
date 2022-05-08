@@ -17,18 +17,22 @@
  * limitations under the License
  */
 
-#include "register_types.h"
+#include "debug.h"
 
 #include "lua_script.h"
 #include "lua_script_language.h"
 #include "lua_script_resource_formate_loader.h"
 #include "lua_script_resource_formate_saver.h"
 
+#include "register_types.h"
+
 #ifdef TOOLS_ENABLED
 #include "editor/editor_node.h"
 #include "editor/luascript_editor_syntax_highlighter.h"
 
 static void _editor_init() {
+	print_debug("register_types._editor_init");
+
 	Ref<LuaScriptEditorSyntaxHighlighter> editor_syntax_highlighter{};
 	editor_syntax_highlighter.instantiate();
 	ScriptEditor::get_singleton()->register_syntax_highlighter(editor_syntax_highlighter);
@@ -40,6 +44,8 @@ Ref<LuaScriptResourceFormatLoader> resource_format_loader{};
 Ref<LuaScriptResourceFormatSaver> resource_format_saver{};
 
 void initialize_luascript_module(ModuleInitializationLevel p_level) {
+	print_debug("register_types.initialize_luascript_module( p_level = %d )", static_cast<int>(p_level));
+
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
@@ -61,6 +67,8 @@ void initialize_luascript_module(ModuleInitializationLevel p_level) {
 }
 
 void uninitialize_luascript_module(ModuleInitializationLevel p_level) {
+	print_debug("register_types.uninitialize_luascript_module( p_level = %d )", static_cast<int>(p_level));
+
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
