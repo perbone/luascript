@@ -60,7 +60,9 @@ public:
 private:
 	LuaScriptInstance(Object *p_owner, Ref<LuaScript> p_script);
 
+	//debug-on
 	String baseClassName;
+	//debug-off
 
 	Object *owner;
 	Ref<LuaScript> script;

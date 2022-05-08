@@ -84,7 +84,7 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 
 	//debug-on
 	instance->baseClassName = String{ p_this->get_class_name() };
-	//debig-off
+	//debug-off
 
 	return instance;
 }
