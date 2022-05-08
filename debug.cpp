@@ -107,7 +107,7 @@ long currTid{ 0l };
 std::map<Thread::ID, long> tids{};
 
 long normalize_thread_id(const Thread::ID tid) {
-	const std::lock_guard<std::mutex> guard(tidMutex);
+	const std::lock_guard<std::mutex> guard{ tidMutex };
 	return tids.find(tid) == tids.end() ? tids[tid] = currTid++ : tids[tid];
 }
 
