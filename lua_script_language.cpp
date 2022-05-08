@@ -152,8 +152,11 @@ void LuaScriptLanguage::get_string_delimiters(List<String> *p_delimiters) const 
 	p_delimiters->push_back("[[ ]]"); // Mult-line strings
 }
 
-Ref<Script> LuaScriptLanguage::make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const {
-	print_debug("LuaScriptLanguage::make_template( p_class_name = " + p_class_name + ", p_base_class_name = " + p_base_class_name + " )");
+Ref<Script> LuaScriptLanguage::make_template(
+		const String &p_template,
+		const String &p_class_name,
+		const String &p_base_class_name) const {
+	print_debug("LuaScriptLanguage::make_template( p_template = " + p_template + ", p_class_name = " + p_class_name + ", p_base_class_name = " + p_base_class_name + " )");
 
 	String _template = String() +
 
@@ -182,9 +185,6 @@ Ref<Script> LuaScriptLanguage::make_template(const String &p_template, const Str
 	script.instantiate();
 	script->set_source_code(_template);
 	script->set_name(p_class_name);
-
-	// FIXME! Probably I'm doing this wrong! But without this I get an error at instance_create method.
-	// GDScript doesn't do like this and works fine. So I need help...
 	script->valid = true;
 
 	return script;
@@ -240,13 +240,13 @@ Script *LuaScriptLanguage::create_script() const {
 bool LuaScriptLanguage::has_named_classes() const {
 	print_debug("LuaScriptLanguage::has_named_classes");
 
-	return false;
+	return true;
 }
 
 bool LuaScriptLanguage::supports_builtin_mode() const {
 	print_debug("LuaScriptLanguage::supports_builtin_mode");
 
-	return true;
+	return false;
 }
 
 bool LuaScriptLanguage::can_inherit_from_file() const { // TODO
@@ -494,7 +494,7 @@ bool LuaScriptLanguage::handles_global_class_type(const String &p_type) const {
 }
 
 String LuaScriptLanguage::get_global_class_name(const String &p_path, String *r_base_type, String *r_icon_path) const {
-	print_debug("LuaScriptLanguage::get_global_class_name( p_path = " + p_path + ", r_base_type = " + *r_base_type + ", r_icon_path = " + *r_icon_path + " )");
+	print_debug("LuaScriptLanguage::get_global_class_name( p_path = " + p_path + " )");
 
 	return String();
 } // TODO
@@ -504,7 +504,7 @@ String LuaScriptLanguage::get_indentation() const {
 
 #ifdef TOOLS_ENABLED
 	if (Engine::get_singleton()->is_editor_hint()) {
-		bool use_space_indentation = EDITOR_DEF("text_editor/behavior/indent/type", false);
+		bool use_space_indentation = EDITOR_DEF("text_editor/behavior/indent/type", true);
 
 		if (use_space_indentation) {
 			int indent_size = EDITOR_DEF("text_editor/behavior/indent/size", LUA_PIL_IDENTATION_SIZE);

@@ -68,7 +68,7 @@ bool LuaScript::inherits_script(const Ref<Script> &p_script) const {
 StringName LuaScript::get_instance_base_type() const { // TODO
 	print_debug("LuaScript::get_instance_base_type");
 
-	return StringName{};
+	return StringName{ "Node2D" };
 }
 
 ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
@@ -76,21 +76,15 @@ ScriptInstance *LuaScript::instance_create(Object *p_this) { // TODO
 
 	ERR_FAIL_COND_V(!this->valid, nullptr);
 
-	if (!tool && !ScriptServer::is_scripting_enabled()) {
-#ifdef TOOLS_ENABLED
-		PlaceHolderScriptInstance *placeHolder = memnew(PlaceHolderScriptInstance(LuaScriptLanguage::get_singleton(), Ref<Script>(this), p_this));
-		placeholders.insert(placeHolder);
-
-		return placeHolder;
-#else
-		return nullptr;
-#endif
-	}
-
 	LuaScriptInstance *instance = memnew(LuaScriptInstance(p_this, Ref<LuaScript>(this)));
+	p_this->set_script_instance(instance);
 
 	auto guard = LuaScriptLanguage::acquire();
 	this->instances.insert(p_this);
+
+	//debug-on
+	instance->baseClassName = String{ p_this->get_class_name() };
+	//debig-off
 
 	return instance;
 }
@@ -267,7 +261,7 @@ bool LuaScript::is_placeholder_fallback_enabled() const {
 #endif
 
 Error LuaScript::load_source_code(const String &p_path) {
-	print_debug("LuaScript::load_source_code( p_path = %s )", String(p_path).ascii().get_data());
+	print_debug("_LuaScript::load_source_code( p_path = %s )", String(p_path).ascii().get_data());
 
 	Error error;
 

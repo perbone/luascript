@@ -88,7 +88,9 @@ public:
 
 	Error load_source_code(const String &p_path);
 
-	// Supports sorting based on inheritance; parent must came first // TODO
+	/**
+	 * @brief Supports sorting based on inheritance; parent must came first // TODO
+	 */
 	bool operator()(const Ref<LuaScript> &a, const Ref<LuaScript> &b) const {
 		return true;
 	}
@@ -106,7 +108,7 @@ private:
 
 	SelfList<LuaScript> self;
 
-	String source;
+	String source{};
 
 	Set<Object *> instances{};
 

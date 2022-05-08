@@ -83,7 +83,7 @@ bool LuaScriptInstance::has_method(const StringName &p_method) const {
 }
 
 Variant LuaScriptInstance::callp(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
-	print_debug("LuaScriptInstance::callp( p_method = " + p_method + " )");
+	print_debug("LuaScriptInstance::callp( p_method = " + p_method + " ) " + baseClassName);
 
 	if (!script.is_valid()) {
 		ERR_FAIL_V(Variant());
@@ -97,7 +97,8 @@ Variant LuaScriptInstance::callp(const StringName &p_method, const Variant **p_a
 } // TODO
 
 void LuaScriptInstance::notification(int p_notification) {
-	print_debug("LuaScriptInstance::notification( p_notification = %d:%s )", p_notification, get_notification_name(p_notification).c_str());
+	print_debug("LuaScriptInstance::notification( p_notification = %d:%s ) %s", p_notification, get_notification_name(p_notification).c_str(),
+			baseClassName.ascii().get_data());
 
 } // TODO
 
