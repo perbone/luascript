@@ -26,6 +26,7 @@
 #include <cstring>
 #include <map>
 #include <mutex>
+#include <string>
 #include <vector>
 
 #include "core/os/os.h"
@@ -111,6 +112,19 @@ long normalize_thread_id(const Thread::ID tid) {
 	return tids.find(tid) == tids.end() ? tids[tid] = currTid++ : tids[tid];
 }
 
+std::string_view cur_timestamp() {
+	using namespace std::chrono;
+	auto timepoint = system_clock::now();
+	auto coarse = system_clock::to_time_t(timepoint);
+	auto fine = time_point_cast<std::chrono::milliseconds>(timepoint);
+
+	char buffer[sizeof "9999-12-31 23:59:59.999"];
+	std::snprintf(buffer + std::strftime(buffer, sizeof buffer - 3, "%F %T.", std::localtime(&coarse)),
+			4, "%03llu", static_cast<long long>(fine.time_since_epoch().count() % 1000));
+
+	return buffer;
+}
+
 void print_debug(const String fmt, ...) {
 	char tmpbuf[256], finalbuf[512];
 	std::vector<char> fmtbuffer(fmt.size());
@@ -118,9 +132,9 @@ void print_debug(const String fmt, ...) {
 
 	wcstombs(fmtbuf, (const wchar_t *)fmt.ptr(), fmt.size());
 
-	sprintf(tmpbuf, "%6d %f %2ld %2ld ",
+	sprintf(tmpbuf, "%6d %s %ld %2ld ",
 			OS::get_singleton()->get_process_id(),
-			OS::get_singleton()->get_unix_time(),
+			cur_timestamp().data(),
 			normalize_thread_id(Thread::get_main_id()),
 			normalize_thread_id(Thread::get_caller_id()));
 
