@@ -26,7 +26,7 @@
 LuaScriptInstance::LuaScriptInstance(Object *p_owner, Ref<LuaScript> p_script) :
 		owner{ p_owner },
 		script{ p_script } {
-	print_debug("LuaScriptInstance::constructor");
+	print_debug("LuaScriptInstance::constructor( p_owner = %s )", String(p_owner->get_class_name()).ascii().get_data());
 } // TODO
 
 LuaScriptInstance::~LuaScriptInstance() {
@@ -97,8 +97,8 @@ Variant LuaScriptInstance::callp(const StringName &p_method, const Variant **p_a
 } // TODO
 
 void LuaScriptInstance::notification(int p_notification) {
-	print_debug("LuaScriptInstance::notification( p_notification = %d:%s ) %s", p_notification, get_notification_name(p_notification).c_str(),
-			baseClassName.ascii().get_data());
+	print_debug("LuaScriptInstance::notification( p_notification = %d:%s ) %s",
+			p_notification, get_notification_name(p_notification).c_str(), baseClassName.ascii().get_data());
 
 } // TODO
 
@@ -132,11 +132,11 @@ bool LuaScriptInstance::is_placeholder() const {
 }
 
 void LuaScriptInstance::property_set_fallback(const StringName &p_name, const Variant &p_value, bool *r_valid) {
-	print_debug("LuaScriptInstance::property_set_fallback");
+	print_debug("LuaScriptInstance::property_set_fallback( p_name = %s )", String(p_name).ascii().get_data());
 }
 
 Variant LuaScriptInstance::property_get_fallback(const StringName &p_name, bool *r_valid) {
-	print_debug("LuaScriptInstance::property_get_fallback");
+	print_debug("LuaScriptInstance::property_get_fallback( p_name = %s )", String(p_name).ascii().get_data());
 
 	return Variant{};
 }
