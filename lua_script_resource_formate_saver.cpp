@@ -17,12 +17,10 @@
  * limitations under the License
  */
 
-#include "core/os/os.h"
-
+#include "lua_script_resource_formate_saver.h"
 #include "constants.h"
 #include "debug.h"
 #include "lua_script.h"
-#include "lua_script_resource_formate_saver.h"
 
 LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
 	print_debug("LuaScriptResourceFormatSaver::constructor");

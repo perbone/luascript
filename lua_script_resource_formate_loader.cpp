@@ -21,6 +21,7 @@
 #include "constants.h"
 #include "debug.h"
 #include "lua_script.h"
+#include "lua_script_language.h"
 
 LuaScriptResourceFormatLoader::LuaScriptResourceFormatLoader() {
 	print_debug("LuaScriptResourceFormatLoader::constructor");
@@ -33,7 +34,7 @@ LuaScriptResourceFormatLoader::~LuaScriptResourceFormatLoader() {
 Ref<Resource> LuaScriptResourceFormatLoader::load(const String &p_path, const String &p_original_path, Error *r_error, bool p_use_sub_threads, float *r_progress, CacheMode p_cache_mode) {
 	print_debug("LuaScriptResourceFormatLoader::load( p_path = " + p_path + ", p_original_path = " + p_original_path + " )");
 
-	LuaScript *script = memnew(LuaScript);
+	LuaScript *script = static_cast<LuaScript *>(LuaScriptLanguage::get_singleton()->create_script());
 
 	if (!script) {
 		if (r_error)

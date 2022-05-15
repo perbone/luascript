@@ -34,6 +34,7 @@ class LuaScriptLanguage : public ScriptLanguage {
 
 	friend class LuaScript;
 	friend class LuaScriptInstance;
+	friend class LuaScriptResourceFormatLoader;
 
 public:
 	LuaScriptLanguage();
