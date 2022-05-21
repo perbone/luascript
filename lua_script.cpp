@@ -240,12 +240,12 @@ int LuaScript::get_member_line(const StringName &p_member) const {
 	return -1;
 }
 
-void LuaScript::get_constants(Map<StringName, Variant> *p_constants) {
+void LuaScript::get_constants(HashMap<StringName, Variant> *p_constants) {
 	print_debug("LuaScript::get_constants");
 
 } // TODO
 
-void LuaScript::get_members(Set<StringName> *p_members) {
+void LuaScript::get_members(RBSet<StringName> *p_members) {
 	print_debug("LuaScript::get_members");
 #if defined(TOOLS_ENABLED) || defined(DEBUG_ENABLED)
 

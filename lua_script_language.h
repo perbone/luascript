@@ -55,7 +55,7 @@ public:
 	Ref<Script> make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const override;
 	Vector<ScriptTemplate> get_built_in_templates(StringName p_object) override;
 	bool is_using_templates() override;
-	bool validate(const String &p_script, const String &p_path = "", List<String> *r_functions = nullptr, List<ScriptError> *r_errors = nullptr, List<Warning> *r_warnings = nullptr, Set<int> *r_safe_lines = nullptr) const override;
+	bool validate(const String &p_script, const String &p_path = "", List<String> *r_functions = nullptr, List<ScriptError> *r_errors = nullptr, List<Warning> *r_warnings = nullptr, RBSet<int> *r_safe_lines = nullptr) const override;
 	String validate_path(const String &p_path) const override;
 	Script *create_script() const override;
 	bool has_named_classes() const override;

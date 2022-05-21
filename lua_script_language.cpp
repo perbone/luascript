@@ -208,7 +208,7 @@ bool LuaScriptLanguage::validate(
 		List<String> *r_functions,
 		List<ScriptError> *r_errors,
 		List<Warning> *r_warnings,
-		Set<int> *r_safe_lines) const {
+		RBSet<int> *r_safe_lines) const {
 	print_debug("LuaScriptLanguage::validate( p_path = %s )", p_path.ascii().get_data());
 
 	parser::ast::AST ast = parser.parse(p_script.ascii().get_data());

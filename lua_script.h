@@ -74,8 +74,8 @@ public:
 
 	int get_member_line(const StringName &p_member) const override;
 
-	void get_constants(Map<StringName, Variant> *p_constants) override;
-	void get_members(Set<StringName> *p_members) override;
+	void get_constants(HashMap<StringName, Variant> *p_constants) override;
+	void get_members(RBSet<StringName> *p_members) override;
 
 #ifdef TOOLS_ENABLED
 	bool is_placeholder_fallback_enabled() const override;
@@ -110,12 +110,12 @@ private:
 
 	String source{};
 
-	Set<Object *> instances{};
+	RBSet<Object *> instances{};
 
 #ifdef TOOLS_ENABLED
 	bool source_changed_cache{};
 	bool placeholder_fallback_enabled{};
-	Set<PlaceHolderScriptInstance *> placeholders{};
+	RBSet<PlaceHolderScriptInstance *> placeholders{};
 	Vector<DocData::ClassDoc> docs{};
 #endif
 };
