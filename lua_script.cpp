@@ -245,7 +245,7 @@ void LuaScript::get_constants(HashMap<StringName, Variant> *p_constants) {
 
 } // TODO
 
-void LuaScript::get_members(RBSet<StringName> *p_members) {
+void LuaScript::get_members(HashSet<StringName> *p_members) {
 	print_debug("LuaScript::get_members");
 #if defined(TOOLS_ENABLED) || defined(DEBUG_ENABLED)
 
