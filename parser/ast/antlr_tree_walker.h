@@ -34,6 +34,7 @@ public:
 
 	[[nodiscard]] AST walk(const std::string_view chunk) override;
 
+private:
 	void exitStatFunction(generated::LuaParser::StatFunctionContext *ctx) override;
 
 private:
