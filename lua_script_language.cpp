@@ -417,9 +417,9 @@ void LuaScriptLanguage::reload_all_scripts() {
 
 	scripts.sort(); // update in inheritance dependency order, parent must be reload first
 
-	for (List<Ref<LuaScript>>::Element *E = scripts.front(); E; E = E->next()) {
-		E->get()->load_source_code(E->get()->get_path());
-		E->get()->reload(true);
+	for (Ref<LuaScript> &script : scripts) {
+		script->load_source_code(script->get_path());
+		script->reload(true);
 	}
 #endif
 } // TODO
