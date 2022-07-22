@@ -99,6 +99,7 @@ public:
 	void get_recognized_extensions(List<String> *p_extensions) const override;
 	void get_public_functions(List<MethodInfo> *p_functions) const override;
 	void get_public_constants(List<Pair<String, Variant>> *p_constants) const override;
+	void get_public_annotations(List<MethodInfo> *p_annotations) const override;
 
 	void profiling_start() override;
 	void profiling_stop() override;

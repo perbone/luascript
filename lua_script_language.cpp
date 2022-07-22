@@ -442,6 +442,10 @@ void LuaScriptLanguage::get_public_constants(List<Pair<String, Variant>> *p_cons
 	print_debug("LuaScriptLanguage::get_public_constants");
 } // TODO
 
+void LuaScriptLanguage::get_public_annotations(List<MethodInfo> *p_annotations) const {
+	print_debug("LuaScriptLanguage::get_public_annotations");
+} // TODO
+
 void LuaScriptLanguage::profiling_start() {
 	print_debug("LuaScriptLanguage::profiling_start");
 } // TODO
