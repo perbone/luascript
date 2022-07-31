@@ -141,10 +141,10 @@ Variant LuaScriptInstance::property_get_fallback(const StringName &p_name, bool 
 	return Variant{};
 }
 
-const Vector<Multiplayer::RPCConfig> LuaScriptInstance::get_rpc_methods() const {
-	print_debug("LuaScriptInstance::get_rpc_methods");
+const Variant LuaScriptInstance::get_rpc_config() const {
+	print_debug("LuaScriptInstance::get_rpc_config");
 
-	return this->script->get_rpc_methods();
+	return this->script->get_rpc_config();
 }
 
 ScriptLanguage *LuaScriptInstance::get_language() {

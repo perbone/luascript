@@ -29,8 +29,7 @@ LuaScriptResourceFormatSaver::LuaScriptResourceFormatSaver() {
 LuaScriptResourceFormatSaver::~LuaScriptResourceFormatSaver() {
 	print_debug("LuaScriptResourceFormatSaver::destructor");
 }
-
-Error LuaScriptResourceFormatSaver::save(const String &p_path, const Ref<Resource> &p_resource, uint32_t p_flags) {
+Error LuaScriptResourceFormatSaver::save(const Ref<Resource> &p_resource, const String &p_path, uint32_t p_flags) {
 	print_debug("LuaScriptResourceFormatSaver::save( p_path = " + p_path + " )");
 
 	Ref<LuaScript> script = p_resource;

@@ -260,6 +260,12 @@ bool LuaScript::is_placeholder_fallback_enabled() const {
 } // TODO
 #endif
 
+const Variant LuaScript::get_rpc_config() const {
+	print_debug("LuaScript::get_rpc_config");
+
+	return this->rpc_config;
+} // TODO
+
 Error LuaScript::load_source_code(const String &p_path) {
 	print_debug("_LuaScript::load_source_code( p_path = %s )", String(p_path).ascii().get_data());
 
@@ -306,14 +312,6 @@ void LuaScript::_placeholder_erased(PlaceHolderScriptInstance *p_placeholder) {
 	this->placeholders.erase(p_placeholder);
 }
 #endif
-
-const Vector<Multiplayer::RPCConfig> LuaScript::get_rpc_methods() const {
-	print_debug("LuaScript::get_rpc_methods");
-
-	Vector<Multiplayer::RPCConfig> rpc_methods{};
-
-	return rpc_methods;
-}
 
 Variant LuaScript::_new(const Variant **p_args, int p_argcount, Callable::CallError &r_error) { // TODO
 	print_debug("LuaScript::_new");

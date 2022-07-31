@@ -53,7 +53,7 @@ public:
 	void property_set_fallback(const StringName &p_name, const Variant &p_value, bool *r_valid) override;
 	Variant property_get_fallback(const StringName &p_name, bool *r_valid) override;
 
-	const Vector<Multiplayer::RPCConfig> get_rpc_methods() const override;
+	const Variant get_rpc_config() const override;
 
 	ScriptLanguage *get_language() override;
 

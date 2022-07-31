@@ -81,7 +81,7 @@ public:
 	bool is_placeholder_fallback_enabled() const override;
 #endif
 
-	const Vector<Multiplayer::RPCConfig> get_rpc_methods() const override;
+	const Variant get_rpc_config() const override;
 
 public:
 	Variant _new(const Variant **p_args, int p_argcount, Callable::CallError &r_error);
@@ -111,6 +111,8 @@ private:
 	String source{};
 
 	HashSet<Object *> instances{};
+
+	Dictionary rpc_config;
 
 #ifdef TOOLS_ENABLED
 	bool source_changed_cache{};
