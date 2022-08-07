@@ -1,5 +1,5 @@
 
-// Generated from /home/perbone/Work/luascript/Lua.g4 by ANTLR 4.10.1
+// Generated from /Users/perbone/Work/luascript/Lua.g4 by ANTLR 4.10.1
 
 #pragma once
 
@@ -73,8 +73,8 @@ public:
   virtual void enterAttrib(LuaParser::AttribContext *ctx) = 0;
   virtual void exitAttrib(LuaParser::AttribContext *ctx) = 0;
 
-  virtual void enterStatReturn(LuaParser::StatReturnContext *ctx) = 0;
-  virtual void exitStatReturn(LuaParser::StatReturnContext *ctx) = 0;
+  virtual void enterLaststat(LuaParser::LaststatContext *ctx) = 0;
+  virtual void exitLaststat(LuaParser::LaststatContext *ctx) = 0;
 
   virtual void enterLabel(LuaParser::LabelContext *ctx) = 0;
   virtual void exitLabel(LuaParser::LabelContext *ctx) = 0;
@@ -154,8 +154,8 @@ public:
   virtual void enterVarOrExp(LuaParser::VarOrExpContext *ctx) = 0;
   virtual void exitVarOrExp(LuaParser::VarOrExpContext *ctx) = 0;
 
-  virtual void enterVar_(LuaParser::Var_Context *ctx) = 0;
-  virtual void exitVar_(LuaParser::Var_Context *ctx) = 0;
+  virtual void enterVar(LuaParser::VarContext *ctx) = 0;
+  virtual void exitVar(LuaParser::VarContext *ctx) = 0;
 
   virtual void enterVarSuffix(LuaParser::VarSuffixContext *ctx) = 0;
   virtual void exitVarSuffix(LuaParser::VarSuffixContext *ctx) = 0;
