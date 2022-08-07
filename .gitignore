@@ -371,3 +371,5 @@ compile_commands.json
 
 # ANTLR
 .antlr
+*.interp
+*.tokens
