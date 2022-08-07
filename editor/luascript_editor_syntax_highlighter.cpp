@@ -17,6 +17,8 @@
  * limitations under the License
  */
 
+#ifdef TOOLS_ENABLED
+
 #include "luascript_editor_syntax_highlighter.h"
 #include "../constants.h"
 #include "../debug.h"
@@ -66,3 +68,5 @@ Ref<EditorSyntaxHighlighter> LuaScriptEditorSyntaxHighlighter::_create() const {
 
 	return editor_syntax_highlighter;
 }
+
+#endif // TOOLS_ENABLED
