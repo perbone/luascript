@@ -37,7 +37,7 @@ public:
 
 	// Overrides from EditorSyntaxHighlighter
 	String _get_name() const override;
-	Array _get_supported_languages() const override;
+	PackedStringArray _get_supported_languages() const override;
 	Ref<EditorSyntaxHighlighter> _create() const override;
 };
 

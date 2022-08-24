@@ -61,6 +61,17 @@ Variant::Type LuaScriptInstance::get_property_type(const StringName &p_name, boo
 	return Variant::Type();
 }
 
+bool LuaScriptInstance::property_can_revert(const StringName &p_name) const {
+	print_debug("LuaScriptInstance::property_can_revert( p_name = %s )", String(p_name).ascii().get_data());
+
+	return false;
+}
+bool LuaScriptInstance::property_get_revert(const StringName &p_name, Variant &r_ret) const {
+	print_debug("LuaScriptInstance::property_get_revert( p_name = %s )", String(p_name).ascii().get_data());
+
+	return false;
+}
+
 Object *LuaScriptInstance::get_owner() {
 	print_debug("LuaScriptInstance::get_owner");
 

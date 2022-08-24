@@ -51,10 +51,10 @@ String LuaScriptEditorSyntaxHighlighter::_get_name() const {
 	return LUA_NAME;
 }
 
-Array LuaScriptEditorSyntaxHighlighter::_get_supported_languages() const {
+PackedStringArray LuaScriptEditorSyntaxHighlighter::_get_supported_languages() const {
 	print_debug("LuaScriptEditorSyntaxHighlighter::_get_supported_languages");
 
-	Array supported_languages{};
+	PackedStringArray supported_languages{};
 	supported_languages.push_back(LUA_SCRIPT_TYPE);
 
 	return supported_languages;

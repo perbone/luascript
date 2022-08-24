@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.80 - 2022-08-22
+
+### Fixed
+
+* Fix broken compilation after Godo's API changes
+
 ## 0.0.79 - 2022-08-07
 
 ### Changed
