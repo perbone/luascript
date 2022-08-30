@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.81 - 2022-08-30
+
+### Fixed
+
+* Fix Lua grammar to conform to PUC Lua
+
 ## 0.0.80 - 2022-08-22
 
 ### Fixed
