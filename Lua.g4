@@ -32,36 +32,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 This grammar file derived from:
 
-    Luau 0.537 Grammar Documentation
-    https://github.com/Roblox/luau/blob/0.537/docs/_pages/grammar.md
-
     Lua 5.4 Reference Manual
-    http://www.lua.org/manual/5.4/manual.html
+    https://www.lua.org/manual/5.4/manual.html
 
     Lua 5.3 Reference Manual
-    http://www.lua.org/manual/5.3/manual.html
+    https://www.lua.org/manual/5.3/manual.html
 
     Lua 5.2 Reference Manual
-    http://www.lua.org/manual/5.2/manual.html
+    https://www.lua.org/manual/5.2/manual.html
 
     Lua 5.1 grammar written by Nicolai Mainiero
-    http://www.antlr3.org/grammar/1178608849736/Lua.g
+    https://www.antlr3.org/grammar/1178608849736/Lua.g
 
 Tested by Kazunori Sakamoto with Test suite for Lua 5.2 (http://www.lua.org/tests/5.2/)
 
 Tested by Alexander Alexeev with Test suite for Lua 5.3 http://www.lua.org/tests/lua-5.3.2-tests.tar.gz
-
-Tested by Matt Hargett with:
-    - Test suite for Lua 5.4.4: http://www.lua.org/tests/lua-5.4.4-tests.tar.gz
-    - Test suite for Selene Lua lint tool v0.20.0: https://github.com/Kampfkarren/selene/tree/0.20.0/selene-lib/tests
-    - Test suite for full-moon Lua parsing library v0.15.1: https://github.com/Kampfkarren/full-moon/tree/main/full-moon/tests
-    - Test suite for IntelliJ-Luanalysis IDE plug-in v1.3.0: https://github.com/Benjamin-Dobell/IntelliJ-Luanalysis/tree/v1.3.0/src/test
-    - Test suite for StyLua formatting tool v.14.1: https://github.com/JohnnyMorganz/StyLua/tree/v0.14.1/tests
-    - Entire codebase for luvit: https://github.com/luvit/luvit/
-    - Entire codebase for lit: https://github.com/luvit/lit/
-    - Entire codebase and test suite for neovim v0.7.2: https://github.com/neovim/neovim/tree/v0.7.2
-    - Entire codebase for World of Warcraft Interface: https://github.com/tomrus88/BlizzardInterfaceCode
-    - Benchmarks and conformance test suite for Luau 0.537: https://github.com/Roblox/luau/tree/0.537
 */
 
 grammar Lua;
@@ -71,7 +56,7 @@ chunk
     ;
 
 block
-    : stat* laststat?
+    : stat* retstat?
     ;
 
 stat
@@ -100,8 +85,8 @@ attrib
     : ('<' NAME '>')?
     ;
 
-laststat
-    : 'return' explist? | 'break' | 'continue' ';'?
+retstat
+    : 'return' explist? ';'?                                                        # StatReturn
     ;
 
 label
@@ -121,7 +106,7 @@ namelist
     ;
 
 explist
-    : (exp ',')* exp
+    : exp (',' exp)*
     ;
 
 exp
@@ -326,17 +311,18 @@ HexDigit
     : [0-9a-fA-F]
     ;
 
-fragment
-SingleLineInputCharacter
-    : ~[\r\n\u0085\u2028\u2029]
-    ;
-
 COMMENT
     : '--[' NESTED_STR ']' -> channel(HIDDEN)
     ;
 
 LINE_COMMENT
-    : '--' SingleLineInputCharacter* -> channel(HIDDEN)
+    : '--'
+    (                                               // --
+    | '[' '='*                                      // --[==
+    | '[' '='* ~('='|'['|'\r'|'\n') ~('\r'|'\n')*   // --[==AA
+    | ~('['|'\r'|'\n') ~('\r'|'\n')*                // --AAA
+    ) ('\r\n'|'\r'|'\n'|EOF)
+    -> channel(HIDDEN)
     ;
 
 WS
@@ -344,5 +330,5 @@ WS
     ;
 
 SHEBANG
-    : '#' '!' SingleLineInputCharacter* -> channel(HIDDEN)
+    : '#' '!' ~('\n'|'\r')* -> channel(HIDDEN)
     ;

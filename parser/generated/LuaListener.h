@@ -73,8 +73,8 @@ public:
   virtual void enterAttrib(LuaParser::AttribContext *ctx) = 0;
   virtual void exitAttrib(LuaParser::AttribContext *ctx) = 0;
 
-  virtual void enterLaststat(LuaParser::LaststatContext *ctx) = 0;
-  virtual void exitLaststat(LuaParser::LaststatContext *ctx) = 0;
+  virtual void enterStatReturn(LuaParser::StatReturnContext *ctx) = 0;
+  virtual void exitStatReturn(LuaParser::StatReturnContext *ctx) = 0;
 
   virtual void enterLabel(LuaParser::LabelContext *ctx) = 0;
   virtual void exitLabel(LuaParser::LabelContext *ctx) = 0;

@@ -75,8 +75,8 @@ public:
   virtual void enterAttrib(LuaParser::AttribContext * /*ctx*/) override { }
   virtual void exitAttrib(LuaParser::AttribContext * /*ctx*/) override { }
 
-  virtual void enterLaststat(LuaParser::LaststatContext * /*ctx*/) override { }
-  virtual void exitLaststat(LuaParser::LaststatContext * /*ctx*/) override { }
+  virtual void enterStatReturn(LuaParser::StatReturnContext * /*ctx*/) override { }
+  virtual void exitStatReturn(LuaParser::StatReturnContext * /*ctx*/) override { }
 
   virtual void enterLabel(LuaParser::LabelContext * /*ctx*/) override { }
   virtual void exitLabel(LuaParser::LabelContext * /*ctx*/) override { }

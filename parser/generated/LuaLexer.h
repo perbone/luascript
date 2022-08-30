@@ -21,10 +21,10 @@ public:
     T__32 = 33, T__33 = 34, T__34 = 35, T__35 = 36, T__36 = 37, T__37 = 38, 
     T__38 = 39, T__39 = 40, T__40 = 41, T__41 = 42, T__42 = 43, T__43 = 44, 
     T__44 = 45, T__45 = 46, T__46 = 47, T__47 = 48, T__48 = 49, T__49 = 50, 
-    T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, T__55 = 56, 
-    NAME = 57, NORMALSTRING = 58, CHARSTRING = 59, LONGSTRING = 60, INT = 61, 
-    HEX = 62, FLOAT = 63, HEX_FLOAT = 64, COMMENT = 65, LINE_COMMENT = 66, 
-    WS = 67, SHEBANG = 68
+    T__50 = 51, T__51 = 52, T__52 = 53, T__53 = 54, T__54 = 55, NAME = 56, 
+    NORMALSTRING = 57, CHARSTRING = 58, LONGSTRING = 59, INT = 60, HEX = 61, 
+    FLOAT = 62, HEX_FLOAT = 63, COMMENT = 64, LINE_COMMENT = 65, WS = 66, 
+    SHEBANG = 67
   };
 
   explicit LuaLexer(antlr4::CharStream *input);
