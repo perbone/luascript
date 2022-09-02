@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.82 - 2022-09-02
+
+### Fixed
+
+* Fix macOS build (solution came from Rémi 'Akien')
+
 ## 0.0.81 - 2022-08-30
 
 ### Fixed

@@ -5,11 +5,15 @@ Import('env_modules')
 
 env_luascript = env_modules.Clone()
 
-if not env.msvc:
-    env_luascript['CXXFLAGS'] = ['-std=c++17']
-else:
+if env.msvc:
     env_luascript['CCFLAGS'] = ['/std:c++17','/Zc:__cplusplus']
     env_luascript.Append(CPPDEFINES=['ANTLR4CPP_STATIC'])
+elif env["platform"] == "macos":
+    env_luascript.Append(ASFLAGS=["-mmacosx-version-min=10.13"])
+    env_luascript.Append(CCFLAGS=["-mmacosx-version-min=10.13"])
+    env_luascript.Append(LINKFLAGS=["-mmacosx-version-min=10.13"])
+else:
+    env_luascript['CXXFLAGS'] = ['-std=c++17']
 
 Export('env_luascript')
 
