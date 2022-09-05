@@ -240,7 +240,7 @@ Script *LuaScriptLanguage::create_script() const {
 bool LuaScriptLanguage::has_named_classes() const {
 	print_debug("LuaScriptLanguage::has_named_classes");
 
-	return true;
+	return true; // FIXME: should it be false like GDScript and CSharp?
 }
 
 bool LuaScriptLanguage::supports_builtin_mode() const {
