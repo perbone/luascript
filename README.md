@@ -49,7 +49,7 @@ My development environment is based primarily on Linux and Mac so I don't know i
 
 So first of all you have to have Godot successfully built in your system, which is beyond the scope of this simple how to.
 
-Now, assuming you can git clone from GitHub, just clone LuaScript into Godo's source code 'modules' folder and then, build Godot again adding to the command line the following options
+Now, assuming you can git clone from GitHub, just clone LuaScript into Godot's source code 'modules' folder and then, build Godot again adding to the command line the following options
 
 module_luascript_enabled=yes
 
