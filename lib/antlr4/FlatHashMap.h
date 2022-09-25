@@ -27,16 +27,31 @@
 
 #include "antlr4-common.h"
 
-#define ANTLRCPP_VERSION_MAJOR 4
-#define ANTLRCPP_VERSION_MINOR 11
-#define ANTLRCPP_VERSION_PATCH 1
+#if ANTLR4CPP_USING_ABSEIL
+#include "absl/container/flat_hash_map.h"
+#else
+#include <unordered_map>
+#endif
 
-#define ANTLRCPP_MAKE_VERSION(major, minor, patch) ((major) * 100000 + (minor) * 1000 + (patch))
+// By default ANTLRv4 uses containers provided by the C++ standard library. In most deployments this
+// is fine, however in some using custom containers may be preferred. This header allows that by
+// optionally supporting some alternative implementations and allowing for more easier patching of
+// other alternatives.
 
-#define ANTLRCPP_VERSION \
-  ANTLRCPP_MAKE_VERSION(ANTLR4CPP_VERSION_MAJOR, ANTLR4CPP_VERSION_MINOR, ANTLR4CPP_VERSION_PATCH)
+namespace antlr4 {
 
-#define ANTLRCPP_VERSION_STRING \
-  ANTLR4CPP_STRINGIFY(ANTLR4CPP_VERSION_MAJOR) "." \
-  ANTLR4CPP_STRINGIFY(ANTLR4CPP_VERSION_MINOR) "." \
-  ANTLR4CPP_STRINGIFY(ANTLR4CPP_VERSION_PATCH)
+#if ANTLR4CPP_USING_ABSEIL
+  template <typename Key, typename Value,
+            typename Hash = typename absl::flat_hash_map<Key, Value>::hasher,
+            typename Equal = typename absl::flat_hash_map<Key, Value>::key_equal,
+            typename Allocator = typename absl::flat_hash_map<Key, Value>::allocator_type>
+  using FlatHashMap = absl::flat_hash_map<Key, Value, Hash, Equal, Allocator>;
+#else
+  template <typename Key, typename Value,
+            typename Hash = typename std::unordered_map<Key, Value>::hasher,
+            typename Equal = typename std::unordered_map<Key, Value>::key_equal,
+            typename Allocator = typename std::unordered_map<Key, Value>::allocator_type>
+  using FlatHashMap = std::unordered_map<Key, Value, Hash, Equal, Allocator>;
+#endif
+
+} // namespace antlr4
