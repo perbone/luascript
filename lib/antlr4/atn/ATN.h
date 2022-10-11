@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <shared_mutex>
+
 #include "RuleContext.h"
 
 // GCC generates a warning when forward-declaring ATN if ATN has already been
