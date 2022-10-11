@@ -20,7 +20,7 @@ Export('env_luascript')
 SConscript('lib/lua/SCsub')
 SConscript('lib/antlr4/SCsub')
 SConscript('parser/SCsub')
-if env['tools']:
+if env.editor_build:
     SConscript('editor/SCsub')
 
 env_luascript.add_source_files(env.modules_sources,'*.cpp')
