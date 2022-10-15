@@ -112,7 +112,7 @@ long normalize_thread_id(const Thread::ID tid) {
 	return tids.find(tid) == tids.end() ? tids[tid] = currTid++ : tids[tid];
 }
 
-std::string_view cur_timestamp() {
+std::string cur_timestamp() {
 	using namespace std::chrono;
 	auto timepoint = system_clock::now();
 	auto coarse = system_clock::to_time_t(timepoint);
@@ -134,7 +134,7 @@ void print_debug(const String fmt, ...) {
 
 	sprintf(tmpbuf, "%6d %s %ld %2ld ",
 			OS::get_singleton()->get_process_id(),
-			cur_timestamp().data(),
+			cur_timestamp().c_str(),
 			normalize_thread_id(Thread::get_main_id()),
 			normalize_thread_id(Thread::get_caller_id()));
 
