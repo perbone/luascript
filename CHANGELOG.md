@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.0.86 - 2023-03-05
+
+### Changed
+
+* Update Lua to 5.4.5 from master
+* Update Antlr4 4.12.0 from master
+
 ## 0.0.85 - 2023-02-03
 
 ### Changed
@@ -18,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 * Update Lua to 5.4.5 from master
+
 ## 0.0.83 - 2022-09-25
 
 ### Changed
