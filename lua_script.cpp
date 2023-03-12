@@ -59,6 +59,12 @@ Ref<Script> LuaScript::get_base_script() const { // TODO
 	return Ref<Script>{};
 }
 
+StringName LuaScript::get_global_name() const {
+	print_debug("LuaScript::get_global_name");
+
+	return StringName{};
+}
+
 bool LuaScript::inherits_script(const Ref<Script> &p_script) const {
 	print_debug("LuaScript::inherits_script");
 

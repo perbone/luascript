@@ -72,12 +72,6 @@ String LuaScriptLanguage::get_extension() const {
 	return LUA_EXTENSION;
 }
 
-Error LuaScriptLanguage::execute_file(const String &p_path) { // TODO
-	print_debug("LuaScriptLanguage::execute_file( p_path = " + p_path + " )");
-
-	return OK;
-}
-
 void LuaScriptLanguage::finish() {
 	print_debug("LuaScriptLanguage::finish");
 
@@ -465,27 +459,6 @@ int LuaScriptLanguage::profiling_get_frame_data(ProfilingInfo *p_info_arr, int p
 
 	return -1;
 }
-
-void *LuaScriptLanguage::alloc_instance_binding_data(Object *p_object) { // TODO
-	print_debug("LuaScriptLanguage::alloc_instance_binding_data( p_object = " + p_object->get_class_name() + " )");
-
-	return nullptr;
-}
-
-void LuaScriptLanguage::free_instance_binding_data(void *p_data) {
-	print_debug("LuaScriptLanguage::free_instance_binding_data");
-} // TODO
-
-void LuaScriptLanguage::refcount_incremented_instance_binding(Object *p_object) {
-	print_debug("LuaScriptLanguage::refcount_incremented_instance_binding( p_object = " + p_object->get_class_name() + " )");
-
-} // TODO
-
-bool LuaScriptLanguage::refcount_decremented_instance_binding(Object *p_object) {
-	print_debug("LuaScriptLanguage::refcount_decremented_instance_binding( p_object = " + p_object->get_class_name() + " )");
-
-	return true;
-} // TODO
 
 void LuaScriptLanguage::frame() {
 	//	print_debug("LuaScriptLanguage::frame");

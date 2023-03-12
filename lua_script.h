@@ -36,6 +36,7 @@ public:
 	bool can_instantiate() const override;
 
 	Ref<Script> get_base_script() const override;
+	 StringName get_global_name() const override;
 
 	bool inherits_script(const Ref<Script> &p_script) const override;
 
