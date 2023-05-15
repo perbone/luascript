@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-* Update Lua to 5.4.5 from master
+* Update Lua to 5.4.6 from master
 
 ## 0.0.88 - 2023-03-15
 
