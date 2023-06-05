@@ -16,6 +16,7 @@
 #include "misc/Interval.h"
 #include "dfa/DFA.h"
 #include "Lexer.h"
+#include "internal/Synchronization.h"
 
 #include "dfa/DFAState.h"
 #include "atn/LexerATNConfig.h"
@@ -23,11 +24,16 @@
 
 #include "atn/LexerATNSimulator.h"
 
-#define DEBUG_ATN 0
-#define DEBUG_DFA 0
+#ifndef LEXER_DEBUG_ATN
+#define LEXER_DEBUG_ATN 0
+#endif
+#ifndef LEXER_DEBUG_DFA
+#define LEXER_DEBUG_DFA 0
+#endif
 
 using namespace antlr4;
 using namespace antlr4::atn;
+using namespace antlr4::internal;
 using namespace antlrcpp;
 
 void LexerATNSimulator::SimState::reset() {
@@ -65,7 +71,7 @@ size_t LexerATNSimulator::match(CharStream *input, size_t mode) {
   const dfa::DFA &dfa = _decisionToDFA[mode];
   dfa::DFAState* s0;
   {
-    std::shared_lock<std::shared_mutex> stateLock(atn._stateMutex);
+    SharedLock<SharedMutex> stateLock(atn._stateMutex);
     s0 = dfa.s0;
   }
   if (s0 == nullptr) {
@@ -167,10 +173,10 @@ size_t LexerATNSimulator::execATN(CharStream *input, dfa::DFAState *ds0) {
 
 dfa::DFAState *LexerATNSimulator::getExistingTargetState(dfa::DFAState *s, size_t t) {
   dfa::DFAState* retval = nullptr;
-  std::shared_lock<std::shared_mutex> edgeLock(atn._edgeMutex);
+  SharedLock<SharedMutex> edgeLock(atn._edgeMutex);
   if (t <= MAX_DFA_EDGE) {
     auto iterator = s->edges.find(t - MIN_DFA_EDGE);
-#if DEBUG_ATN == 1
+#if LEXER_DEBUG_ATN == 1
     if (iterator != s->edges.end()) {
       std::cout << std::string("reuse state ") << s->stateNumber << std::string(" edge to ") << iterator->second->stateNumber << std::endl;
     }
@@ -230,7 +236,7 @@ void LexerATNSimulator::getReachableConfigSet(CharStream *input, ATNConfigSet *c
       continue;
     }
 
-#if DEBUG_ATN == 1
+#if LEXER_DEBUG_ATN == 1
       std::cout << "testing " << getTokenName((int)t) << " at " << c->toString(true) << std::endl;
 #endif
 
@@ -261,7 +267,7 @@ void LexerATNSimulator::getReachableConfigSet(CharStream *input, ATNConfigSet *c
 
 void LexerATNSimulator::accept(CharStream *input, const Ref<const LexerActionExecutor> &lexerActionExecutor, size_t /*startIndex*/,
                                size_t index, size_t line, size_t charPos) {
-#if DEBUG_ATN == 1
+#if LEXER_DEBUG_ATN == 1
     std::cout << "ACTION ";
     std::cout << toString(lexerActionExecutor) << std::endl;
 #endif
@@ -298,12 +304,12 @@ std::unique_ptr<ATNConfigSet> LexerATNSimulator::computeStartState(CharStream *i
 
 bool LexerATNSimulator::closure(CharStream *input, const Ref<LexerATNConfig> &config, ATNConfigSet *configs,
                                 bool currentAltReachedAcceptState, bool speculative, bool treatEofAsEpsilon) {
-#if DEBUG_ATN == 1
+#if LEXER_DEBUG_ATN == 1
     std::cout << "closure(" << config->toString(true) << ")" << std::endl;
 #endif
 
   if (config->state != nullptr && config->state->getStateType() == ATNStateType::RULE_STOP) {
-#if DEBUG_ATN == 1
+#if LEXER_DEBUG_ATN == 1
       if (_recog != nullptr) {
         std::cout << "closure at " << _recog->getRuleNames()[config->state->ruleIndex] << " rule stop " << config << std::endl;
       } else {
@@ -390,7 +396,7 @@ Ref<LexerATNConfig> LexerATNSimulator::getEpsilonTarget(CharStream *input, const
        */
       const PredicateTransition *pt = static_cast<const PredicateTransition*>(t);
 
-#if DEBUG_ATN == 1
+#if LEXER_DEBUG_ATN == 1
         std::cout << "EVAL rule " << pt->getRuleIndex() << ":" << pt->getPredIndex() << std::endl;
 #endif
 
@@ -513,7 +519,7 @@ void LexerATNSimulator::addDFAEdge(dfa::DFAState *p, size_t t, dfa::DFAState *q)
     return;
   }
 
-  std::unique_lock<std::shared_mutex> edgeLock(atn._edgeMutex);
+  UniqueLock<SharedMutex> edgeLock(atn._edgeMutex);
   p->edges[t - MIN_DFA_EDGE] = q; // connect
 }
 
@@ -545,7 +551,7 @@ dfa::DFAState *LexerATNSimulator::addDFAState(ATNConfigSet *configs, bool suppre
   dfa::DFA &dfa = _decisionToDFA[_mode];
 
   {
-    std::unique_lock<std::shared_mutex> stateLock(atn._stateMutex);
+    UniqueLock<SharedMutex> stateLock(atn._stateMutex);
     auto [existing, inserted] = dfa.states.insert(proposed);
     if (!inserted) {
       delete proposed;
