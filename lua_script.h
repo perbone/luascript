@@ -54,6 +54,8 @@ public:
 
 #ifdef TOOLS_ENABLED
 	Vector<DocData::ClassDoc> get_documentation() const override;
+	String get_class_icon_path() const override;
+	PropertyInfo get_class_category() const override;
 #endif
 
 	bool has_method(const StringName &p_method) const override;
@@ -61,6 +63,7 @@ public:
 
 	bool is_tool() const override;
 	bool is_valid() const override;
+	bool is_abstract() const override;
 
 	ScriptLanguage *get_language() const override;
 

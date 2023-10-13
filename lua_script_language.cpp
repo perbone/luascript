@@ -138,6 +138,10 @@ void LuaScriptLanguage::get_comment_delimiters(List<String> *p_delimiters) const
 	p_delimiters->push_back("--"); // Single-line comment starts with a double hyphens
 }
 
+void LuaScriptLanguage::get_doc_comment_delimiters(List<String> *p_delimiters) const {
+	print_debug("LuaScriptLanguage::get_doc_comment_delimiters");
+}
+
 void LuaScriptLanguage::get_string_delimiters(List<String> *p_delimiters) const {
 	print_debug("LuaScriptLanguage::get_string_delimiters");
 

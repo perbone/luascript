@@ -61,6 +61,10 @@ Variant::Type LuaScriptInstance::get_property_type(const StringName &p_name, boo
 	return Variant::Type();
 }
 
+void LuaScriptInstance::validate_property(PropertyInfo &p_property) const {
+	print_debug("LuaScriptInstance::validate_property");
+}
+
 bool LuaScriptInstance::property_can_revert(const StringName &p_name) const {
 	print_debug("LuaScriptInstance::property_can_revert( p_name = %s )", String(p_name).ascii().get_data());
 
@@ -107,10 +111,9 @@ Variant LuaScriptInstance::callp(const StringName &p_method, const Variant **p_a
 	return Variant();
 } // TODO
 
-void LuaScriptInstance::notification(int p_notification) {
+void LuaScriptInstance::notification(int p_notification, bool p_reversed) {
 	print_debug("LuaScriptInstance::notification( p_notification = %d:%s ) %s",
 			p_notification, get_notification_name(p_notification).c_str(), baseClassName.ascii().get_data());
-
 } // TODO
 
 String LuaScriptInstance::to_string(bool *r_valid) {

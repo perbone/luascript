@@ -166,6 +166,16 @@ Vector<DocData::ClassDoc> LuaScript::get_documentation() const {
 
 	return this->docs;
 } // TODO
+
+String LuaScript::get_class_icon_path() const {
+	print_debug("LuaScript::get_class_icon_path");
+	return String();
+} // TODO
+
+PropertyInfo LuaScript::get_class_category() const {
+	print_debug("LuaScript::get_class_category");
+	return PropertyInfo();
+} // TODO
 #endif
 
 bool LuaScript::has_method(const StringName &p_method) const { // TODO
@@ -190,6 +200,12 @@ bool LuaScript::is_valid() const { // TODO
 	print_debug("LuaScript::is_valid");
 
 	return this->valid;
+}
+
+bool LuaScript::is_abstract() const {
+	print_debug("LuaScript::is_abstract");
+
+	return false;
 }
 
 ScriptLanguage *LuaScript::get_language() const { // TODO

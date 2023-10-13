@@ -31,6 +31,7 @@ public:
 	bool get(const StringName &p_name, Variant &r_ret) const override;
 	void get_property_list(List<PropertyInfo> *p_properties) const override;
 	Variant::Type get_property_type(const StringName &p_name, bool *r_is_valid = nullptr) const override;
+	void validate_property(PropertyInfo &p_property) const override;
 
 	bool property_can_revert(const StringName &p_name) const override;
 	bool property_get_revert(const StringName &p_name, Variant &r_ret) const override;
@@ -43,7 +44,7 @@ public:
 
 	Variant callp(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) override;
 
-	void notification(int p_notification) override;
+	void notification(int p_notification, bool p_reversed = false) override;
 	String to_string(bool *r_valid) override;
 
 	void refcount_incremented() override;
