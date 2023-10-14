@@ -7,6 +7,12 @@ env_parser = env_luascript.Clone()
 
 env_parser.Append(CPPPATH = ['../lib/antlr4'])
 
+# Enable exceptions for ANTLR4
+if env_parser.msvc:
+    env_parser.Append(CPPDEFINES=[("_HAS_EXCEPTIONS", 1)])
+else:
+    env_parser.Append(CCFLAGS=["-fexceptions"])
+
 env_parser.add_source_files(env.modules_sources,'ast/*.cpp')
 env_parser.add_source_files(env.modules_sources,'generated/*.cpp')
 env_parser.add_source_files(env.modules_sources,'*.cpp')
