@@ -26,7 +26,8 @@
 #include "core/string/ustring.h"
 
 std::string get_notification_name(const int constant_value);
-void print_debug(const String fmt, ...);
+//void print_debug(const String fmt, ...);
+#define print_debug(fmt, ...)  print_line(vformat(fmt, __VA_ARGS__))
 
 #else
 
