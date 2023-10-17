@@ -205,7 +205,7 @@ bool LuaScript::is_valid() const { // TODO
 bool LuaScript::is_abstract() const {
 	print_debug("LuaScript::is_abstract");
 
-	return false;
+	return this->abstract;
 }
 
 ScriptLanguage *LuaScript::get_language() const { // TODO

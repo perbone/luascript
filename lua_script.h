@@ -109,6 +109,7 @@ protected:
 private:
 	bool tool{};
 	bool valid{};
+	bool abstract{};
 
 	SelfList<LuaScript> self;
 
