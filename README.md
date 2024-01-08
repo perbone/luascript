@@ -7,7 +7,7 @@
 > Current progress:
 >
 > - The new parser using Antlr4 is up and running. Now comes the construction of the AST and the static analyzer.
-> 
+>
 > #### Warning!! Kindly note that the git tag 3.x exists only for historical reasons, and although it compiles it is unfinished. So please do not open issues nor send PR for this tag. Appreciate the understanding.
 
 ## Features
@@ -79,7 +79,7 @@ For transparency and insight into our release cycle, releases are be numbered wi
 
 ## License
 
-Copyright 2017-2023 Paulo Perbone
+Copyright 2017-2024 Paulo Perbone
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
