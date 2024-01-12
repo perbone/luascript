@@ -53,7 +53,7 @@ public:
 	void get_doc_comment_delimiters(List<String> *p_delimiters) const override;
 	void get_string_delimiters(List<String> *p_delimiters) const override;
 	Ref<Script> make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const override;
-	Vector<ScriptTemplate> get_built_in_templates(StringName p_object) override;
+	Vector<ScriptTemplate> get_built_in_templates(const StringName &p_object) override;
 	bool is_using_templates() override;
 	bool validate(const String &p_script, const String &p_path = "", List<String> *r_functions = nullptr, List<ScriptError> *r_errors = nullptr, List<Warning> *r_warnings = nullptr, HashSet<int> *r_safe_lines = nullptr) const override;
 	String validate_path(const String &p_path) const override;
@@ -103,6 +103,7 @@ public:
 
 	void profiling_start() override;
 	void profiling_stop() override;
+	void profiling_set_save_native_calls(bool p_enable) override;
 
 	int profiling_get_accumulated_data(ProfilingInfo *p_info_arr, int p_info_max) override;
 	int profiling_get_frame_data(ProfilingInfo *p_info_arr, int p_info_max) override;

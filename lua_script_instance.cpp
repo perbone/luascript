@@ -62,7 +62,7 @@ Variant::Type LuaScriptInstance::get_property_type(const StringName &p_name, boo
 }
 
 void LuaScriptInstance::validate_property(PropertyInfo &p_property) const {
-	print_debug("LuaScriptInstance::validate_property");
+	print_debug("LuaScriptInstance::validate_property( p_property = %s )", p_property.name.ascii().get_data());
 }
 
 bool LuaScriptInstance::property_can_revert(const StringName &p_name) const {

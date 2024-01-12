@@ -188,7 +188,7 @@ Ref<Script> LuaScriptLanguage::make_template(
 	return script;
 }
 
-Vector<ScriptTemplate> LuaScriptLanguage::get_built_in_templates(StringName p_object) {
+Vector<ScriptTemplate> LuaScriptLanguage::get_built_in_templates(const StringName &p_object) {
 	print_debug("LuaScriptLanguage::get_built_in_templates");
 
 	return Vector<ScriptTemplate>();
@@ -451,6 +451,10 @@ void LuaScriptLanguage::profiling_start() {
 void LuaScriptLanguage::profiling_stop() {
 	print_debug("LuaScriptLanguage::profiling_stop");
 } // TODO
+
+void LuaScriptLanguage::profiling_set_save_native_calls(bool p_enable) {
+	print_debug("LuaScriptLanguage::profiling_set_save_native_calls");
+}
 
 int LuaScriptLanguage::profiling_get_accumulated_data(ProfilingInfo *p_info_arr, int p_info_max) { // TODO
 	print_debug("LuaScriptLanguage::profiling_get_accumulated_data");
