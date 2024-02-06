@@ -94,6 +94,7 @@ public:
 	Vector<StackInfo> debug_get_current_stack_info() override;
 
 	void reload_all_scripts() override;
+	void reload_scripts(const Array &p_scripts, bool p_soft_reload) override;
 	void reload_tool_script(const Ref<Script> &p_script, bool p_soft_reload) override;
 
 	void get_recognized_extensions(List<String> *p_extensions) const override;

@@ -422,6 +422,10 @@ void LuaScriptLanguage::reload_all_scripts() {
 #endif
 } // TODO
 
+void LuaScriptLanguage::reload_scripts(const Array &p_scripts, bool p_soft_reload) {
+	print_debug("LuaScriptLanguage::reload_scripts");
+} // TODO
+
 void LuaScriptLanguage::reload_tool_script(const Ref<Script> &p_script, bool p_soft_reload) {
 	print_debug("LuaScriptLanguage::reload_tool_script");
 } // TODO
