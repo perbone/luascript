@@ -116,19 +116,19 @@ void LuaScriptLanguage::get_reserved_words(List<String> *p_words) const {
 	}
 }
 
-bool LuaScriptLanguage::is_control_flow_keyword(String p_keyword) const {
-	return p_keyword == "break" ||
-			p_keyword == "else" ||
-			p_keyword == "elseif" ||
-			p_keyword == "do" ||
-			p_keyword == "for" ||
-			p_keyword == "goto" ||
-			p_keyword == "if" ||
-			p_keyword == "repeat" ||
-			p_keyword == "return" ||
-			p_keyword == "then" ||
-			p_keyword == "until" ||
-			p_keyword == "while";
+bool LuaScriptLanguage::is_control_flow_keyword(const String &p_string) const {
+	return p_string == "break" ||
+			p_string == "else" ||
+			p_string == "elseif" ||
+			p_string == "do" ||
+			p_string == "for" ||
+			p_string == "goto" ||
+			p_string == "if" ||
+			p_string == "repeat" ||
+			p_string == "return" ||
+			p_string == "then" ||
+			p_string == "until" ||
+			p_string == "while";
 }
 
 void LuaScriptLanguage::get_comment_delimiters(List<String> *p_delimiters) const {
