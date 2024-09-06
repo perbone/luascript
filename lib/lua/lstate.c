@@ -52,53 +52,38 @@ typedef struct LG {
 
 
 /*
-** A macro to create a "random" seed when a state is created;
-** the seed is used to randomize string hashes.
+** these macros allow user-specific actions when a thread is
+** created/deleted
 */
-#if !defined(luai_makeseed)
+#if !defined(luai_userstateopen)
+#define luai_userstateopen(L)		((void)L)
+#endif
 
-#include <time.h>
+#if !defined(luai_userstateclose)
+#define luai_userstateclose(L)		((void)L)
+#endif
 
-/*
-** Compute an initial seed with some level of randomness.
-** Rely on Address Space Layout Randomization (if present) and
-** current time.
-*/
-#define addbuff(b,p,e) \
-  { size_t t = cast_sizet(e); \
-    memcpy(b + p, &t, sizeof(t)); p += sizeof(t); }
+#if !defined(luai_userstatethread)
+#define luai_userstatethread(L,L1)	((void)L)
+#endif
 
-static unsigned int luai_makeseed (lua_State *L) {
-  char buff[3 * sizeof(size_t)];
-  unsigned int h = cast_uint(time(NULL));
-  int p = 0;
-  addbuff(buff, p, L);  /* heap variable */
-  addbuff(buff, p, &h);  /* local variable */
-  addbuff(buff, p, &lua_newstate);  /* public function */
-  lua_assert(p == sizeof(buff));
-  return luaS_hash(buff, p, h);
-}
-
+#if !defined(luai_userstatefree)
+#define luai_userstatefree(L,L1)	((void)L)
 #endif
 
 
 /*
-** set GCdebt to a new value keeping the value (totalbytes + GCdebt)
-** invariant (and avoiding underflows in 'totalbytes')
+** set GCdebt to a new value keeping the real number of allocated
+** objects (totalobjs - GCdebt) invariant and avoiding overflows in
+** 'totalobjs'.
 */
-void luaE_setdebt (global_State *g, l_mem debt) {
-  l_mem tb = gettotalbytes(g);
+void luaE_setdebt (global_State *g, l_obj debt) {
+  l_obj tb = gettotalobjs(g);
   lua_assert(tb > 0);
-  if (debt < tb - MAX_LMEM)
-    debt = tb - MAX_LMEM;  /* will make 'totalbytes == MAX_LMEM' */
-  g->totalbytes = tb - debt;
+  if (debt > MAX_LOBJ - tb)
+    debt = MAX_LOBJ - tb;  /* will make 'totalobjs == MAX_LMEM' */
+  g->totalobjs = tb + debt;
   g->GCdebt = debt;
-}
-
-
-LUA_API int lua_setcstacklimit (lua_State *L, unsigned int limit) {
-  UNUSED(L); UNUSED(limit);
-  return LUAI_MAXCCALLS;  /* warning?? */
 }
 
 
@@ -192,7 +177,6 @@ static void stack_init (lua_State *L1, lua_State *L) {
   ci->callstatus = CIST_C;
   ci->func.p = L1->top.p;
   ci->u.c.k = NULL;
-  ci->nresults = 0;
   setnilvalue(s2v(L1->top.p));  /* 'function' entry for this 'ci' */
   L1->top.p++;
   ci->top.p = L1->top.p + LUA_MINSTACK;
@@ -206,7 +190,8 @@ static void freestack (lua_State *L) {
   L->ci = &L->base_ci;  /* free the entire 'ci' list */
   freeCI(L);
   lua_assert(L->nci == 0);
-  luaM_freearray(L, L->stack.p, stacksize(L) + EXTRA_STACK);  /* free stack */
+  /* free stack */
+  luaM_freearray(L, L->stack.p, cast_sizet(stacksize(L) + EXTRA_STACK));
 }
 
 
@@ -215,13 +200,19 @@ static void freestack (lua_State *L) {
 */
 static void init_registry (lua_State *L, global_State *g) {
   /* create registry */
+  TValue aux;
   Table *registry = luaH_new(L);
   sethvalue(L, &g->l_registry, registry);
   luaH_resize(L, registry, LUA_RIDX_LAST, 0);
+  /* registry[1] = false */
+  setbfvalue(&aux);
+  luaH_setint(L, registry, 1, &aux);
   /* registry[LUA_RIDX_MAINTHREAD] = L */
-  setthvalue(L, &registry->array[LUA_RIDX_MAINTHREAD - 1], L);
+  setthvalue(L, &aux, L);
+  luaH_setint(L, registry, LUA_RIDX_MAINTHREAD, &aux);
   /* registry[LUA_RIDX_GLOBALS] = new table (table of globals) */
-  sethvalue(L, &registry->array[LUA_RIDX_GLOBALS - 1], luaH_new(L));
+  sethvalue(L, &aux, luaH_new(L));
+  luaH_setint(L, registry, LUA_RIDX_GLOBALS, &aux);
 }
 
 
@@ -276,9 +267,10 @@ static void close_state (lua_State *L) {
     luaC_freeallobjects(L);  /* collect all objects */
     luai_userstateclose(L);
   }
-  luaM_freearray(L, G(L)->strt.hash, G(L)->strt.size);
+  luaM_freearray(L, G(L)->strt.hash, cast_sizet(G(L)->strt.size));
   freestack(L);
-  lua_assert(gettotalbytes(g) == sizeof(LG));
+  lua_assert(g->totalbytes == sizeof(LG));
+  lua_assert(gettotalobjs(g) == 1);
   (*g->frealloc)(g->ud, fromstate(L), sizeof(LG), 0);  /* free main block */
 }
 
@@ -349,15 +341,7 @@ LUA_API int lua_closethread (lua_State *L, lua_State *from) {
 }
 
 
-/*
-** Deprecated! Use 'lua_closethread' instead.
-*/
-LUA_API int lua_resetthread (lua_State *L) {
-  return lua_closethread(L, NULL);
-}
-
-
-LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
+LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud, unsigned seed) {
   int i;
   lua_State *L;
   global_State *g;
@@ -377,7 +361,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   g->warnf = NULL;
   g->ud_warn = NULL;
   g->mainthread = L;
-  g->seed = luai_makeseed(L);
+  g->seed = seed;
   g->gcstp = GCSTPGC;  /* no GC while building state */
   g->strt.size = g->strt.nuse = 0;
   g->strt.hash = NULL;
@@ -395,15 +379,17 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   g->weak = g->ephemeron = g->allweak = NULL;
   g->twups = NULL;
   g->totalbytes = sizeof(LG);
+  g->totalobjs = 1;
+  g->marked = 0;
   g->GCdebt = 0;
-  g->lastatomic = 0;
   setivalue(&g->nilvalue, 0);  /* to signal that state is not yet built */
-  setgcparam(g->gcpause, LUAI_GCPAUSE);
-  setgcparam(g->gcstepmul, LUAI_GCMUL);
-  g->gcstepsize = LUAI_GCSTEPSIZE;
-  setgcparam(g->genmajormul, LUAI_GENMAJORMUL);
-  g->genminormul = LUAI_GENMINORMUL;
-  for (i=0; i < LUA_NUMTAGS; i++) g->mt[i] = NULL;
+  setgcparam(g, PAUSE, LUAI_GCPAUSE);
+  setgcparam(g, STEPMUL, LUAI_GCMUL);
+  setgcparam(g, STEPSIZE, LUAI_GCSTEPSIZE);
+  setgcparam(g, MINORMUL, LUAI_GENMINORMUL);
+  setgcparam(g, MINORMAJOR, LUAI_MINORMAJOR);
+  setgcparam(g, MAJORMINOR, LUAI_MAJORMINOR);
+  for (i=0; i < LUA_NUMTYPES; i++) g->mt[i] = NULL;
   if (luaD_rawrunprotected(L, f_luaopen, NULL) != LUA_OK) {
     /* memory allocation error: free partial state */
     close_state(L);

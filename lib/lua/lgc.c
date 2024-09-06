@@ -9,7 +9,6 @@
 
 #include "lprefix.h"
 
-#include <stdio.h>
 #include <string.h>
 
 
@@ -19,6 +18,7 @@
 #include "ldo.h"
 #include "lfunc.h"
 #include "lgc.h"
+#include "llex.h"
 #include "lmem.h"
 #include "lobject.h"
 #include "lstate.h"
@@ -28,36 +28,18 @@
 
 
 /*
+** Number of fixed (luaC_fix) objects in a Lua state: metafield names,
+** plus reserved words, plus "_ENV", plus the memory-error message.
+*/
+#define NFIXED		(TM_N + NUM_RESERVED + 2)
+
+
+/*
 ** Maximum number of elements to sweep in each single step.
 ** (Large enough to dissipate fixed overheads but small enough
 ** to allow small steps for the collector.)
 */
-#define GCSWEEPMAX	100
-
-/*
-** Maximum number of finalizers to call in each single step.
-*/
-#define GCFINMAX	10
-
-
-/*
-** Cost of calling one finalizer.
-*/
-#define GCFINALIZECOST	50
-
-
-/*
-** The equivalent, in bytes, of one unit of "work" (visiting a slot,
-** sweeping an object, etc.)
-*/
-#define WORK2MEM	sizeof(TValue)
-
-
-/*
-** macro to adjust 'pause': 'pause' is actually used like
-** 'pause / PAUSEADJ' (value chosen by tests)
-*/
-#define PAUSEADJ		100
+#define GCSWEEPMAX	20
 
 
 /* mask with all color bits */
@@ -91,6 +73,13 @@
 #define gcvalueN(o)     (iscollectable(o) ? gcvalue(o) : NULL)
 
 
+/*
+** Access to collectable objects in array part of tables
+*/
+#define gcvalarr(t,i)  \
+	((*getArrTag(t,i) & BIT_ISCOLLECTABLE) ? getArrVal(t,i)->gc : NULL)
+
+
 #define markvalue(g,o) { checkliveness(g->mainthread,o); \
   if (valiswhite(o)) reallymarkobject(g,gcvalue(o)); }
 
@@ -104,8 +93,9 @@
 */
 #define markobjectN(g,t)	{ if (t) markobject(g,t); }
 
+
 static void reallymarkobject (global_State *g, GCObject *o);
-static lu_mem atomic (lua_State *L);
+static l_obj atomic (lua_State *L);
 static void entersweep (lua_State *L);
 
 
@@ -217,7 +207,7 @@ void luaC_barrier_ (lua_State *L, GCObject *o, GCObject *v) {
   }
   else {  /* sweep phase */
     lua_assert(issweepphase(g));
-    if (g->gckind == KGC_INC)  /* incremental mode? */
+    if (g->gckind != KGC_GENMINOR)  /* incremental mode? */
       makewhite(g, o);  /* mark 'o' as white to avoid other barriers */
   }
 }
@@ -230,7 +220,8 @@ void luaC_barrier_ (lua_State *L, GCObject *o, GCObject *v) {
 void luaC_barrierback_ (lua_State *L, GCObject *o) {
   global_State *g = G(L);
   lua_assert(isblack(o) && !isdead(g, o));
-  lua_assert((g->gckind == KGC_GEN) == (isold(o) && getage(o) != G_TOUCHED1));
+  lua_assert((g->gckind != KGC_GENMINOR)
+          || (isold(o) && getage(o) != G_TOUCHED1));
   if (getage(o) == G_TOUCHED2)  /* already in gray list? */
     set2gray(o);  /* make it gray to become touched1 */
   else  /* link it in 'grayagain' and paint it gray */
@@ -255,10 +246,11 @@ void luaC_fix (lua_State *L, GCObject *o) {
 ** create a new collectable object (with given type, size, and offset)
 ** and link it to 'allgc' list.
 */
-GCObject *luaC_newobjdt (lua_State *L, int tt, size_t sz, size_t offset) {
+GCObject *luaC_newobjdt (lua_State *L, lu_byte tt, size_t sz, size_t offset) {
   global_State *g = G(L);
   char *p = cast_charp(luaM_newobject(L, novariant(tt), sz));
   GCObject *o = cast(GCObject *, p + offset);
+  g->GCdebt--;
   o->marked = luaC_white(g);
   o->tt = tt;
   o->next = g->allgc;
@@ -267,7 +259,10 @@ GCObject *luaC_newobjdt (lua_State *L, int tt, size_t sz, size_t offset) {
 }
 
 
-GCObject *luaC_newobj (lua_State *L, int tt, size_t sz) {
+/*
+** create a new collectable object with no offset.
+*/
+GCObject *luaC_newobj (lua_State *L, lu_byte tt, size_t sz) {
   return luaC_newobjdt(L, tt, sz, 0);
 }
 
@@ -295,6 +290,7 @@ GCObject *luaC_newobj (lua_State *L, int tt, size_t sz) {
 ** (only closures can), and a userdata's metatable must be a table.
 */
 static void reallymarkobject (global_State *g, GCObject *o) {
+  g->marked++;
   switch (o->tt) {
     case LUA_VSHRSTR:
     case LUA_VLNGSTR: {
@@ -334,7 +330,7 @@ static void reallymarkobject (global_State *g, GCObject *o) {
 */
 static void markmt (global_State *g) {
   int i;
-  for (i=0; i < LUA_NUMTAGS; i++)
+  for (i=0; i < LUA_NUMTYPES; i++)
     markobjectN(g, g->mt[i]);
 }
 
@@ -342,9 +338,9 @@ static void markmt (global_State *g) {
 /*
 ** mark all objects in list of being-finalized
 */
-static lu_mem markbeingfnz (global_State *g) {
+static l_obj markbeingfnz (global_State *g) {
   GCObject *o;
-  lu_mem count = 0;
+  l_obj count = 0;
   for (o = g->tobefnz; o != NULL; o = o->next) {
     count++;
     markobject(g, o);
@@ -364,12 +360,11 @@ static lu_mem markbeingfnz (global_State *g) {
 ** upvalues, as they have nothing to be checked. (If the thread gets an
 ** upvalue later, it will be linked in the list again.)
 */
-static int remarkupvals (global_State *g) {
+static l_obj remarkupvals (global_State *g) {
+  l_obj work = 0;
   lua_State *thread;
   lua_State **p = &g->twups;
-  int work = 0;  /* estimate of how much work was done here */
   while ((thread = *p) != NULL) {
-    work++;
     if (!iswhite(thread) && thread->openupval != NULL)
       p = &thread->twups;  /* keep marked thread with upvalues in the list */
     else {  /* thread is not marked or without upvalues */
@@ -379,13 +374,13 @@ static int remarkupvals (global_State *g) {
       thread->twups = thread;  /* mark that it is out of list */
       for (uv = thread->openupval; uv != NULL; uv = uv->u.open.next) {
         lua_assert(getage(uv) <= getage(thread));
-        work++;
         if (!iswhite(uv)) {  /* upvalue already visited? */
           lua_assert(upisopen(uv) && isgray(uv));
           markvalue(g, uv->v.p);  /* mark its value */
         }
       }
     }
+    work++;
   }
   return work;
 }
@@ -398,10 +393,15 @@ static void cleargraylists (global_State *g) {
 
 
 /*
-** mark root set and reset all gray lists, to start a new collection
+** mark root set and reset all gray lists, to start a new collection.
+** 'marked' is initialized with the number of fixed objects in the state,
+** to count the total number of live objects during a cycle. (That is
+** the metafield names, plus the reserved words, plus "_ENV" plus the
+** memory-error message.)
 */
 static void restartcollection (global_State *g) {
   cleargraylists(g);
+  g->marked = NFIXED;
   markobject(g, g->mainthread);
   markvalue(g, &g->l_registry);
   markmt(g);
@@ -433,7 +433,7 @@ static void genlink (global_State *g, GCObject *o) {
     linkobjgclist(o, g->grayagain);  /* link it back in 'grayagain' */
   }  /* everything else do not need to be linked back */
   else if (getage(o) == G_TOUCHED2)
-    changeage(o, G_TOUCHED2, G_OLD);  /* advance age */
+    setage(o, G_OLD);  /* advance age */
 }
 
 
@@ -466,6 +466,24 @@ static void traverseweakvalue (global_State *g, Table *h) {
 
 
 /*
+** Traverse the array part of a table.
+*/
+static int traversearray (global_State *g, Table *h) {
+  unsigned asize = luaH_realasize(h);
+  int marked = 0;  /* true if some object is marked in this traversal */
+  unsigned i;
+  for (i = 0; i < asize; i++) {
+    GCObject *o = gcvalarr(h, i);
+    if (o != NULL && iswhite(o)) {
+      marked = 1;
+      reallymarkobject(g, o);
+    }
+  }
+  return marked;
+}
+
+
+/*
 ** Traverse an ephemeron table and link it to proper list. Returns true
 ** iff any object was marked during this traversal (which implies that
 ** convergence has to continue). During propagation phase, keep table
@@ -478,19 +496,11 @@ static void traverseweakvalue (global_State *g, Table *h) {
 ** by 'genlink'.
 */
 static int traverseephemeron (global_State *g, Table *h, int inv) {
-  int marked = 0;  /* true if an object is marked in this traversal */
   int hasclears = 0;  /* true if table has white keys */
   int hasww = 0;  /* true if table has entry "white-key -> white-value" */
   unsigned int i;
-  unsigned int asize = luaH_realasize(h);
   unsigned int nsize = sizenode(h);
-  /* traverse array part */
-  for (i = 0; i < asize; i++) {
-    if (valiswhite(&h->array[i])) {
-      marked = 1;
-      reallymarkobject(g, gcvalue(&h->array[i]));
-    }
-  }
+  int marked = traversearray(g, h);  /* traverse array part */
   /* traverse hash part; if 'inv', traverse descending
      (see 'convergeephemerons') */
   for (i = 0; i < nsize; i++) {
@@ -522,10 +532,7 @@ static int traverseephemeron (global_State *g, Table *h, int inv) {
 
 static void traversestrongtable (global_State *g, Table *h) {
   Node *n, *limit = gnodelast(h);
-  unsigned int i;
-  unsigned int asize = luaH_realasize(h);
-  for (i = 0; i < asize; i++)  /* traverse array part */
-    markvalue(g, &h->array[i]);
+  traversearray(g, h);
   for (n = gnode(h, 0); n < limit; n++) {  /* traverse hash part */
     if (isempty(gval(n)))  /* entry is empty? */
       clearkey(n);  /* clear its key */
@@ -539,7 +546,7 @@ static void traversestrongtable (global_State *g, Table *h) {
 }
 
 
-static lu_mem traversetable (global_State *g, Table *h) {
+static void traversetable (global_State *g, Table *h) {
   const char *weakkey, *weakvalue;
   const TValue *mode = gfasttm(g, h->metatable, TM_MODE);
   TString *smode;
@@ -558,17 +565,15 @@ static lu_mem traversetable (global_State *g, Table *h) {
   }
   else  /* not weak */
     traversestrongtable(g, h);
-  return 1 + h->alimit + 2 * allocsizenode(h);
 }
 
 
-static int traverseudata (global_State *g, Udata *u) {
+static void traverseudata (global_State *g, Udata *u) {
   int i;
   markobjectN(g, u->metatable);  /* mark its metatable */
   for (i = 0; i < u->nuvalue; i++)
     markvalue(g, &u->uv[i].uv);
   genlink(g, obj2gco(u));
-  return 1 + u->nuvalue;
 }
 
 
@@ -577,7 +582,7 @@ static int traverseudata (global_State *g, Udata *u) {
 ** arrays can be larger than needed; the extra slots are filled with
 ** NULL, so the use of 'markobjectN')
 */
-static int traverseproto (global_State *g, Proto *f) {
+static void traverseproto (global_State *g, Proto *f) {
   int i;
   markobjectN(g, f->source);
   for (i = 0; i < f->sizek; i++)  /* mark literals */
@@ -588,29 +593,26 @@ static int traverseproto (global_State *g, Proto *f) {
     markobjectN(g, f->p[i]);
   for (i = 0; i < f->sizelocvars; i++)  /* mark local-variable names */
     markobjectN(g, f->locvars[i].varname);
-  return 1 + f->sizek + f->sizeupvalues + f->sizep + f->sizelocvars;
 }
 
 
-static int traverseCclosure (global_State *g, CClosure *cl) {
+static void traverseCclosure (global_State *g, CClosure *cl) {
   int i;
   for (i = 0; i < cl->nupvalues; i++)  /* mark its upvalues */
     markvalue(g, &cl->upvalue[i]);
-  return 1 + cl->nupvalues;
 }
 
 /*
 ** Traverse a Lua closure, marking its prototype and its upvalues.
 ** (Both can be NULL while closure is being created.)
 */
-static int traverseLclosure (global_State *g, LClosure *cl) {
+static void traverseLclosure (global_State *g, LClosure *cl) {
   int i;
   markobjectN(g, cl->p);  /* mark its prototype */
   for (i = 0; i < cl->nupvalues; i++) {  /* visit its upvalues */
     UpVal *uv = cl->upvals[i];
     markobjectN(g, uv);  /* mark upvalue */
   }
-  return 1 + cl->nupvalues;
 }
 
 
@@ -626,13 +628,13 @@ static int traverseLclosure (global_State *g, LClosure *cl) {
 ** (which can only happen in generational mode) or if the traverse is in
 ** the propagate phase (which can only happen in incremental mode).
 */
-static int traversethread (global_State *g, lua_State *th) {
+static void traversethread (global_State *g, lua_State *th) {
   UpVal *uv;
   StkId o = th->stack.p;
   if (isold(th) || g->gcstate == GCSpropagate)
     linkgclist(th, g->grayagain);  /* insert into 'grayagain' list */
   if (o == NULL)
-    return 1;  /* stack not completely built yet */
+    return;  /* stack not completely built yet */
   lua_assert(g->gcstate == GCSatomic ||
              th->openupval == NULL || isintwups(th));
   for (; o < th->top.p; o++)  /* mark live elements in the stack */
@@ -650,34 +652,35 @@ static int traversethread (global_State *g, lua_State *th) {
       g->twups = th;
     }
   }
-  return 1 + stacksize(th);
 }
 
 
 /*
 ** traverse one gray object, turning it to black.
 */
-static lu_mem propagatemark (global_State *g) {
+static void propagatemark (global_State *g) {
   GCObject *o = g->gray;
   nw2black(o);
   g->gray = *getgclist(o);  /* remove from 'gray' list */
   switch (o->tt) {
-    case LUA_VTABLE: return traversetable(g, gco2t(o));
-    case LUA_VUSERDATA: return traverseudata(g, gco2u(o));
-    case LUA_VLCL: return traverseLclosure(g, gco2lcl(o));
-    case LUA_VCCL: return traverseCclosure(g, gco2ccl(o));
-    case LUA_VPROTO: return traverseproto(g, gco2p(o));
-    case LUA_VTHREAD: return traversethread(g, gco2th(o));
-    default: lua_assert(0); return 0;
+    case LUA_VTABLE: traversetable(g, gco2t(o)); break;
+    case LUA_VUSERDATA: traverseudata(g, gco2u(o)); break;
+    case LUA_VLCL: traverseLclosure(g, gco2lcl(o)); break;
+    case LUA_VCCL: traverseCclosure(g, gco2ccl(o)); break;
+    case LUA_VPROTO: traverseproto(g, gco2p(o)); break;
+    case LUA_VTHREAD: traversethread(g, gco2th(o)); break;
+    default: lua_assert(0);
   }
 }
 
 
-static lu_mem propagateall (global_State *g) {
-  lu_mem tot = 0;
-  while (g->gray)
-    tot += propagatemark(g);
-  return tot;
+static l_obj propagateall (global_State *g) {
+  l_obj work = 0;
+  while (g->gray) {
+    propagatemark(g);
+    work++;
+  }
+  return work;
 }
 
 
@@ -686,10 +689,10 @@ static lu_mem propagateall (global_State *g) {
 ** Repeat until it converges, that is, nothing new is marked. 'dir'
 ** inverts the direction of the traversals, trying to speed up
 ** convergence on chains in the same table.
-**
 */
-static void convergeephemerons (global_State *g) {
+static l_obj convergeephemerons (global_State *g) {
   int changed;
+  l_obj work = 0;
   int dir = 0;
   do {
     GCObject *w;
@@ -704,9 +707,11 @@ static void convergeephemerons (global_State *g) {
         propagateall(g);  /* propagate changes */
         changed = 1;  /* will have to revisit all ephemeron tables */
       }
+      work++;
     }
     dir = !dir;  /* invert direction next time */
   } while (changed);  /* repeat until no more changes */
+  return work;
 }
 
 /* }====================================================== */
@@ -722,7 +727,8 @@ static void convergeephemerons (global_State *g) {
 /*
 ** clear entries with unmarked keys from all weaktables in list 'l'
 */
-static void clearbykeys (global_State *g, GCObject *l) {
+static l_obj clearbykeys (global_State *g, GCObject *l) {
+  l_obj work = 0;
   for (; l; l = gco2t(l)->gclist) {
     Table *h = gco2t(l);
     Node *limit = gnodelast(h);
@@ -733,7 +739,9 @@ static void clearbykeys (global_State *g, GCObject *l) {
       if (isempty(gval(n)))  /* is entry empty? */
         clearkey(n);  /* clear its key */
     }
+    work++;
   }
+  return work;
 }
 
 
@@ -741,16 +749,17 @@ static void clearbykeys (global_State *g, GCObject *l) {
 ** clear entries with unmarked values from all weaktables in list 'l' up
 ** to element 'f'
 */
-static void clearbyvalues (global_State *g, GCObject *l, GCObject *f) {
+static l_obj clearbyvalues (global_State *g, GCObject *l, GCObject *f) {
+  l_obj work = 0;
   for (; l != f; l = gco2t(l)->gclist) {
     Table *h = gco2t(l);
     Node *n, *limit = gnodelast(h);
     unsigned int i;
     unsigned int asize = luaH_realasize(h);
     for (i = 0; i < asize; i++) {
-      TValue *o = &h->array[i];
-      if (iscleared(g, gcvalueN(o)))  /* value was collected? */
-        setempty(o);  /* remove entry */
+      GCObject *o = gcvalarr(h, i);
+      if (iscleared(g, o))  /* value was collected? */
+        *getArrTag(h, i) = LUA_VEMPTY;  /* remove entry */
     }
     for (n = gnode(h, 0); n < limit; n++) {
       if (iscleared(g, gcvalueN(gval(n))))  /* unmarked value? */
@@ -758,7 +767,9 @@ static void clearbyvalues (global_State *g, GCObject *l, GCObject *f) {
       if (isempty(gval(n)))  /* is entry empty? */
         clearkey(n);  /* clear its key */
     }
+    work++;
   }
+  return work;
 }
 
 
@@ -770,6 +781,7 @@ static void freeupval (lua_State *L, UpVal *uv) {
 
 
 static void freeobj (lua_State *L, GCObject *o) {
+  G(L)->totalobjs--;
   switch (o->tt) {
     case LUA_VPROTO:
       luaF_freeproto(L, gco2p(o));
@@ -801,12 +813,14 @@ static void freeobj (lua_State *L, GCObject *o) {
     case LUA_VSHRSTR: {
       TString *ts = gco2ts(o);
       luaS_remove(L, ts);  /* remove it from hash table */
-      luaM_freemem(L, ts, sizelstring(ts->shrlen));
+      luaM_freemem(L, ts, sizestrshr(cast_uint(ts->shrlen)));
       break;
     }
     case LUA_VLNGSTR: {
       TString *ts = gco2ts(o);
-      luaM_freemem(L, ts, sizelstring(ts->u.lnglen));
+      if (ts->shrlen == LSTRMEM)  /* must free external string? */
+        (*ts->falloc)(ts->ud, ts->contents, ts->u.lnglen + 1, 0);
+      luaM_freemem(L, ts, luaS_sizelngstr(ts->u.lnglen, ts->shrlen));
       break;
     }
     default: lua_assert(0);
@@ -817,15 +831,14 @@ static void freeobj (lua_State *L, GCObject *o) {
 /*
 ** sweep at most 'countin' elements from a list of GCObjects erasing dead
 ** objects, where a dead object is one marked with the old (non current)
-** white; change all non-dead objects back to white, preparing for next
-** collection cycle. Return where to continue the traversal or NULL if
-** list is finished. ('*countout' gets the number of elements traversed.)
+** white; change all non-dead objects back to white (and new), preparing
+** for next collection cycle. Return where to continue the traversal or
+** NULL if list is finished.
 */
-static GCObject **sweeplist (lua_State *L, GCObject **p, int countin,
-                             int *countout) {
+static GCObject **sweeplist (lua_State *L, GCObject **p, l_obj countin) {
   global_State *g = G(L);
   int ow = otherwhite(g);
-  int i;
+  l_obj i;
   int white = luaC_white(g);  /* current white */
   for (i = 0; *p != NULL && i < countin; i++) {
     GCObject *curr = *p;
@@ -834,13 +847,11 @@ static GCObject **sweeplist (lua_State *L, GCObject **p, int countin,
       *p = curr->next;  /* remove 'curr' from list */
       freeobj(L, curr);  /* erase 'curr' */
     }
-    else {  /* change mark to 'white' */
-      curr->marked = cast_byte((marked & ~maskgcbits) | white);
+    else {  /* change mark to 'white' and age to 'new' */
+      curr->marked = cast_byte((marked & ~maskgcbits) | white | G_NEW);
       p = &curr->next;  /* go to next element */
     }
   }
-  if (countout)
-    *countout = i;  /* number of elements traversed */
   return (*p == NULL) ? NULL : p;
 }
 
@@ -851,7 +862,7 @@ static GCObject **sweeplist (lua_State *L, GCObject **p, int countin,
 static GCObject **sweeptolive (lua_State *L, GCObject **p) {
   GCObject **old = p;
   do {
-    p = sweeplist(L, p, 1, NULL);
+    p = sweeplist(L, p, 1);
   } while (p == old);
   return p;
 }
@@ -870,11 +881,8 @@ static GCObject **sweeptolive (lua_State *L, GCObject **p) {
 */
 static void checkSizes (lua_State *L, global_State *g) {
   if (!g->gcemergency) {
-    if (g->strt.nuse < g->strt.size / 4) {  /* string table too big? */
-      l_mem olddebt = g->GCdebt;
+    if (g->strt.nuse < g->strt.size / 4)  /* string table too big? */
       luaS_resize(L, g->strt.size / 2);
-      g->GCestimate += g->GCdebt - olddebt;  /* correct estimate */
-    }
   }
 }
 
@@ -914,7 +922,7 @@ static void GCTM (lua_State *L) {
   if (!notm(tm)) {  /* is there a finalizer? */
     int status;
     lu_byte oldah = L->allowhook;
-    int oldgcstp  = g->gcstp;
+    lu_byte oldgcstp  = g->gcstp;
     g->gcstp |= GCSTPGC;  /* avoid GC steps */
     L->allowhook = 0;  /* stop debug hooks during GC metamethod */
     setobj2s(L, L->top.p++, tm);  /* push finalizer... */
@@ -929,18 +937,6 @@ static void GCTM (lua_State *L) {
       L->top.p--;  /* pops error object */
     }
   }
-}
-
-
-/*
-** Call a few finalizers
-*/
-static int runafewfinalizers (lua_State *L, int n) {
-  global_State *g = G(L);
-  int i;
-  for (i = 0; i < n && g->tobefnz; i++)
-    GCTM(L);  /* call one finalizer */
-  return i;
 }
 
 
@@ -1051,21 +1047,14 @@ void luaC_checkfinalizer (lua_State *L, GCObject *o, Table *mt) {
 
 
 /*
-** Set the "time" to wait before starting a new GC cycle; cycle will
-** start when memory use hits the threshold of ('estimate' * pause /
-** PAUSEADJ). (Division by 'estimate' should be OK: it cannot be zero,
-** because Lua cannot even start with less than PAUSEADJ bytes).
+** Set the "time" to wait before starting a new incremental cycle;
+** cycle will start when number of objects in use hits the threshold of
+** approximately (marked * pause / 100).
 */
 static void setpause (global_State *g) {
-  l_mem threshold, debt;
-  int pause = getgcparam(g->gcpause);
-  l_mem estimate = g->GCestimate / PAUSEADJ;  /* adjust 'estimate' */
-  lua_assert(estimate > 0);
-  threshold = (pause < MAX_LMEM / estimate)  /* overflow? */
-            ? estimate * pause  /* no overflow */
-            : MAX_LMEM;  /* overflow; truncate to maximum */
-  debt = gettotalbytes(g) - threshold;
-  if (debt > 0) debt = 0;
+  l_obj threshold = applygcparam(g, PAUSE, g->marked);
+  l_obj debt = threshold - gettotalobjs(g);
+  if (debt < 0) debt = 0;
   luaE_setdebt(g, debt);
 }
 
@@ -1113,7 +1102,8 @@ static void sweep2old (lua_State *L, GCObject **p) {
 ** will also remove objects turned white here from any gray list.
 */
 static GCObject **sweepgen (lua_State *L, global_State *g, GCObject **p,
-                            GCObject *limit, GCObject **pfirstold1) {
+                            GCObject *limit, GCObject **pfirstold1,
+                            l_obj *paddedold) {
   static const lu_byte nextage[] = {
     G_SURVIVAL,  /* from G_NEW */
     G_OLD1,      /* from G_SURVIVAL */
@@ -1123,6 +1113,7 @@ static GCObject **sweepgen (lua_State *L, global_State *g, GCObject **p,
     G_TOUCHED1,  /* from G_TOUCHED1 (do not change) */
     G_TOUCHED2   /* from G_TOUCHED2 (do not change) */
   };
+  l_obj addedold = 0;
   int white = luaC_white(g);
   GCObject *curr;
   while ((curr = *p) != limit) {
@@ -1132,42 +1123,38 @@ static GCObject **sweepgen (lua_State *L, global_State *g, GCObject **p,
       freeobj(L, curr);  /* erase 'curr' */
     }
     else {  /* correct mark and age */
-      if (getage(curr) == G_NEW) {  /* new objects go back to white */
+      int age = getage(curr);
+      if (age == G_NEW) {  /* new objects go back to white */
         int marked = curr->marked & ~maskgcbits;  /* erase GC bits */
         curr->marked = cast_byte(marked | G_SURVIVAL | white);
       }
       else {  /* all other objects will be old, and so keep their color */
-        setage(curr, nextage[getage(curr)]);
-        if (getage(curr) == G_OLD1 && *pfirstold1 == NULL)
-          *pfirstold1 = curr;  /* first OLD1 object in the list */
+        lua_assert(age != G_OLD1);  /* advanced in 'markold' */
+        setage(curr, nextage[age]);
+        if (getage(curr) == G_OLD1) {
+          addedold++;  /* one more object becoming old */
+          if (*pfirstold1 == NULL)
+            *pfirstold1 = curr;  /* first OLD1 object in the list */
+        }
       }
       p = &curr->next;  /* go to next element */
     }
   }
+  *paddedold += addedold;
   return p;
 }
 
 
 /*
-** Traverse a list making all its elements white and clearing their
-** age. In incremental mode, all objects are 'new' all the time,
-** except for fixed strings (which are always old).
-*/
-static void whitelist (global_State *g, GCObject *p) {
-  int white = luaC_white(g);
-  for (; p != NULL; p = p->next)
-    p->marked = cast_byte((p->marked & ~maskgcbits) | white);
-}
-
-
-/*
-** Correct a list of gray objects. Return pointer to where rest of the
-** list should be linked.
+** Correct a list of gray objects. Return a pointer to the last element
+** left on the list, so that we can link another list to the end of
+** this one.
 ** Because this correction is done after sweeping, young objects might
 ** be turned white and still be in the list. They are only removed.
 ** 'TOUCHED1' objects are advanced to 'TOUCHED2' and remain on the list;
-** Non-white threads also remain on the list; 'TOUCHED2' objects become
-** regular old; they and anything else are removed from the list.
+** Non-white threads also remain on the list. 'TOUCHED2' objects and
+** anything else become regular old, are marked black, and are removed
+** from the list.
 */
 static GCObject **correctgraylist (GCObject **p) {
   GCObject *curr;
@@ -1178,7 +1165,7 @@ static GCObject **correctgraylist (GCObject **p) {
     else if (getage(curr) == G_TOUCHED1) {  /* touched in this cycle? */
       lua_assert(isgray(curr));
       nw2black(curr);  /* make it black, for next barrier */
-      changeage(curr, G_TOUCHED1, G_TOUCHED2);
+      setage(curr, G_TOUCHED2);
       goto remain;  /* keep it in the list and go to next element */
     }
     else if (curr->tt == LUA_VTHREAD) {
@@ -1188,7 +1175,7 @@ static GCObject **correctgraylist (GCObject **p) {
     else {  /* everything else is removed */
       lua_assert(isold(curr));  /* young objects should be white here */
       if (getage(curr) == G_TOUCHED2)  /* advance from TOUCHED2... */
-        changeage(curr, G_TOUCHED2, G_OLD);  /* ... to OLD */
+        setage(curr, G_OLD);  /* ... to OLD */
       nw2black(curr);  /* make object black (to be removed) */
       goto remove;
     }
@@ -1215,15 +1202,15 @@ static void correctgraylists (global_State *g) {
 
 /*
 ** Mark black 'OLD1' objects when starting a new young collection.
-** Gray objects are already in some gray list, and so will be visited
-** in the atomic step.
+** Gray objects are already in some gray list, and so will be visited in
+** the atomic step.
 */
 static void markold (global_State *g, GCObject *from, GCObject *to) {
   GCObject *p;
   for (p = from; p != to; p = p->next) {
     if (getage(p) == G_OLD1) {
       lua_assert(!iswhite(p));
-      changeage(p, G_OLD1, G_OLD);  /* now they are old */
+      setage(p, G_OLD);  /* now they are old */
       if (isblack(p))
         reallymarkobject(g, p);
     }
@@ -1244,11 +1231,46 @@ static void finishgencycle (lua_State *L, global_State *g) {
 
 
 /*
+** Shifts from a minor collection to major collections. It starts in
+** the "sweep all" state to clear all objects, which are mostly black
+** in generational mode.
+*/
+static void minor2inc (lua_State *L, global_State *g, lu_byte kind) {
+  g->GCmajorminor = g->marked;  /* number of live objects */
+  g->gckind = kind;
+  g->reallyold = g->old1 = g->survival = NULL;
+  g->finobjrold = g->finobjold1 = g->finobjsur = NULL;
+  entersweep(L);  /* continue as an incremental cycle */
+  /* set a debt equal to the step size */
+  luaE_setdebt(g, applygcparam(g, STEPSIZE, 100));
+}
+
+
+/*
+** Decide whether to shift to major mode. It tests two conditions:
+** 1) Whether the number of added old objects in this collection is more
+** than half the number of new objects. ('step' is the number of objects
+** created between minor collections. Except for forward barriers, it
+** is the maximum number of objects that can become old in each minor
+** collection.)
+** 2) Whether the accumulated number of added old objects is larger
+** than 'minormajor'% of the number of lived objects after the last
+** major collection. (That percentage is computed in 'limit'.)
+*/
+static int checkminormajor (global_State *g, l_obj addedold1) {
+  l_obj step = applygcparam(g, MINORMUL, g->GCmajorminor);
+  l_obj limit = applygcparam(g, MINORMAJOR, g->GCmajorminor);
+  return (addedold1 >= (step >> 1) || g->marked >= limit);
+}
+
+/*
 ** Does a young collection. First, mark 'OLD1' objects. Then does the
-** atomic step. Then, sweep all lists and advance pointers. Finally,
-** finish the collection.
+** atomic step. Then, check whether to continue in minor mode. If so,
+** sweep all lists and advance pointers. Finally, finish the collection.
 */
 static void youngcollection (lua_State *L, global_State *g) {
+  l_obj addedold1 = 0;
+  l_obj marked = g->marked;  /* preserve 'g->marked' */
   GCObject **psurvival;  /* to point to first non-dead survival object */
   GCObject *dummy;  /* dummy out parameter to 'sweepgen' */
   lua_assert(g->gcstate == GCSpropagate);
@@ -1258,28 +1280,39 @@ static void youngcollection (lua_State *L, global_State *g) {
   }
   markold(g, g->finobj, g->finobjrold);
   markold(g, g->tobefnz, NULL);
-  atomic(L);
+
+  atomic(L);  /* will lose 'g->marked' */
 
   /* sweep nursery and get a pointer to its last live element */
   g->gcstate = GCSswpallgc;
-  psurvival = sweepgen(L, g, &g->allgc, g->survival, &g->firstold1);
+  psurvival = sweepgen(L, g, &g->allgc, g->survival, &g->firstold1, &addedold1);
   /* sweep 'survival' */
-  sweepgen(L, g, psurvival, g->old1, &g->firstold1);
+  sweepgen(L, g, psurvival, g->old1, &g->firstold1, &addedold1);
   g->reallyold = g->old1;
   g->old1 = *psurvival;  /* 'survival' survivals are old now */
   g->survival = g->allgc;  /* all news are survivals */
 
   /* repeat for 'finobj' lists */
   dummy = NULL;  /* no 'firstold1' optimization for 'finobj' lists */
-  psurvival = sweepgen(L, g, &g->finobj, g->finobjsur, &dummy);
+  psurvival = sweepgen(L, g, &g->finobj, g->finobjsur, &dummy, &addedold1);
   /* sweep 'survival' */
-  sweepgen(L, g, psurvival, g->finobjold1, &dummy);
+  sweepgen(L, g, psurvival, g->finobjold1, &dummy, &addedold1);
   g->finobjrold = g->finobjold1;
   g->finobjold1 = *psurvival;  /* 'survival' survivals are old now */
   g->finobjsur = g->finobj;  /* all news are survivals */
 
-  sweepgen(L, g, &g->tobefnz, NULL, &dummy);
-  finishgencycle(L, g);
+  sweepgen(L, g, &g->tobefnz, NULL, &dummy, &addedold1);
+
+  /* keep total number of added old1 objects */
+  g->marked = marked + addedold1;
+
+  /* decide whether to shift to major mode */
+  if (checkminormajor(g, addedold1)) {
+    minor2inc(L, g, KGC_GENMAJOR);  /* go to major mode */
+    g->marked = 0;  /* avoid pause in first major cycle */
+  }
+  else
+    finishgencycle(L, g);  /* still in minor mode; finish it */
 }
 
 
@@ -1304,19 +1337,19 @@ static void atomic2gen (lua_State *L, global_State *g) {
 
   sweep2old(L, &g->tobefnz);
 
-  g->gckind = KGC_GEN;
-  g->lastatomic = 0;
-  g->GCestimate = gettotalbytes(g);  /* base for memory control */
+  g->gckind = KGC_GENMINOR;
+  g->GCmajorminor = g->marked;  /* "base" for number of objects */
+  g->marked = 0;  /* to count the number of added old1 objects */
   finishgencycle(L, g);
 }
 
 
 /*
 ** Set debt for the next minor collection, which will happen when
-** memory grows 'genminormul'%.
+** total number of objects grows 'genminormul'%.
 */
 static void setminordebt (global_State *g) {
-  luaE_setdebt(g, -(cast(l_mem, (gettotalbytes(g) / 100)) * g->genminormul));
+  luaE_setdebt(g, applygcparam(g, MINORMUL, g->GCmajorminor));
 }
 
 
@@ -1326,31 +1359,12 @@ static void setminordebt (global_State *g) {
 ** are cleared. Then, turn all objects into old and finishes the
 ** collection.
 */
-static lu_mem entergen (lua_State *L, global_State *g) {
-  lu_mem numobjs;
-  luaC_runtilstate(L, bitmask(GCSpause));  /* prepare to start a new cycle */
-  luaC_runtilstate(L, bitmask(GCSpropagate));  /* start new cycle */
-  numobjs = atomic(L);  /* propagates all and then do the atomic stuff */
+static void entergen (lua_State *L, global_State *g) {
+  luaC_runtilstate(L, GCSpause, 1);  /* prepare to start a new cycle */
+  luaC_runtilstate(L, GCSpropagate, 1);  /* start new cycle */
+  atomic(L);  /* propagates all and then do the atomic stuff */
   atomic2gen(L, g);
   setminordebt(g);  /* set debt assuming next cycle will be minor */
-  return numobjs;
-}
-
-
-/*
-** Enter incremental mode. Turn all objects white, make all
-** intermediate lists point to NULL (to avoid invalid pointers),
-** and go to the pause state.
-*/
-static void enterinc (global_State *g) {
-  whitelist(g, g->allgc);
-  g->reallyold = g->old1 = g->survival = NULL;
-  whitelist(g, g->finobj);
-  whitelist(g, g->tobefnz);
-  g->finobjrold = g->finobjold1 = g->finobjsur = NULL;
-  g->gcstate = GCSpause;
-  g->gckind = KGC_INC;
-  g->lastatomic = 0;
 }
 
 
@@ -1359,111 +1373,49 @@ static void enterinc (global_State *g) {
 */
 void luaC_changemode (lua_State *L, int newmode) {
   global_State *g = G(L);
-  if (newmode != g->gckind) {
-    if (newmode == KGC_GEN)  /* entering generational mode? */
+  if (g->gckind == KGC_GENMAJOR)  /* doing major collections? */
+    g->gckind = KGC_INC;  /* already incremental but in name */
+  if (newmode != g->gckind) {  /* does it need to change? */
+    if (newmode == KGC_INC)  /* entering incremental mode? */
+      minor2inc(L, g, KGC_INC);  /* entering incremental mode */
+    else {
+      lua_assert(newmode == KGC_GENMINOR);
       entergen(L, g);
-    else
-      enterinc(g);  /* entering incremental mode */
+    }
   }
-  g->lastatomic = 0;
 }
 
 
 /*
 ** Does a full collection in generational mode.
 */
-static lu_mem fullgen (lua_State *L, global_State *g) {
-  enterinc(g);
-  return entergen(L, g);
+static void fullgen (lua_State *L, global_State *g) {
+  minor2inc(L, g, KGC_INC);
+  entergen(L, g);
 }
 
 
 /*
-** Does a major collection after last collection was a "bad collection".
-**
-** When the program is building a big structure, it allocates lots of
-** memory but generates very little garbage. In those scenarios,
-** the generational mode just wastes time doing small collections, and
-** major collections are frequently what we call a "bad collection", a
-** collection that frees too few objects. To avoid the cost of switching
-** between generational mode and the incremental mode needed for full
-** (major) collections, the collector tries to stay in incremental mode
-** after a bad collection, and to switch back to generational mode only
-** after a "good" collection (one that traverses less than 9/8 objects
-** of the previous one).
-** The collector must choose whether to stay in incremental mode or to
-** switch back to generational mode before sweeping. At this point, it
-** does not know the real memory in use, so it cannot use memory to
-** decide whether to return to generational mode. Instead, it uses the
-** number of objects traversed (returned by 'atomic') as a proxy. The
-** field 'g->lastatomic' keeps this count from the last collection.
-** ('g->lastatomic != 0' also means that the last collection was bad.)
+** After an atomic incremental step from a major collection,
+** check whether collector could return to minor collections.
+** It checks whether the number of objects 'tobecollected'
+** is greater than 'majorminor'% of the number of objects added
+** since the last collection ('addedobjs').
 */
-static void stepgenfull (lua_State *L, global_State *g) {
-  lu_mem newatomic;  /* count of traversed objects */
-  lu_mem lastatomic = g->lastatomic;  /* count from last collection */
-  if (g->gckind == KGC_GEN)  /* still in generational mode? */
-    enterinc(g);  /* enter incremental mode */
-  luaC_runtilstate(L, bitmask(GCSpropagate));  /* start new cycle */
-  newatomic = atomic(L);  /* mark everybody */
-  if (newatomic < lastatomic + (lastatomic >> 3)) {  /* good collection? */
-    atomic2gen(L, g);  /* return to generational mode */
-    setminordebt(g);
-  }
-  else {  /* another bad collection; stay in incremental mode */
-    g->GCestimate = gettotalbytes(g);  /* first estimate */
-    entersweep(L);
-    luaC_runtilstate(L, bitmask(GCSpause));  /* finish collection */
-    setpause(g);
-    g->lastatomic = newatomic;
-  }
-}
-
-
-/*
-** Does a generational "step".
-** Usually, this means doing a minor collection and setting the debt to
-** make another collection when memory grows 'genminormul'% larger.
-**
-** However, there are exceptions.  If memory grows 'genmajormul'%
-** larger than it was at the end of the last major collection (kept
-** in 'g->GCestimate'), the function does a major collection. At the
-** end, it checks whether the major collection was able to free a
-** decent amount of memory (at least half the growth in memory since
-** previous major collection). If so, the collector keeps its state,
-** and the next collection will probably be minor again. Otherwise,
-** we have what we call a "bad collection". In that case, set the field
-** 'g->lastatomic' to signal that fact, so that the next collection will
-** go to 'stepgenfull'.
-**
-** 'GCdebt <= 0' means an explicit call to GC step with "size" zero;
-** in that case, do a minor collection.
-*/
-static void genstep (lua_State *L, global_State *g) {
-  if (g->lastatomic != 0)  /* last collection was a bad one? */
-    stepgenfull(L, g);  /* do a full step */
-  else {
-    lu_mem majorbase = g->GCestimate;  /* memory after last major collection */
-    lu_mem majorinc = (majorbase / 100) * getgcparam(g->genmajormul);
-    if (g->GCdebt > 0 && gettotalbytes(g) > majorbase + majorinc) {
-      lu_mem numobjs = fullgen(L, g);  /* do a major collection */
-      if (gettotalbytes(g) < majorbase + (majorinc / 2)) {
-        /* collected at least half of memory growth since last major
-           collection; keep doing minor collections. */
-        lua_assert(g->lastatomic == 0);
-      }
-      else {  /* bad collection */
-        g->lastatomic = numobjs;  /* signal that last collection was bad */
-        setpause(g);  /* do a long wait for next (major) collection */
-      }
-    }
-    else {  /* regular case; do a minor collection */
-      youngcollection(L, g);
+static int checkmajorminor (lua_State *L, global_State *g) {
+  if (g->gckind == KGC_GENMAJOR) {  /* generational mode? */
+    l_obj numobjs = gettotalobjs(g);
+    l_obj addedobjs = numobjs - g->GCmajorminor;
+    l_obj limit = applygcparam(g, MAJORMINOR, addedobjs);
+    l_obj tobecollected = numobjs - g->marked;
+    if (tobecollected > limit) {
+      atomic2gen(L, g);  /* return to generational mode */
       setminordebt(g);
-      g->GCestimate = majorbase;  /* preserve base value */
+      return 0;  /* exit incremental collection */
     }
   }
-  lua_assert(isdecGCmodegen(g));
+  g->GCmajorminor = g->marked;  /* prepare for next collection */
+  return 1;  /* stay doing incremental collections */
 }
 
 /* }====================================================== */
@@ -1522,9 +1474,9 @@ void luaC_freeallobjects (lua_State *L) {
 }
 
 
-static lu_mem atomic (lua_State *L) {
+static l_obj atomic (lua_State *L) {
+  l_obj work = 0;
   global_State *g = G(L);
-  lu_mem work = 0;
   GCObject *origweak, *origall;
   GCObject *grayagain = g->grayagain;  /* save original list */
   g->grayagain = NULL;
@@ -1541,50 +1493,60 @@ static lu_mem atomic (lua_State *L) {
   work += propagateall(g);  /* propagate changes */
   g->gray = grayagain;
   work += propagateall(g);  /* traverse 'grayagain' list */
-  convergeephemerons(g);
+  work += convergeephemerons(g);
   /* at this point, all strongly accessible objects are marked. */
   /* Clear values from weak tables, before checking finalizers */
-  clearbyvalues(g, g->weak, NULL);
-  clearbyvalues(g, g->allweak, NULL);
+  work += clearbyvalues(g, g->weak, NULL);
+  work += clearbyvalues(g, g->allweak, NULL);
   origweak = g->weak; origall = g->allweak;
   separatetobefnz(g, 0);  /* separate objects to be finalized */
   work += markbeingfnz(g);  /* mark objects that will be finalized */
   work += propagateall(g);  /* remark, to propagate 'resurrection' */
-  convergeephemerons(g);
+  work += convergeephemerons(g);
   /* at this point, all resurrected objects are marked. */
   /* remove dead objects from weak tables */
-  clearbykeys(g, g->ephemeron);  /* clear keys from all ephemeron tables */
-  clearbykeys(g, g->allweak);  /* clear keys from all 'allweak' tables */
+  work += clearbykeys(g, g->ephemeron);  /* clear keys from all ephemeron */
+  work += clearbykeys(g, g->allweak);  /* clear keys from all 'allweak' */
   /* clear values from resurrected weak tables */
-  clearbyvalues(g, g->weak, origweak);
-  clearbyvalues(g, g->allweak, origall);
+  work += clearbyvalues(g, g->weak, origweak);
+  work += clearbyvalues(g, g->allweak, origall);
   luaS_clearcache(g);
   g->currentwhite = cast_byte(otherwhite(g));  /* flip current white */
   lua_assert(g->gray == NULL);
-  return work;  /* estimate of slots marked by 'atomic' */
+  return work;
 }
 
 
-static int sweepstep (lua_State *L, global_State *g,
-                      int nextstate, GCObject **nextlist) {
-  if (g->sweepgc) {
-    l_mem olddebt = g->GCdebt;
-    int count;
-    g->sweepgc = sweeplist(L, g->sweepgc, GCSWEEPMAX, &count);
-    g->GCestimate += g->GCdebt - olddebt;  /* update estimate */
-    return count;
-  }
+/*
+** Do a sweep step. The normal case (not fast) sweeps at most GCSWEEPMAX
+** elements. The fast case sweeps the whole list.
+*/
+static void sweepstep (lua_State *L, global_State *g,
+                       lu_byte nextstate, GCObject **nextlist, int fast) {
+  if (g->sweepgc)
+    g->sweepgc = sweeplist(L, g->sweepgc, fast ? MAX_LOBJ : GCSWEEPMAX);
   else {  /* enter next state */
     g->gcstate = nextstate;
     g->sweepgc = nextlist;
-    return 0;  /* no work done */
   }
 }
 
 
-static lu_mem singlestep (lua_State *L) {
+/*
+** Performs one incremental "step" in an incremental garbage collection.
+** For indivisible work, a step goes to the next state. When marking
+** (propagating), a step traverses one object. When sweeping, a step
+** sweeps GCSWEEPMAX objects, to avoid a big overhead for sweeping
+** objects one by one. (Sweeping is inexpensive, no matter the
+** object.) When 'fast' is true, 'singlestep' tries to finish a state
+** "as fast as possible". In particular, it skips the propagation
+** phase and leaves all objects to be traversed by the atomic phase:
+** That avoids traversing twice some objects, such as threads and
+** weak tables.
+*/
+static l_obj singlestep (lua_State *L, int fast) {
   global_State *g = G(L);
-  lu_mem work;
+  l_obj work;
   lua_assert(!g->gcstopem);  /* collector is not reentrant */
   g->gcstopem = 1;  /* no emergency collections while collecting */
   switch (g->gcstate) {
@@ -1595,30 +1557,35 @@ static lu_mem singlestep (lua_State *L) {
       break;
     }
     case GCSpropagate: {
-      if (g->gray == NULL) {  /* no more gray objects? */
+      if (fast || g->gray == NULL) {
         g->gcstate = GCSenteratomic;  /* finish propagate phase */
         work = 0;
       }
-      else
-        work = propagatemark(g);  /* traverse one gray object */
+      else {
+        propagatemark(g);  /* traverse one gray object */
+        work = 1;
+      }
       break;
     }
     case GCSenteratomic: {
-      work = atomic(L);  /* work is what was traversed by 'atomic' */
-      entersweep(L);
-      g->GCestimate = gettotalbytes(g);  /* first estimate */
+      work = atomic(L);
+      if (checkmajorminor(L, g))
+        entersweep(L);
       break;
     }
     case GCSswpallgc: {  /* sweep "regular" objects */
-      work = sweepstep(L, g, GCSswpfinobj, &g->finobj);
+      sweepstep(L, g, GCSswpfinobj, &g->finobj, fast);
+      work = GCSWEEPMAX;
       break;
     }
     case GCSswpfinobj: {  /* sweep objects with finalizers */
-      work = sweepstep(L, g, GCSswptobefnz, &g->tobefnz);
+      sweepstep(L, g, GCSswptobefnz, &g->tobefnz, fast);
+      work = GCSWEEPMAX;
       break;
     }
     case GCSswptobefnz: {  /* sweep objects to be finalized */
-      work = sweepstep(L, g, GCSswpend, NULL);
+      sweepstep(L, g, GCSswpend, NULL, fast);
+      work = GCSWEEPMAX;
       break;
     }
     case GCSswpend: {  /* finish sweeps */
@@ -1627,10 +1594,11 @@ static lu_mem singlestep (lua_State *L) {
       work = 0;
       break;
     }
-    case GCScallfin: {  /* call remaining finalizers */
+    case GCScallfin: {  /* call finalizers */
       if (g->tobefnz && !g->gcemergency) {
         g->gcstopem = 0;  /* ok collections during finalizers */
-        work = runafewfinalizers(L, GCFINMAX) * GCFINALIZECOST;
+        GCTM(L);  /* call one finalizer */
+        work = 1;
       }
       else {  /* emergency mode or no more finalizers */
         g->gcstate = GCSpause;  /* finish collection */
@@ -1646,13 +1614,15 @@ static lu_mem singlestep (lua_State *L) {
 
 
 /*
-** advances the garbage collector until it reaches a state allowed
-** by 'statemask'
+** Advances the garbage collector until it reaches the given state.
+** (The option 'fast' is only for testing; in normal code, 'fast'
+** here is always true.)
 */
-void luaC_runtilstate (lua_State *L, int statesmask) {
+void luaC_runtilstate (lua_State *L, int state, int fast) {
   global_State *g = G(L);
-  while (!testbit(statesmask, g->gcstate))
-    singlestep(L);
+  lua_assert(g->gckind == KGC_INC);
+  while (state != g->gcstate)
+    singlestep(L, fast);
 }
 
 
@@ -1665,21 +1635,23 @@ void luaC_runtilstate (lua_State *L, int statesmask) {
 ** controls when next step will be performed.
 */
 static void incstep (lua_State *L, global_State *g) {
-  int stepmul = (getgcparam(g->gcstepmul) | 1);  /* avoid division by 0 */
-  l_mem debt = (g->GCdebt / WORK2MEM) * stepmul;
-  l_mem stepsize = (g->gcstepsize <= log2maxs(l_mem))
-                 ? ((cast(l_mem, 1) << g->gcstepsize) / WORK2MEM) * stepmul
-                 : MAX_LMEM;  /* overflow; keep maximum value */
-  do {  /* repeat until pause or enough "credit" (negative debt) */
-    lu_mem work = singlestep(L);  /* perform one single step */
-    debt -= work;
-  } while (debt > -stepsize && g->gcstate != GCSpause);
+  l_obj stepsize = applygcparam(g, STEPSIZE, 100);
+  l_obj work2do = applygcparam(g, STEPMUL, stepsize);
+  int fast = 0;
+  if (work2do == 0) {  /* special case: do a full collection */
+    work2do = MAX_LOBJ;  /* do unlimited work */
+    fast = 1;
+  }
+  do {  /* repeat until pause or enough work */
+    l_obj work = singlestep(L, fast);  /* perform one single step */
+    if (g->gckind == KGC_GENMINOR)  /* returned to minor collections? */
+      return;  /* nothing else to be done here */
+    work2do -= work;
+  } while (work2do > 0 && g->gcstate != GCSpause);
   if (g->gcstate == GCSpause)
     setpause(g);  /* pause until next cycle */
-  else {
-    debt = (debt / stepmul) * WORK2MEM;  /* convert 'work units' to bytes */
-    luaE_setdebt(g, debt);
-  }
+  else
+    luaE_setdebt(g, stepsize);
 }
 
 /*
@@ -1689,13 +1661,19 @@ static void incstep (lua_State *L, global_State *g) {
 */
 void luaC_step (lua_State *L) {
   global_State *g = G(L);
+  lua_assert(!g->gcemergency);
   if (!gcrunning(g))  /* not running? */
-    luaE_setdebt(g, -2000);
+    luaE_setdebt(g, 2000);
   else {
-    if(isdecGCmodegen(g))
-      genstep(L, g);
-    else
-      incstep(L, g);
+    switch (g->gckind) {
+      case KGC_INC: case KGC_GENMAJOR:
+        incstep(L, g);
+        break;
+      case KGC_GENMINOR:
+        youngcollection(L, g);
+        setminordebt(g);
+        break;
+    }
   }
 }
 
@@ -1711,13 +1689,11 @@ static void fullinc (lua_State *L, global_State *g) {
   if (keepinvariant(g))  /* black objects? */
     entersweep(L); /* sweep everything to turn them back to white */
   /* finish any pending sweep phase to start a new cycle */
-  luaC_runtilstate(L, bitmask(GCSpause));
-  luaC_runtilstate(L, bitmask(GCSpropagate));  /* start new cycle */
-  g->gcstate = GCSenteratomic;  /* go straight to atomic phase ??? */
-  luaC_runtilstate(L, bitmask(GCScallfin));  /* run up to finalizers */
-  /* estimate must be correct after a full GC cycle */
-  lua_assert(g->GCestimate == gettotalbytes(g));
-  luaC_runtilstate(L, bitmask(GCSpause));  /* finish collection */
+  luaC_runtilstate(L, GCSpause, 1);
+  luaC_runtilstate(L, GCScallfin, 1);  /* run up to finalizers */
+  /* 'marked' must be correct after a full GC cycle */
+  lua_assert(g->marked == gettotalobjs(g));
+  luaC_runtilstate(L, GCSpause, 1);  /* finish collection */
   setpause(g);
 }
 
@@ -1730,11 +1706,16 @@ static void fullinc (lua_State *L, global_State *g) {
 void luaC_fullgc (lua_State *L, int isemergency) {
   global_State *g = G(L);
   lua_assert(!g->gcemergency);
-  g->gcemergency = isemergency;  /* set flag */
-  if (g->gckind == KGC_INC)
-    fullinc(L, g);
-  else
-    fullgen(L, g);
+  g->gcemergency = cast_byte(isemergency);  /* set flag */
+  switch (g->gckind) {
+    case KGC_GENMINOR: fullgen(L, g); break;
+    case KGC_INC: fullinc(L, g); break;
+    case KGC_GENMAJOR:
+      g->gckind = KGC_INC;
+      fullinc(L, g);
+      g->gckind = KGC_GENMAJOR;
+      break;
+  }
   g->gcemergency = 0;
 }
 

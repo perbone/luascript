@@ -7,13 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## 0.0.98 - 20240220
+## 0.0.99 - 2024-09-06
+
+### Changed
+
+- Update Lua to 5.4.7 from master
+
+## 0.0.98 - 2024-02-20
 
 ### Fixed
 
 - Fix broken compilation after Godo's API changes
 
-## 0.0.97 - 20240206
+## 0.0.97 - 2024-02-06
 
 ### Added
 

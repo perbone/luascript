@@ -18,6 +18,7 @@
 
 #include "lauxlib.h"
 #include "lualib.h"
+#include "llimits.h"
 
 
 /*
@@ -446,14 +447,6 @@ static int db_traceback (lua_State *L) {
 }
 
 
-static int db_setcstacklimit (lua_State *L) {
-  int limit = (int)luaL_checkinteger(L, 1);
-  int res = lua_setcstacklimit(L, limit);
-  lua_pushinteger(L, res);
-  return 1;
-}
-
-
 static const luaL_Reg dblib[] = {
   {"debug", db_debug},
   {"getuservalue", db_getuservalue},
@@ -471,7 +464,6 @@ static const luaL_Reg dblib[] = {
   {"setmetatable", db_setmetatable},
   {"setupvalue", db_setupvalue},
   {"traceback", db_traceback},
-  {"setcstacklimit", db_setcstacklimit},
   {NULL, NULL}
 };
 

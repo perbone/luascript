@@ -20,6 +20,7 @@
 
 #include "lauxlib.h"
 #include "lualib.h"
+#include "llimits.h"
 
 
 #undef PI
@@ -352,7 +353,7 @@ static lua_Number I2d (Rand64 x) {
   SRand64 sx = (SRand64)(trim64(x) >> shift64_FIG);
   lua_Number res = (lua_Number)(sx) * scaleFIG;
   if (sx < 0)
-    res += 1.0;  /* correct the two's complement if negative */
+    res += l_mathop(1.0);  /* correct the two's complement if negative */
   lua_assert(0 <= res && res < 1);
   return res;
 }
@@ -366,25 +367,17 @@ static lua_Number I2d (Rand64 x) {
 
 #else	/* no 'Rand64'   }{ */
 
-/* get an integer with at least 32 bits */
-#if LUAI_IS32INT
-typedef unsigned int lu_int32;
-#else
-typedef unsigned long lu_int32;
-#endif
-
-
 /*
 ** Use two 32-bit integers to represent a 64-bit quantity.
 */
 typedef struct Rand64 {
-  lu_int32 h;  /* higher half */
-  lu_int32 l;  /* lower half */
+  l_uint32 h;  /* higher half */
+  l_uint32 l;  /* lower half */
 } Rand64;
 
 
 /*
-** If 'lu_int32' has more than 32 bits, the extra bits do not interfere
+** If 'l_uint32' has more than 32 bits, the extra bits do not interfere
 ** with the 32 initial bits, except in a right shift and comparisons.
 ** Moreover, the final result has to discard the extra bits.
 */
@@ -398,7 +391,7 @@ typedef struct Rand64 {
 */
 
 /* build a new Rand64 value */
-static Rand64 packI (lu_int32 h, lu_int32 l) {
+static Rand64 packI (l_uint32 h, l_uint32 l) {
   Rand64 result;
   result.h = h;
   result.l = l;
@@ -471,7 +464,7 @@ static Rand64 nextrand (Rand64 *state) {
 */
 
 /* an unsigned 1 with proper type */
-#define UONE		((lu_int32)1)
+#define UONE		((l_uint32)1)
 
 
 #if FIGS <= 32
@@ -522,7 +515,7 @@ static lua_Unsigned I2UInt (Rand64 x) {
 
 /* convert a 'lua_Unsigned' to a 'Rand64' */
 static Rand64 Int2I (lua_Unsigned n) {
-  return packI((lu_int32)((n >> 31) >> 1), (lu_int32)n);
+  return packI((l_uint32)((n >> 31) >> 1), (l_uint32)n);
 }
 
 #endif  /* } */
@@ -585,7 +578,7 @@ static int math_random (lua_State *L) {
       low = 1;
       up = luaL_checkinteger(L, 1);
       if (up == 0) {  /* single 0 as argument? */
-        lua_pushinteger(L, I2UInt(rv));  /* full random integer */
+        lua_pushinteger(L, l_castU2S(I2UInt(rv)));  /* full random integer */
         return 1;
       }
       break;
@@ -601,7 +594,7 @@ static int math_random (lua_State *L) {
   luaL_argcheck(L, low <= up, 1, "interval is empty");
   /* project random integer into the interval [0, up - low] */
   p = project(I2UInt(rv), (lua_Unsigned)up - (lua_Unsigned)low, state);
-  lua_pushinteger(L, p + (lua_Unsigned)low);
+  lua_pushinteger(L, l_castU2S(p) + low);
   return 1;
 }
 
@@ -615,33 +608,23 @@ static void setseed (lua_State *L, Rand64 *state,
   state[3] = Int2I(0);
   for (i = 0; i < 16; i++)
     nextrand(state);  /* discard initial values to "spread" seed */
-  lua_pushinteger(L, n1);
-  lua_pushinteger(L, n2);
-}
-
-
-/*
-** Set a "random" seed. To get some randomness, use the current time
-** and the address of 'L' (in case the machine does address space layout
-** randomization).
-*/
-static void randseed (lua_State *L, RanState *state) {
-  lua_Unsigned seed1 = (lua_Unsigned)time(NULL);
-  lua_Unsigned seed2 = (lua_Unsigned)(size_t)L;
-  setseed(L, state->s, seed1, seed2);
+  lua_pushinteger(L, l_castU2S(n1));
+  lua_pushinteger(L, l_castU2S(n2));
 }
 
 
 static int math_randomseed (lua_State *L) {
   RanState *state = (RanState *)lua_touserdata(L, lua_upvalueindex(1));
+  lua_Unsigned n1, n2;
   if (lua_isnone(L, 1)) {
-    randseed(L, state);
+    n1 = luaL_makeseed(L);  /* "random" seed */
+    n2 = I2UInt(nextrand(state->s));  /* in case seed is not that random... */
   }
   else {
-    lua_Integer n1 = luaL_checkinteger(L, 1);
-    lua_Integer n2 = luaL_optinteger(L, 2, 0);
-    setseed(L, state->s, n1, n2);
+    n1 = l_castS2U(luaL_checkinteger(L, 1));
+    n2 = l_castS2U(luaL_optinteger(L, 2, 0));
   }
+  setseed(L, state->s, n1, n2);
   return 2;  /* return seeds */
 }
 
@@ -658,7 +641,7 @@ static const luaL_Reg randfuncs[] = {
 */
 static void setrandfunc (lua_State *L) {
   RanState *state = (RanState *)lua_newuserdatauv(L, sizeof(RanState), 0);
-  randseed(L, state);  /* initialize with a "random" seed */
+  setseed(L, state->s, luaL_makeseed(L), 0);  /* initialize with random seed */
   lua_pop(L, 2);  /* remove pushed seeds */
   luaL_setfuncs(L, randfuncs, 1);
 }

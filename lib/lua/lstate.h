@@ -142,6 +142,17 @@ struct lua_longjmp;  /* defined in ldo.c */
 #define EXTRA_STACK   5
 
 
+/*
+** Size of cache for strings in the API. 'N' is the number of
+** sets (better be a prime) and "M" is the size of each set.
+** (M == 1 makes a direct cache.)
+*/
+#if !defined(STRCACHE_N)
+#define STRCACHE_N              53
+#define STRCACHE_M              2
+#endif
+
+
 #define BASIC_STACK_SIZE        (2*LUA_MINSTACK)
 
 #define stacksize(th)	cast_int((th)->stack_last.p - (th)->stack.p)
@@ -149,13 +160,14 @@ struct lua_longjmp;  /* defined in ldo.c */
 
 /* kinds of Garbage Collection */
 #define KGC_INC		0	/* incremental gc */
-#define KGC_GEN		1	/* generational gc */
+#define KGC_GENMINOR	1	/* generational gc in minor (regular) mode */
+#define KGC_GENMAJOR	2	/* generational in major mode */
 
 
 typedef struct stringtable {
-  TString **hash;
+  TString **hash;  /* array of buckets (linked lists of strings) */
   int nuse;  /* number of elements */
-  int size;
+  int size;  /* number of buckets */
 } stringtable;
 
 
@@ -171,8 +183,6 @@ typedef struct stringtable {
 ** yield (from the yield until the next resume);
 ** - field 'nres' is used only while closing tbc variables when
 ** returning from a function;
-** - field 'transferinfo' is used only during call/returnhooks,
-** before the function starts or after it ends.
 */
 struct CallInfo {
   StkIdRel func;  /* function index in the stack */
@@ -194,35 +204,43 @@ struct CallInfo {
     int funcidx;  /* called-function index */
     int nyield;  /* number of values yielded */
     int nres;  /* number of values returned */
-    struct {  /* info about transferred values (for call/return hooks) */
-      unsigned short ftransfer;  /* offset of first value transferred */
-      unsigned short ntransfer;  /* number of values transferred */
-    } transferinfo;
   } u2;
-  short nresults;  /* expected number of results from this function */
-  unsigned short callstatus;
+  l_uint32 callstatus;
 };
 
 
 /*
 ** Bits in CallInfo status
 */
-#define CIST_OAH	(1<<0)	/* original value of 'allowhook' */
-#define CIST_C		(1<<1)	/* call is running a C function */
-#define CIST_FRESH	(1<<2)	/* call is on a fresh "luaV_execute" frame */
-#define CIST_HOOKED	(1<<3)	/* call is running a debug hook */
-#define CIST_YPCALL	(1<<4)	/* doing a yieldable protected call */
-#define CIST_TAIL	(1<<5)	/* call was tail called */
-#define CIST_HOOKYIELD	(1<<6)	/* last hook called yielded */
-#define CIST_FIN	(1<<7)	/* function "called" a finalizer */
-#define CIST_TRAN	(1<<8)	/* 'ci' has transfer information */
-#define CIST_CLSRET	(1<<9)  /* function is closing tbc variables */
-/* Bits 10-12 are used for CIST_RECST (see below) */
-#define CIST_RECST	10
+/* bits 0-7 are the expected number of results from this function + 1 */
+#define CIST_NRESULTS	0xff
+/* original value of 'allowhook' */
+#define CIST_OAH	(cast(l_uint32, 1) << 8)
+/* call is running a C function */
+#define CIST_C		(cast(l_uint32, 1) << 9)
+/* call is on a fresh "luaV_execute" frame */
+#define CIST_FRESH	(cast(l_uint32, 1) << 10)
+/* call is running a debug hook */
+#define CIST_HOOKED	(cast(l_uint32, 1) << 11)
+/* doing a yieldable protected call */
+#define CIST_YPCALL	(cast(l_uint32, 1) << 12)
+/* call was tail called */
+#define CIST_TAIL	(cast(l_uint32, 1) << 13)
+/* last hook called yielded */
+#define CIST_HOOKYIELD	(cast(l_uint32, 1) << 14)
+/* function "called" a finalizer */
+#define CIST_FIN	(cast(l_uint32, 1) << 15)
+ /* function is closing tbc variables */
+#define CIST_CLSRET	(cast(l_uint32, 1) << 16)
+/* Bits 17-19 are used for CIST_RECST (see below) */
+#define CIST_RECST	17  /* the offset, not the mask */
 #if defined(LUA_COMPAT_LT_LE)
-#define CIST_LEQ	(1<<13)  /* using __lt for __le */
+/* using __lt for __le */
+#define CIST_LEQ	(cast(l_uint32, 1) << 20)
 #endif
 
+
+#define get_nresults(cs)  (cast_int((cs) & CIST_NRESULTS) - 1)
 
 /*
 ** Field CIST_RECST stores the "recover status", used to keep the error
@@ -233,8 +251,8 @@ struct CallInfo {
 #define getcistrecst(ci)     (((ci)->callstatus >> CIST_RECST) & 7)
 #define setcistrecst(ci,st)  \
   check_exp(((st) & 7) == (st),   /* status must fit in three bits */  \
-            ((ci)->callstatus = ((ci)->callstatus & ~(7 << CIST_RECST))  \
-                                                  | ((st) << CIST_RECST)))
+            ((ci)->callstatus = ((ci)->callstatus & ~(7u << CIST_RECST))  \
+                                | (cast(l_uint32, st) << CIST_RECST)))
 
 
 /* active function is a Lua function */
@@ -243,9 +261,11 @@ struct CallInfo {
 /* call is running Lua code (not a hook) */
 #define isLuacode(ci)	(!((ci)->callstatus & (CIST_C | CIST_HOOKED)))
 
-/* assume that CIST_OAH has offset 0 and that 'v' is strictly 0/1 */
-#define setoah(st,v)	((st) = ((st) & ~CIST_OAH) | (v))
-#define getoah(st)	((st) & CIST_OAH)
+
+#define setoah(ci,v)  \
+  ((ci)->callstatus = ((v) ? (ci)->callstatus | CIST_OAH  \
+                           : (ci)->callstatus & ~CIST_OAH))
+#define getoah(ci)  (((ci)->callstatus & CIST_OAH) ? 1 : 0)
 
 
 /*
@@ -254,25 +274,22 @@ struct CallInfo {
 typedef struct global_State {
   lua_Alloc frealloc;  /* function to reallocate memory */
   void *ud;         /* auxiliary data to 'frealloc' */
-  l_mem totalbytes;  /* number of bytes currently allocated - GCdebt */
-  l_mem GCdebt;  /* bytes allocated not yet compensated by the collector */
-  lu_mem GCestimate;  /* an estimate of the non-garbage memory in use */
-  lu_mem lastatomic;  /* see function 'genstep' in file 'lgc.c' */
+  lu_mem totalbytes;  /* number of bytes currently allocated */
+  l_obj totalobjs;  /* total number of objects allocated + GCdebt */
+  l_obj GCdebt;  /* objects counted but not yet allocated */
+  l_obj marked;  /* number of objects marked in a GC cycle */
+  l_obj GCmajorminor;  /* auxiliary counter to control major-minor shifts */
   stringtable strt;  /* hash table for strings */
   TValue l_registry;
   TValue nilvalue;  /* a nil value */
   unsigned int seed;  /* randomized seed for hashes */
+  lu_byte gcparams[LUA_GCPN];
   lu_byte currentwhite;
   lu_byte gcstate;  /* state of garbage collector */
   lu_byte gckind;  /* kind of GC running */
   lu_byte gcstopem;  /* stops emergency collections */
-  lu_byte genminormul;  /* control for minor generational collections */
-  lu_byte genmajormul;  /* control for major generational collections */
   lu_byte gcstp;  /* control whether GC is running */
   lu_byte gcemergency;  /* true if this is an emergency collection */
-  lu_byte gcpause;  /* size of pause between successive GCs */
-  lu_byte gcstepmul;  /* GC "speed" */
-  lu_byte gcstepsize;  /* (log2 of) GC granularity */
   GCObject *allgc;  /* list of all collectable objects */
   GCObject **sweepgc;  /* current position of sweep in list */
   GCObject *finobj;  /* list of collectable objects with finalizers */
@@ -329,6 +346,10 @@ struct lua_State {
   int basehookcount;
   int hookcount;
   volatile l_signalT hookmask;
+  struct {  /* info about transferred values (for call/return hooks) */
+    int ftransfer;  /* offset of first value transferred */
+    int ntransfer;  /* number of values transferred */
+  } transferinfo;
 };
 
 
@@ -390,10 +411,11 @@ union GCUnion {
 #define obj2gco(v)	check_exp((v)->tt >= LUA_TSTRING, &(cast_u(v)->gc))
 
 
-/* actual number of total bytes allocated */
-#define gettotalbytes(g)	cast(lu_mem, (g)->totalbytes + (g)->GCdebt)
+/* actual number of total objects allocated */
+#define gettotalobjs(g)	((g)->totalobjs - (g)->GCdebt)
 
-LUAI_FUNC void luaE_setdebt (global_State *g, l_mem debt);
+
+LUAI_FUNC void luaE_setdebt (global_State *g, l_obj debt);
 LUAI_FUNC void luaE_freethread (lua_State *L, lua_State *L1);
 LUAI_FUNC CallInfo *luaE_extendCI (lua_State *L);
 LUAI_FUNC void luaE_shrinkCI (lua_State *L);

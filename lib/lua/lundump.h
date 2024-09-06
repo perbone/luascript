@@ -7,6 +7,8 @@
 #ifndef lundump_h
 #define lundump_h
 
+#include <limits.h>
+
 #include "llimits.h"
 #include "lobject.h"
 #include "lzio.h"
@@ -25,8 +27,10 @@
 
 #define LUAC_FORMAT	0	/* this is the official format */
 
+
 /* load one chunk; from lundump.c */
-LUAI_FUNC LClosure* luaU_undump (lua_State* L, ZIO* Z, const char* name);
+LUAI_FUNC LClosure* luaU_undump (lua_State* L, ZIO* Z, const char* name,
+                                               int fixed);
 
 /* dump one chunk; from ldump.c */
 LUAI_FUNC int luaU_dump (lua_State* L, const Proto* f, lua_Writer w,
