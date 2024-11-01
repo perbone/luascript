@@ -225,7 +225,7 @@ LUALIB_API void luaL_where (lua_State *L, int level) {
 /*
 ** Again, the use of 'lua_pushvfstring' ensures this function does
 ** not need reserved stack space when called. (At worst, it generates
-** an error with "stack overflow" instead of the given message.)
+** a memory error instead of the given message.)
 */
 LUALIB_API int luaL_error (lua_State *L, const char *fmt, ...) {
   va_list argp;
@@ -618,6 +618,7 @@ LUALIB_API void luaL_pushresult (luaL_Buffer *B) {
     box->bsize = 0;  box->box = NULL;
     lua_pushextlstring(L, s, len, allocf, ud);
     lua_closeslot(L, -2);  /* close the box */
+    lua_gc(L, LUA_GCSTEP, len);
   }
   lua_remove(L, -2);  /* remove box or placeholder from the stack */
 }
@@ -919,10 +920,9 @@ LUALIB_API const char *luaL_tolstring (lua_State *L, int idx, size_t *len) {
   else {
     switch (lua_type(L, idx)) {
       case LUA_TNUMBER: {
-        if (lua_isinteger(L, idx))
-          lua_pushfstring(L, "%I", (LUAI_UACINT)lua_tointeger(L, idx));
-        else
-          lua_pushfstring(L, "%f", (LUAI_UACNUMBER)lua_tonumber(L, idx));
+        char buff[LUA_N2SBUFFSZ];
+        lua_numbertostrbuff(L, idx, buff);
+        lua_pushstring(L, buff);
         break;
       }
       case LUA_TSTRING:

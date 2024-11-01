@@ -74,15 +74,15 @@ typedef struct LG {
 
 /*
 ** set GCdebt to a new value keeping the real number of allocated
-** objects (totalobjs - GCdebt) invariant and avoiding overflows in
-** 'totalobjs'.
+** objects (GCtotalobjs - GCdebt) invariant and avoiding overflows in
+** 'GCtotalobjs'.
 */
-void luaE_setdebt (global_State *g, l_obj debt) {
-  l_obj tb = gettotalobjs(g);
+void luaE_setdebt (global_State *g, l_mem debt) {
+  l_mem tb = gettotalbytes(g);
   lua_assert(tb > 0);
-  if (debt > MAX_LOBJ - tb)
-    debt = MAX_LOBJ - tb;  /* will make 'totalobjs == MAX_LMEM' */
-  g->totalobjs = tb + debt;
+  if (debt > MAX_LMEM - tb)
+    debt = MAX_LMEM - tb;  /* will make GCtotalbytes == MAX_LMEM */
+  g->GCtotalbytes = tb + debt;
   g->GCdebt = debt;
 }
 
@@ -257,6 +257,14 @@ static void preinit_thread (lua_State *L, global_State *g) {
 }
 
 
+size_t luaE_threadsize (lua_State *L) {
+  size_t sz = sizeof(LX) + cast_uint(L->nci) * sizeof(CallInfo);
+  if (L->stack.p != NULL)
+    sz += cast_uint(stacksize(L) + EXTRA_STACK) * sizeof(StackValue);
+  return sz;
+}
+
+
 static void close_state (lua_State *L) {
   global_State *g = G(L);
   if (!completestate(g))  /* closing a partially built state? */
@@ -269,8 +277,7 @@ static void close_state (lua_State *L) {
   }
   luaM_freearray(L, G(L)->strt.hash, cast_sizet(G(L)->strt.size));
   freestack(L);
-  lua_assert(g->totalbytes == sizeof(LG));
-  lua_assert(gettotalobjs(g) == 1);
+  lua_assert(gettotalbytes(g) == sizeof(LG));
   (*g->frealloc)(g->ud, fromstate(L), sizeof(LG), 0);  /* free main block */
 }
 
@@ -378,9 +385,8 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud, unsigned seed) {
   g->gray = g->grayagain = NULL;
   g->weak = g->ephemeron = g->allweak = NULL;
   g->twups = NULL;
-  g->totalbytes = sizeof(LG);
-  g->totalobjs = 1;
-  g->marked = 0;
+  g->GCtotalbytes = sizeof(LG);
+  g->GCmarked = 0;
   g->GCdebt = 0;
   setivalue(&g->nilvalue, 0);  /* to signal that state is not yet built */
   setgcparam(g, PAUSE, LUAI_GCPAUSE);

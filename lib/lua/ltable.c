@@ -402,7 +402,8 @@ int luaH_next (lua_State *L, Table *t, StkId key) {
 
 static void freehash (lua_State *L, Table *t) {
   if (!isdummy(t)) {
-    size_t bsize = sizenode(t) * sizeof(Node);  /* 'node' size in bytes */
+    /* 'node' size in bytes */
+    size_t bsize = cast_sizet(sizenode(t)) * sizeof(Node);
     char *arr = cast_charp(t->node);
     if (haslastfree(t)) {
       bsize += sizeof(Limbox);
@@ -801,6 +802,18 @@ Table *luaH_new (lua_State *L) {
   t->alimit = 0;
   setnodevector(L, t, 0);
   return t;
+}
+
+
+size_t luaH_size (Table *t) {
+  size_t sz = sizeof(Table)
+            + luaH_realasize(t) * (sizeof(Value) + 1);
+  if (!isdummy(t)) {
+    sz += sizenode(t) * sizeof(Node);
+    if (haslastfree(t))
+      sz += sizeof(Limbox);
+  }
+  return sz;
 }
 
 

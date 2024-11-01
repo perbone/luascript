@@ -53,16 +53,6 @@ const char lua_ident[] =
 #define isupvalue(i)		((i) < LUA_REGISTRYINDEX)
 
 
-/* Advance the garbage collector when creating large objects */
-static void advancegc (lua_State *L, size_t delta) {
-  delta >>= 5;  /* one object for each 32 bytes (empirical) */
-  if (delta > 0) {
-    global_State *g = G(L);
-    luaE_setdebt(g, g->GCdebt - cast(l_obj, delta));
-  }
-}
-
-
 /*
 ** Convert an acceptable index to a pointer to its respective value.
 ** Non-valid indices return the special nil value 'G(L)->nilvalue'.
@@ -378,6 +368,18 @@ LUA_API int lua_compare (lua_State *L, int index1, int index2, int op) {
 }
 
 
+LUA_API unsigned (lua_numbertostrbuff) (lua_State *L, int idx, char *buff) {
+  const TValue *o = index2value(L, idx);
+  if (ttisnumber(o)) {
+    unsigned len = luaO_tostringbuff(o, buff);
+    buff[len++] = '\0';  /* add final zero */
+    return len;
+  }
+  else
+    return 0;
+}
+
+
 LUA_API size_t lua_stringtonumber (lua_State *L, const char *s) {
   size_t sz = luaO_str2num(s, s2v(L->top.p));
   if (sz != 0)
@@ -540,7 +542,6 @@ LUA_API const char *lua_pushlstring (lua_State *L, const char *s, size_t len) {
   ts = (len == 0) ? luaS_new(L, "") : luaS_newlstr(L, s, len);
   setsvalue2s(L, L->top.p, ts);
   api_incr_top(L);
-  advancegc(L, len);
   luaC_checkGC(L);
   lua_unlock(L);
   return getstr(ts);
@@ -556,8 +557,6 @@ LUA_API const char *lua_pushextlstring (lua_State *L,
   ts = luaS_newextlstr (L, s, len, falloc, ud);
   setsvalue2s(L, L->top.p, ts);
   api_incr_top(L);
-  if (falloc != NULL)  /* non-static string? */
-    advancegc(L, len);  /* count its memory */
   luaC_checkGC(L);
   lua_unlock(L);
   return getstr(ts);
@@ -600,6 +599,8 @@ LUA_API const char *lua_pushfstring (lua_State *L, const char *fmt, ...) {
   ret = luaO_pushvfstring(L, fmt, argp);
   va_end(argp);
   luaC_checkGC(L);
+  if (ret == NULL)  /* error? */
+    luaD_throw(L, LUA_ERRMEM);
   lua_unlock(L);
   return ret;
 }
@@ -1190,16 +1191,16 @@ LUA_API int lua_gc (lua_State *L, int what, ...) {
     }
     case LUA_GCCOUNT: {
       /* GC values are expressed in Kbytes: #bytes/2^10 */
-      res = cast_int(g->totalbytes >> 10);
+      res = cast_int(gettotalbytes(g) >> 10);
       break;
     }
     case LUA_GCCOUNTB: {
-      res = cast_int(g->totalbytes & 0x3ff);
+      res = cast_int(gettotalbytes(g) & 0x3ff);
       break;
     }
     case LUA_GCSTEP: {
       lu_byte oldstp = g->gcstp;
-      l_obj n = va_arg(argp, int);
+      l_mem n = cast(l_mem, va_arg(argp, size_t));
       int work = 0;  /* true if GC did some work */
       g->gcstp = 0;  /* allow GC to run (other bits must be zero here) */
       if (n <= 0)
@@ -1352,11 +1353,10 @@ void lua_warning (lua_State *L, const char *msg, int tocont) {
 LUA_API void *lua_newuserdatauv (lua_State *L, size_t size, int nuvalue) {
   Udata *u;
   lua_lock(L);
-  api_check(L, 0 <= nuvalue && nuvalue < USHRT_MAX, "invalid value");
+  api_check(L, 0 <= nuvalue && nuvalue < SHRT_MAX, "invalid value");
   u = luaS_newudata(L, size, cast(unsigned short, nuvalue));
   setuvalue(L, s2v(L->top.p), u);
   api_incr_top(L);
-  advancegc(L, size);
   luaC_checkGC(L);
   lua_unlock(L);
   return getudatamem(u);
